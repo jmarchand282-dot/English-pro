@@ -86,7 +86,7 @@ class _AppHomeState extends State<AppHome> {
     if(upcoming!=null) Text('Prochaine étape : ${upcoming.title}',style:const TextStyle(color:Colors.black54,fontSize:12)),
     const SizedBox(height:18),
     const Center(child:Text('CRÉÉ PAR JOSEPH MARCHAND • DÉVELOPPEUR',textAlign:TextAlign.center,style:TextStyle(color:Colors.black45,fontSize:11,fontWeight:FontWeight.w600))),
-   ]))
+   ])
   );
  }
  Widget _homeStat(IconData icon,String value,String label)=>Container(padding:const EdgeInsets.symmetric(vertical:16,horizontal:10),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(17),border:Border.all(color:const Color(0xFFE7E8F2))),child:Row(children:[Container(width:42,height:42,decoration:BoxDecoration(color:gold.withValues(alpha:.2),borderRadius:BorderRadius.circular(13)),child:Icon(icon,color:blue)),const SizedBox(width:10),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(value,style:const TextStyle(color:navy,fontSize:20,fontWeight:FontWeight.bold)),Text(label,style:const TextStyle(color:Colors.black54,fontSize:11))]))]));
