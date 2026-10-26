@@ -142,6 +142,8 @@ const _placementQuestions=< _PlacementQuestion>[
  _PlacementQuestion('Had I known, I ___ earlier.','Cette inversion conditionnelle renvoie à une situation passée irréelle : would have left.',['would leave','would have left','will leave'],1),
  _PlacementQuestion('The proposal, ___ merits remain contested, was approved.','Whose indique la possession et peut se rapporter à une chose : the proposal’s merits.',['which','whose','who'],1),
 ];
+const _welcomePhrases=<String>['HELLO! WELCOME TO ENGLISH PRO','LET’S LEARN ENGLISH TOGETHER!','PRACTICE MAKES PERFECT!'];
+const _welcomeTranslations=<String>['Bonjour, bienvenue dans English Pro.','Apprenons l’anglais ensemble.','C’est en pratiquant qu’on progresse.'];
 class OnboardingPage extends StatefulWidget {
  final String initialName; final String? photo; final Future<void> Function() onPickPhoto; final Future<void> Function(String,int) onComplete;
  const OnboardingPage({super.key,required this.initialName,required this.photo,required this.onPickPhoto,required this.onComplete});
@@ -149,8 +151,9 @@ class OnboardingPage extends StatefulWidget {
 }
 class _OnboardingPageState extends State<OnboardingPage>{
  late final TextEditingController nameController=TextEditingController(text:widget.initialName=='Learner'?'':widget.initialName);
- int page=0,index=0,score=0;int? selected;bool checked=false,saving=false;
- @override void dispose(){nameController.dispose();super.dispose();}
+ int page=0,index=0,score=0,welcomePhrase=0;int? selected;bool checked=false,saving=false;Timer? welcomeTimer;
+ @override void initState(){super.initState();welcomeTimer=Timer.periodic(const Duration(seconds:3),(_){if(mounted)setState(()=>welcomePhrase=(welcomePhrase+1)%_welcomePhrases.length);});}
+ @override void dispose(){welcomeTimer?.cancel();nameController.dispose();super.dispose();}
  @override Widget build(BuildContext context){
   final q=_placementQuestions[index];
   return Scaffold(
@@ -158,9 +161,9 @@ class _OnboardingPageState extends State<OnboardingPage>{
     const SizedBox(height:12),
     const Center(child:Text('🇺🇸',style:TextStyle(fontSize:48))),
     const SizedBox(height:8),
-    const Center(child:Text('HELLO! WELCOME TO ENGLISH PRO',textAlign:TextAlign.center,style:TextStyle(color:blue,fontSize:20,fontWeight:FontWeight.w900))),
-    const SizedBox(height:8),
-    const Center(child:Text('Apprends l’anglais étape par étape.',style:TextStyle(color:Colors.black54))),
+    Center(child:SizedBox(height:54,child:AnimatedSwitcher(duration:const Duration(milliseconds:450),transitionBuilder:(child,animation)=>FadeTransition(opacity:animation,child:SlideTransition(position:Tween<Offset>(begin:const Offset(0,.15),end:Offset.zero).animate(animation),child:child)),child:Text(_welcomePhrases[welcomePhrase],key:ValueKey(welcomePhrase),textAlign:TextAlign.center,style:const TextStyle(color:blue,fontSize:19,fontWeight:FontWeight.w900))))),
+    const SizedBox(height:6),
+    Center(child:AnimatedSwitcher(duration:const Duration(milliseconds:300),child:Text(_welcomeTranslations[welcomePhrase],key:ValueKey('translation-$welcomePhrase'),style:const TextStyle(color:Colors.black54)))),
     const SizedBox(height:22),
     if(page==0)...[
      const Text('1. Créons ton profil',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold,color:navy)),
