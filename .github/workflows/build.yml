@@ -41,6 +41,8 @@ jobs:
           xml = manifest.read_text()
           if 'android.permission.RECEIVE_BOOT_COMPLETED' not in xml:
               xml = xml.replace('<application', '    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <application', 1)
+          if 'android.permission.RECORD_AUDIO' not in xml:
+              xml = xml.replace('<application', '    <uses-permission android:name="android.permission.RECORD_AUDIO"/>\n    <application', 1)
           receivers = '''        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
                   <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
                       <intent-filter>
