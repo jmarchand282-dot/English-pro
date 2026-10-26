@@ -1,3 +1,5 @@
+import 'a1_course_data.dart';
+
 class Topic {
  final String title, explanation, example, french, question;
  final List<String> options; final int answer;
@@ -91,6 +93,47 @@ const levelNames = {'A1':'Beginner','A2':'Elementary','B1':'Intermediate','B2':'
 const phaseNames = ['Learn the idea','Guided practice','Review challenge'];
 List<StudyLesson> buildCurriculum() {
  final result=<StudyLesson>[];
- for(final entry in curriculum.entries){ var unit=1; for(var i=0;i<entry.value.length;i++){final t=entry.value[i]; for(var p=0;p<3;p++){final suffix=p==0?'':p==1?' — Practice':' — Review'; result.add(StudyLesson(id:'${entry.key}-${i+1}-${p+1}',level:entry.key,title:'${(i+1).toString().padLeft(2,'0')}. ${t.title}$suffix',subtitle:'${phaseNames[p]} • Unit $unit',explanation:t.explanation,example:t.example,french:t.french,question:p==0?t.question:p==1?'Practice: ${t.question}':'Review: ${t.question}',options:t.options,answer:t.answer,unit:unit,phase:p));} unit++;}}
+ // The A1 course is the 500-lesson structured course authored in docs/lessons/.
+ for(final raw in a1CourseData){
+  result.add(StudyLesson(
+   id: raw['id'] as String,
+   level: 'A1',
+   title: raw['title'] as String,
+   subtitle: raw['subtitle'] as String,
+   explanation: raw['explanation'] as String,
+   example: raw['example'] as String,
+   french: raw['french'] as String,
+   question: raw['question'] as String,
+   options: (raw['options'] as List).cast<String>(),
+   answer: raw['answer'] as int,
+   unit: raw['unit'] as int,
+   phase: 0,
+  ));
+ }
+ // A2-C2 keep the current course bank for now; their expanded lesson content is still to be written.
+ for(final entry in curriculum.entries.where((e)=>e.key!='A1')){
+  var unit=1;
+  for(var i=0;i<entry.value.length;i++){
+   final t=entry.value[i];
+   for(var p=0;p<3;p++){
+    final suffix=p==0?'':p==1?' — Practice':' — Review';
+    result.add(StudyLesson(
+     id:'${entry.key}-${i+1}-${p+1}',
+     level:entry.key,
+     title:'${(i+1).toString().padLeft(2,'0')}. ${t.title}$suffix',
+     subtitle:'${phaseNames[p]} • Unit $unit',
+     explanation:t.explanation,
+     example:t.example,
+     french:t.french,
+     question:p==0?t.question:p==1?'Practice: ${t.question}':'Review: ${t.question}',
+     options:t.options,
+     answer:t.answer,
+     unit:unit,
+     phase:p,
+    ));
+   }
+   unit++;
+  }
+ }
  return result;
 }
