@@ -25,7 +25,7 @@ jobs:
           channel: stable
           cache: true
       - name: Generate Android platform files
-        run: flutter create --platforms=android,web --org com.englishpro.app --project-name english_pro /tmp/english_pro
+        run: flutter create --platforms=android --org com.englishpro.app --project-name english_pro /tmp/english_pro
       - name: Configure Android notification scheduling
         run: |
           python3 - <<'PY'
