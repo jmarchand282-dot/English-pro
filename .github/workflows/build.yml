@@ -59,6 +59,12 @@ jobs:
           '''
           if 'ScheduledNotificationBootReceiver' not in xml:
               xml = xml.replace('</application>', receivers + '\n    </application>', 1)
+          if '<queries>' not in xml:
+              xml = xml.replace('</manifest>', '''    <queries>
+                      <intent><action android:name="android.intent.action.TTS_SERVICE"/></intent>
+                      <intent><action android:name="android.speech.RecognitionService"/></intent>
+                  </queries>
+          </manifest>''', 1)
           manifest.write_text(xml)
           PY
       - name: Copy application source
