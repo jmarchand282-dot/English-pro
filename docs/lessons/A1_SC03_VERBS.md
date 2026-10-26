@@ -997,10 +997,11 @@ Which sentence is correct?
 **Quiz**  
 She speak English.
 
-- A. I want to learn English.
-- B. He have a book.
-- C. I want to learn English.
-- **Réponse correcte :** Want to + base verbale est correct ; he takes has and she takes speaks.
+- A. She speak English.
+- B. I want to learn English.
+- C. He have a book.
+- **Réponse correcte :** I want to learn English.
+- **Correction expliquée :** Want to + base verbale est correct ; he takes has and she takes speaks.
 - **Correction expliquée :** Écris trois phrases avec des verbes différents.
 
 **Pratique / révision**  
