@@ -30,6 +30,7 @@ jobs:
         run: |
           cp pubspec.yaml /tmp/english_pro/pubspec.yaml
           cp -r lib/. /tmp/english_pro/lib/
+          rm -rf /tmp/english_pro/test
           cd /tmp/english_pro
           flutter pub get
       - name: Check Dart code
