@@ -54,7 +54,7 @@ class _AppHomeState extends State<AppHome> {
  @override void initState(){super.initState();lessons=buildCurriculum();init();}
  Future<void> init() async {prefs=await SharedPreferences.getInstance();done=(prefs.getStringList('completed_v2')??[]).toSet();xp=prefs.getInt('xp_v2')??0;goal=prefs.getInt('daily_goal')??15;streak=prefs.getInt('streak')??0;name=prefs.getString('learner_name')??'Learner';lastDate=prefs.getString('last_study_date')??'';photo=prefs.getString('photo_data');placementLevel=prefs.getString('placement_level')??'A1';darkMode=prefs.getBool('dark_mode')??false;appThemeMode.value=darkMode?ThemeMode.dark:ThemeMode.light;remindersEnabled=prefs.getBool('reminders_enabled')??false;reminderSound=prefs.getBool('reminder_sound')??true;reminderHour=prefs.getInt('reminder_hour')??18;reminderMinute=prefs.getInt('reminder_minute')??0;if(remindersEnabled){try{await scheduleDailyReminder(hour:reminderHour,minute:reminderMinute,sound:reminderSound);}catch(_){}}needsOnboarding=!(prefs.getBool('profile_setup_complete')??false);if(mounted)setState(()=>loading=false);}
  Future<void> save() async {await prefs.setStringList('completed_v2',done.toList());await prefs.setInt('xp_v2',xp);await prefs.setInt('daily_goal',goal);await prefs.setInt('streak',streak);await prefs.setString('learner_name',name);await prefs.setString('last_study_date',lastDate);await prefs.setBool('dark_mode',darkMode);await prefs.setBool('reminders_enabled',remindersEnabled);await prefs.setBool('reminder_sound',reminderSound);await prefs.setInt('reminder_hour',reminderHour);await prefs.setInt('reminder_minute',reminderMinute);if(photo!=null)await prefs.setString('photo_data',photo!);}
- String get currentLevel {for(final l in levels){if(!lessons.where((x)=>x.level==l).every((x)=>done.contains(x.id)))return l;}return 'C2';}
+ String get currentLevel {for(final l in levels){if(!lessons.where((x)=>x.level==l).every((x)=>done.contains(x.id)))return l;final units=lessons.where((x)=>x.level==l).map((x)=>x.unit).toSet().toList()..sort();if(units.isNotEmpty&&!conversationsDone.contains('$l-U${units.last}'))return l;}return 'C2';}
  int count(String l)=>lessons.where((x)=>x.level==l&&done.contains(x.id)).length;
  int total(String l)=>lessons.where((x)=>x.level==l).length;
  StudyLesson? get next {for(final l in lessons){if(!done.contains(l.id))return l;}return null;}
@@ -109,6 +109,8 @@ class _AppHomeState extends State<AppHome> {
      const SizedBox(height:10),
      ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:(todayXp/goal).clamp(0,1),minHeight:8,color:blue,backgroundColor:const Color(0xFFE7E8F2))),
      const SizedBox(height:8),
+     Text('Niveau actuel : $level • ${levelNames[level]}',style:const TextStyle(color:navy,fontWeight:FontWeight.w600,fontSize:13)),
+     const SizedBox(height:4),
      Text('Niveau conseillé par le test : $placementLevel • ${levelNames[placementLevel]}',style:const TextStyle(color:Colors.black54,fontSize:13)),
      const SizedBox(height:4),
      Text('Le parcours reste progressif : A1 se termine avant le déverrouillage de A2.',style:TextStyle(color:Colors.blueGrey.shade700,fontSize:12)),
