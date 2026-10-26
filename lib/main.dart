@@ -48,7 +48,7 @@ class _AppHomeState extends State<AppHome> {
      IconButton(onPressed:settings,icon:const Icon(Icons.settings_outlined),tooltip:'Paramètres'),
     ],
    ),
-   body:SafeArea(child,ListView(padding:const EdgeInsets.fromLTRB(18,18,18,24),children:[
+   body:ListView(padding:const EdgeInsets.fromLTRB(18,18,18,24),children:[
     Container(padding:const EdgeInsets.all(22),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(26)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
      Text('BONJOUR, ${name.toUpperCase()}',style:const TextStyle(color:gold,fontSize:11,fontWeight:FontWeight.bold,letterSpacing:1.2)),
      const SizedBox(height:12),
