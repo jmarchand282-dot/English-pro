@@ -138,7 +138,7 @@ class _OnboardingPageState extends State<OnboardingPage>{
      const SizedBox(height:18),
      SizedBox(height:54,child:FilledButton(onPressed:()=>setState(()=>page=1),child:const Text('FAIRE LE TEST DE NIVEAU →',style:TextStyle(fontWeight:FontWeight.bold))))
     ] else if(page==1)...[
-     Row(children:[Expanded(child:Text('2. Test de positionnement',style:const TextStyle(fontSize:21,fontWeight:FontWeight.bold,color:navy))),Text('${index+1}/${_placementQuestions.length}',style:const TextStyle(color:blue,fontWeight:FontWeight.bold))]),
+     Row(children:[Expanded(child:const Text('2. Test de positionnement',style:TextStyle(fontSize:21,fontWeight:FontWeight.bold,color:navy))),Text('${index+1}/${_placementQuestions.length}',style:const TextStyle(color:blue,fontWeight:FontWeight.bold))]),
      const SizedBox(height:8),
      LinearProgressIndicator(value:(index+1)/_placementQuestions.length,color:blue,backgroundColor:const Color(0xFFE7E8F2),minHeight:7),
      const SizedBox(height:20),
@@ -239,7 +239,7 @@ class _SubchapterPageState extends State<SubchapterPage>{
      contentPadding:const EdgeInsets.all(14),
      leading:Container(width:46,height:46,decoration:BoxDecoration(color:unlocked?blue.withValues(alpha:.12):const Color(0xFFF0F0F5),borderRadius:BorderRadius.circular(13)),child:Icon(finished?Icons.check_circle:unlocked?Icons.play_circle_outline:Icons.lock,color:finished?Colors.green:unlocked?blue:Colors.grey)),
      title:Text(title,style:const TextStyle(fontWeight:FontWeight.bold,color:navy)),
-     subtitle:Text('${doneCount} / ${list.length} leçons'),
+     subtitle:Text('$doneCount / ${list.length} leçons'),
      trailing:Icon(unlocked?Icons.chevron_right:Icons.lock,color:unlocked?blue:Colors.grey),
      onTap:!unlocked?(){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine le sous-chapitre précédent pour débloquer celui-ci.')));}:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>UnitLessonsPage(level:widget.level,unit:unit,title:title,lessons:list,done:widget.done,lessonUnlocked:widget.lessonUnlocked,onOpenLesson:widget.onOpenLesson))).then((_){if(mounted)setState((){});}),
     ));
