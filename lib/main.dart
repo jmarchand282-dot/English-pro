@@ -268,14 +268,17 @@ class _SubchapterPageState extends State<SubchapterPage>{
    ...units.map((unit){
     final list=levelLessons.where((l)=>l.unit==unit).toList();
     final doneCount=list.where((l)=>widget.done.contains(l.id)).length;
-    final unlocked=unit==units.first||levelLessons.where((l)=>l.unit<unit).every((l)=>widget.done.contains(l.id));
-    final finished=doneCount==list.length;
+    final previousUnits=units.where((u)=>u<unit).toList();
+    final previousUnit=previousUnits.isEmpty?null:previousUnits.last;
+    final unlocked=previousUnit==null||(levelLessons.where((l)=>l.unit==previousUnit).every((l)=>widget.done.contains(l.id))&&widget.conversationsDone.contains('${widget.level}-U${previousUnit}'));
+    final conversationValidated=widget.conversationsDone.contains('${widget.level}-U${unit}');
+    final finished=doneCount==list.length&&conversationValidated;
     final title=widget.level=='A1'?(a1UnitTitles[unit]??'Sous-chapitre $unit'):'Sous-chapitre $unit • ${list.first.title}';
     return Card(color:Colors.white,margin:const EdgeInsets.only(bottom:11),child:ListTile(
      contentPadding:const EdgeInsets.all(14),
      leading:Container(width:46,height:46,decoration:BoxDecoration(color:unlocked?blue.withValues(alpha:.12):const Color(0xFFF0F0F5),borderRadius:BorderRadius.circular(13)),child:Icon(finished?Icons.check_circle:unlocked?Icons.play_circle_outline:Icons.lock,color:finished?Colors.green:unlocked?blue:Colors.grey)),
      title:Text(title,style:const TextStyle(fontWeight:FontWeight.bold,color:navy)),
-     subtitle:Text('$doneCount / ${list.length} leçons'),
+     subtitle:Text('$doneCount / ${list.length} leçons • ${conversationValidated?'conversation validée':'conversation à valider'}'),
      trailing:Icon(unlocked?Icons.chevron_right:Icons.lock,color:unlocked?blue:Colors.grey),
      onTap:!unlocked?(){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine le sous-chapitre précédent pour débloquer celui-ci.')));}:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>UnitLessonsPage(level:widget.level,unit:unit,title:title,lessons:list,done:widget.done,conversationsDone:widget.conversationsDone,lessonUnlocked:widget.lessonUnlocked,onOpenLesson:widget.onOpenLesson,onConversationComplete:widget.onConversationComplete))).then((_){if(mounted)setState((){});}),
     ));
