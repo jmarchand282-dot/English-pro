@@ -148,17 +148,70 @@ class LessonPage extends StatefulWidget {
  @override State<LessonPage> createState()=>_LessonPageState();
 }
 class _LessonPageState extends State<LessonPage>{
- int step=0,score=0; int? selected; bool checked=false,finished=false;
- @override Widget build(BuildContext context){final l=widget.lesson;return Scaffold(appBar:AppBar(title:Text('${l.level} • Leçon'),leading:IconButton(onPressed:()=>Navigator.pop(context),icon:const Icon(Icons.close))),body:SafeArea(child:Column(children:[
- Padding(padding:const EdgeInsets.fromLTRB(18,14,18,8),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Expanded(child:Text(l.title,style:const TextStyle(color:navy,fontWeight:FontWeight.bold,fontSize:18))),Text('${step+1}/3',style:const TextStyle(color:blue,fontWeight:FontWeight.bold))]),const SizedBox(height:8),ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:(step+1)/3,minHeight:7,color:blue,backgroundColor:const Color(0xFFE7E8F2)))])),
- Expanded(child:SingleChildScrollView(padding:const EdgeInsets.all(18),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
- Container(width:double.infinity,padding:const EdgeInsets.all(19),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(22)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('APPRENDS',style:TextStyle(color:gold,fontWeight:FontWeight.bold,letterSpacing:1.2)),const SizedBox(height:12),Text(l.explanation,style:const TextStyle(color:Colors.white,fontSize:18,height:1.45)),const SizedBox(height:17),Container(width:double.infinity,padding:const EdgeInsets.all(13),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.13),borderRadius:BorderRadius.circular(14)),child:Text(l.example,style:const TextStyle(color:Colors.white,fontSize:17,fontWeight:FontWeight.w600,height:1.5))),const SizedBox(height:8),Text(l.french,style:const TextStyle(color:Colors.white70,height:1.5))])),
- const SizedBox(height:22),const Text('EXERCICE',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),const SizedBox(height:9),Text(l.question,style:const TextStyle(fontSize:19,fontWeight:FontWeight.bold,color:navy)),const SizedBox(height:12),
- ...List.generate(l.options.length,(i){final sel=selected==i,correct=checked&&i==l.answer,wrong=checked&&sel&&i!=l.answer;final c=correct?Colors.green:wrong?Colors.red:sel?blue:const Color(0xFFE4E6F0);return Container(margin:const EdgeInsets.only(bottom:9),child:InkWell(onTap:checked?null:()=>setState(()=>selected=i),borderRadius:BorderRadius.circular(14),child:Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:correct?const Color(0xFFE8F8ED):wrong?const Color(0xFFFFEEEE):sel?const Color(0xFFEEEEFF):Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:c,width:sel||correct?2:1)),child:Row(children:[Expanded(child:Text(l.options[i],style:const TextStyle(color:navy,fontSize:15))),if(correct)const Icon(Icons.check_circle,color:Colors.green),if(wrong)const Icon(Icons.cancel,color:Colors.red)]))));}),
- if(checked)Container(width:double.infinity,padding:const EdgeInsets.all(12),decoration:BoxDecoration(color:selected==l.answer?const Color(0xFFE8F8ED):const Color(0xFFFFF4DF),borderRadius:BorderRadius.circular(12)),child:Text(selected==l.answer?'Bonne réponse ! Continue.':'Réponse correcte : ${l.options[l.answer]}',style:TextStyle(fontWeight:FontWeight.w600,color:selected==l.answer?Colors.green.shade800:Colors.brown)))
- ]))),
- Padding(padding:const EdgeInsets.all(18),child:SizedBox(width:double.infinity,child:FilledButton(onPressed:()async{if(finished){Navigator.pop(context);return;}if(!checked){if(selected==null){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Choisis une réponse.')));return;}setState((){checked=true;if(selected==l.answer)score++;});}else if(step<2){setState((){step++;selected=null;checked=false;});}else if(score>=2||widget.alreadyDone){await widget.onComplete();if(mounted)setState(()=>finished=true);}else{setState((){step=0;score=0;selected=null;checked=false;});ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Il faut au moins 2 bonnes réponses sur 3. Relis puis réessaie.')));}},child:Text(finished?'Retour au parcours':!checked?'Vérifier':step<2?'Continuer':score>=2||widget.alreadyDone?'Terminer • +10 XP':'Réessayer'))))
- ])));}
+ int? selected; bool checked=false,finished=false; int attempts=0;
+ @override Widget build(BuildContext context){
+  final l=widget.lesson;
+  final isCorrect=checked&&selected==l.answer;
+  return Scaffold(
+   appBar:AppBar(title:Text('${l.level} • Leçon'),leading:IconButton(onPressed:()=>Navigator.pop(context),icon:const Icon(Icons.close))),
+   body:SafeArea(child:Column(children:[
+    Padding(padding:const EdgeInsets.fromLTRB(18,14,18,8),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+     Text(l.title,style:const TextStyle(color:navy,fontWeight:FontWeight.bold,fontSize:20)),
+     const SizedBox(height:8),
+     ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:finished?1:checked?.72:.42,minHeight:7,color:blue,backgroundColor:const Color(0xFFE7E8F2))),
+     const SizedBox(height:7),
+     Text('Étudie, réponds, puis lis la correction avant de continuer.',style:TextStyle(color:Colors.blueGrey.shade700,fontSize:12))
+    ])),
+    Expanded(child:SingleChildScrollView(padding:const EdgeInsets.all(18),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+     Container(width:double.infinity,padding:const EdgeInsets.all(19),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(22)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+      const Text('APPRENDS D’ABORD',style:TextStyle(color:gold,fontWeight:FontWeight.bold,letterSpacing:1.1)),
+      const SizedBox(height:12),
+      Text(l.explanation,style:const TextStyle(color:Colors.white,fontSize:17,height:1.45)),
+      const SizedBox(height:17),
+      Container(width:double.infinity,padding:const EdgeInsets.all(13),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.13),borderRadius:BorderRadius.circular(14)),child:Text(l.example,style:const TextStyle(color:Colors.white,fontSize:16,fontWeight:FontWeight.w600,height:1.5))),
+      const SizedBox(height:8),
+      Text(l.french,style:const TextStyle(color:Colors.white70,height:1.5))
+     ])),
+     const SizedBox(height:22),
+     const Text('VÉRIFIE TA COMPRÉHENSION',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),
+     const SizedBox(height:9),
+     Text(l.question,style:const TextStyle(fontSize:19,fontWeight:FontWeight.bold,color:navy)),
+     const SizedBox(height:12),
+     ...List.generate(l.options.length,(i){
+      final sel=selected==i,correct=checked&&i==l.answer,wrong=checked&&sel&&i!=l.answer;
+      final border=correct?Colors.green:wrong?Colors.red:sel?blue:const Color(0xFFE4E6F0);
+      return Container(margin:const EdgeInsets.only(bottom:9),child:InkWell(
+       onTap:checked?null:()=>setState(()=>selected=i),
+       borderRadius:BorderRadius.circular(14),
+       child:Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:correct?const Color(0xFFE8F8ED):wrong?const Color(0xFFFFEEEE):sel?const Color(0xFFEEEEFF):Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:border,width:sel||correct?2:1)),
+        child:Row(children:[Expanded(child:Text(l.options[i],style:const TextStyle(color:navy,fontSize:15))),if(correct)const Icon(Icons.check_circle,color:Colors.green),if(wrong)const Icon(Icons.cancel,color:Colors.red)])
+       )
+      ));
+     }),
+     if(checked)Container(width:double.infinity,margin:const EdgeInsets.only(top:4),padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:isCorrect?const Color(0xFFE8F8ED):const Color(0xFFFFF4DF),borderRadius:BorderRadius.circular(14)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+      Text(isCorrect?'Bonne réponse !':'On corrige ensemble',style:TextStyle(fontWeight:FontWeight.bold,color:isCorrect?Colors.green.shade800:Colors.brown.shade800,fontSize:16)),
+      const SizedBox(height:6),
+      Text(isCorrect?'Tu as bien compris cette question.':'Réponse correcte : ${l.options[l.answer]}',style:const TextStyle(fontWeight:FontWeight.w600,color:navy)),
+      const SizedBox(height:6),
+      Text(l.correction,style:const TextStyle(color:navy,height:1.45))
+     ]))
+    ]))),
+    Padding(padding:const EdgeInsets.all(18),child:SizedBox(width:double.infinity,child:FilledButton(
+     onPressed:()async{
+      if(finished){Navigator.pop(context);return;}
+      if(!checked){
+       if(selected==null){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Choisis une réponse pour continuer.')));return;}
+       setState(()=>checked=true);attempts++;return;
+      }
+      if(!isCorrect){setState(()=>{selected=null,checked=false});return;}
+      await widget.onComplete();
+      if(mounted)setState(()=>finished=true);
+     },
+     child:Text(finished?'Retour au parcours':!checked?'Vérifier ma réponse':isCorrect?'Terminer • +10 XP':'Réessayer après correction')
+    )))
+   ]))
+  );
+ }
 }
 
 class SettingsPage extends StatelessWidget{
