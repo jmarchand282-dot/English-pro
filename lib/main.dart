@@ -148,7 +148,7 @@ class LessonPage extends StatefulWidget {
  @override State<LessonPage> createState()=>_LessonPageState();
 }
 class _LessonPageState extends State<LessonPage>{
- int? selected; bool checked=false,finished=false; int attempts=0;
+ int? selected; bool checked=false,finished=false;
  @override Widget build(BuildContext context){
   final l=widget.lesson;
   final isCorrect=checked&&selected==l.answer;
@@ -158,7 +158,7 @@ class _LessonPageState extends State<LessonPage>{
     Padding(padding:const EdgeInsets.fromLTRB(18,14,18,8),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
      Text(l.title,style:const TextStyle(color:navy,fontWeight:FontWeight.bold,fontSize:20)),
      const SizedBox(height:8),
-     ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:finished?1:checked?.72:.42,minHeight:7,color:blue,backgroundColor:const Color(0xFFE7E8F2))),
+     ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value: finished ? 1 : (checked ? 0.72 : 0.42),minHeight:7,color:blue,backgroundColor:const Color(0xFFE7E8F2))),
      const SizedBox(height:7),
      Text('Étudie, réponds, puis lis la correction avant de continuer.',style:TextStyle(color:Colors.blueGrey.shade700,fontSize:12))
     ])),
@@ -201,9 +201,9 @@ class _LessonPageState extends State<LessonPage>{
       if(finished){Navigator.pop(context);return;}
       if(!checked){
        if(selected==null){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Choisis une réponse pour continuer.')));return;}
-       setState(()=>checked=true);attempts++;return;
+       setState(()=>checked=true);return;
       }
-      if(!isCorrect){setState(()=>{selected=null,checked=false});return;}
+      if(!isCorrect){setState((){selected=null;checked=false;});return;}
       await widget.onComplete();
       if(mounted)setState(()=>finished=true);
      },
