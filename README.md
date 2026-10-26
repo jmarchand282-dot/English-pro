@@ -1,16 +1,14 @@
 # English Pro
+Flutter English-learning app for Android and Web, with a sequential CEFR path from A1 to C2.
 
-English Pro is an offline-first English-learning app for Android and the Web, designed to grow from CEFR A1 to C2.
+## Features
+- Automatic progression A1 → A2 → B1 → B2 → C1 → C2.
+- Lesson locks: the next lesson unlocks only after the previous one is passed.
+- French explanations, English examples and interactive multiple-choice practice.
+- Learn, guided-practice and review stages for each curriculum topic.
+- Pass threshold: at least 2 correct answers out of 3.
+- XP, daily goal, streak, local progress, learner name and profile photo.
+- Settings, WhatsApp contact, and reset-progress control.
+- Offline-first lesson content.
 
-## Current starter features
-- A1–C2 level selector
-- Starter lessons and examples
-- XP points and completed-lesson tracking saved locally
-- Flutter interface
-- GitHub Actions workflow for Android APK and Web builds
-
-## Build
-Push to `main` or manually start **Build English Pro** from the Actions tab. Download the generated APK or Web artifact from a successful workflow run.
-
-## Status
-This is the initial foundation. The current lesson bank is a small starter sample, not yet the complete A1–C2 course. Next steps include structured lessons, exercises, audio, revision, goals, and progress statistics.
+Created by Joseph Marchand. WhatsApp: +243 986 230 968.
