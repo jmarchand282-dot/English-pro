@@ -6,9 +6,9 @@ class Topic {
  const Topic(this.title,this.explanation,this.example,this.french,this.question,this.options,this.answer);
 }
 class StudyLesson {
- final String id,level,title,subtitle,explanation,example,french,question;
+ final String id,level,title,subtitle,explanation,example,french,question,correction;
  final List<String> options; final int answer,unit,phase;
- const StudyLesson({required this.id,required this.level,required this.title,required this.subtitle,required this.explanation,required this.example,required this.french,required this.question,required this.options,required this.answer,required this.unit,required this.phase});
+ const StudyLesson({required this.id,required this.level,required this.title,required this.subtitle,required this.explanation,required this.example,required this.french,required this.question,required this.correction,required this.options,required this.answer,required this.unit,required this.phase});
 }
 const curriculum = <String,List<Topic>>{
 'A1':[
@@ -104,6 +104,7 @@ List<StudyLesson> buildCurriculum() {
    example: raw['example'] as String,
    french: raw['french'] as String,
    question: raw['question'] as String,
+   correction: raw['correction'] as String,
    options: (raw['options'] as List).cast<String>(),
    answer: raw['answer'] as int,
    unit: raw['unit'] as int,
@@ -126,6 +127,7 @@ List<StudyLesson> buildCurriculum() {
      example:t.example,
      french:t.french,
      question:p==0?t.question:p==1?'Practice: ${t.question}':'Review: ${t.question}',
+     correction:t.explanation,
      options:t.options,
      answer:t.answer,
      unit:unit,
