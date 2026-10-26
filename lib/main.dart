@@ -1,218 +1,74 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'lesson_bank.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const EnglishProApp());
-}
-
-const navy = Color(0xFF171A3A);
-const blue = Color(0xFF4F46E5);
-const gold = Color(0xFFFFC857);
+void main() { WidgetsFlutterBinding.ensureInitialized(); runApp(const EnglishProApp()); }
+const navy=Color(0xFF151936), blue=Color(0xFF4F46E5), gold=Color(0xFFFFC857), pageBg=Color(0xFFF5F6FC);
+const levels=['A1','A2','B1','B2','C1','C2'];
 
 class EnglishProApp extends StatelessWidget {
-  const EnglishProApp({super.key});
-
-  @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: 'English Pro',
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(seedColor: blue),
-      scaffoldBackgroundColor: const Color(0xFFF7F8FC),
-      appBarTheme: const AppBarTheme(backgroundColor: navy, foregroundColor: Colors.white),
-    ),
-    home: const HomeScreen(),
-  );
+ const EnglishProApp({super.key});
+ @override Widget build(BuildContext context)=>MaterialApp(title:'English Pro',debugShowCheckedModeBanner:false,theme:ThemeData(useMaterial3:true,colorScheme:ColorScheme.fromSeed(seedColor:blue),scaffoldBackgroundColor:pageBg,appBarTheme:const AppBarTheme(backgroundColor:navy,foregroundColor:Colors.white)),home:const AppHome());
+}
+class AppHome extends StatefulWidget { const AppHome({super.key}); @override State<AppHome> createState()=>_AppHomeState(); }
+class _AppHomeState extends State<AppHome> {
+ late SharedPreferences prefs; late List<StudyLesson> lessons;
+ Set<String> done={}; int xp=0,goal=15,streak=0; String name='Learner',lastDate=''; String? photo; bool loading=true;
+ @override void initState(){super.initState();lessons=buildCurriculum();init();}
+ Future<void> init() async {prefs=await SharedPreferences.getInstance();done=(prefs.getStringList('completed_v2')??[]).toSet();xp=prefs.getInt('xp_v2')??0;goal=prefs.getInt('daily_goal')??15;streak=prefs.getInt('streak')??0;name=prefs.getString('learner_name')??'Learner';lastDate=prefs.getString('last_study_date')??'';photo=prefs.getString('photo_data');if(mounted)setState(()=>loading=false);}
+ Future<void> save() async {await prefs.setStringList('completed_v2',done.toList());await prefs.setInt('xp_v2',xp);await prefs.setInt('daily_goal',goal);await prefs.setInt('streak',streak);await prefs.setString('learner_name',name);await prefs.setString('last_study_date',lastDate);if(photo!=null)await prefs.setString('photo_data',photo!);}
+ String get currentLevel {for(final l in levels){if(!lessons.where((x)=>x.level==l).every((x)=>done.contains(x.id)))return l;}return 'C2';}
+ int count(String l)=>lessons.where((x)=>x.level==l&&done.contains(x.id)).length;
+ int total(String l)=>lessons.where((x)=>x.level==l).length;
+ StudyLesson? get next {for(final l in lessons){if(!done.contains(l.id))return l;}return null;}
+ bool isUnlocked(StudyLesson l){final i=lessons.indexWhere((x)=>x.id==l.id);return i==0||done.contains(l.id)||done.contains(lessons[i-1].id);}
+ int get todayXp=>prefs.getInt('today_xp')??0;
+ Future<void> complete(StudyLesson l) async {if(done.contains(l.id))return;final n=DateTime.now();final today='${n.year}-${n.month}-${n.day}';if(lastDate!=today){final y=n.subtract(const Duration(days:1));final yesterday='${y.year}-${y.month}-${y.day}';streak=lastDate==yesterday?streak+1:1;lastDate=today;await prefs.setInt('today_xp',0);}done.add(l.id);xp+=10;await prefs.setInt('today_xp',todayXp+10);await save();if(mounted)setState((){});}
+ void openLesson(StudyLesson l){if(!isUnlocked(l)){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine la leçon précédente pour débloquer celle-ci.')));return;}Navigator.push(context,MaterialPageRoute(builder:(_)=>LessonPage(lesson:l,alreadyDone:done.contains(l.id),onComplete:()=>complete(l)))).then((_){if(mounted)setState((){});});}
+ Future<void> pickPhoto() async {try{final f=await ImagePicker().pickImage(source:ImageSource.gallery,imageQuality:65,maxWidth:420);if(f==null)return;photo=base64Encode(await f.readAsBytes());await save();if(mounted)setState((){});}catch(_){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Photo impossible à charger. Réessaie.')));}}
+ void profile(){final c=TextEditingController(text:name=='Learner'?'':name);showModalBottomSheet(context:context,isScrollControlled:true,builder:(ctx)=>Padding(padding:EdgeInsets.fromLTRB(22,22,22,MediaQuery.of(ctx).viewInsets.bottom+24),child:Column(mainAxisSize:MainAxisSize.min,children:[const Text('Mon profil',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold,color:navy)),const SizedBox(height:14),GestureDetector(onTap:pickPhoto,child:avatar(photo,name,78)),TextButton.icon(onPressed:pickPhoto,icon:const Icon(Icons.photo_camera_outlined),label:const Text('Choisir une photo')),TextField(controller:c,decoration:const InputDecoration(labelText:'Ton nom',border:OutlineInputBorder())),const SizedBox(height:14),SizedBox(width:double.infinity,child:FilledButton(onPressed:()async{name=c.text.trim().isEmpty?'Learner':c.text.trim();await save();if(ctx.mounted)Navigator.pop(ctx);if(mounted)setState((){});},child:const Text('Enregistrer')))])));}
+ void settings(){Navigator.push(context,MaterialPageRoute(builder:(_)=>SettingsPage(goal:goal,onGoal:(v)async{goal=v;await save();if(mounted)setState((){});},onContact:contact,onReset:reset));}
+ Future<void> contact()async{final u=Uri.parse('https://wa.me/243986230968?text=Bonjour%20English%20Pro%2C%20j%27ai%20besoin%20d%27aide.');if(!await launchUrl(u,mode:LaunchMode.externalApplication)&&mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('WhatsApp ne peut pas être ouvert.')));}
+ Future<void> reset()async{final ok=await showDialog<bool>(context:context,builder:(c)=>AlertDialog(title:const Text('Effacer la progression ?'),content:const Text('Toutes les leçons terminées et les XP seront supprimés sur cet appareil.'),actions:[TextButton(onPressed:()=>Navigator.pop(c,false),child:const Text('Annuler')),FilledButton(onPressed:()=>Navigator.pop(c,true),child:const Text('Effacer'))]));if(ok!=true)return;done.clear();xp=0;streak=0;lastDate='';await save();if(mounted)setState((){});}
+ @override Widget build(BuildContext context){if(loading)return const Scaffold(body:Center(child:CircularProgressIndicator()));final l=currentLevel;final current=lessons.where((x)=>x.level==l).toList();final progress=total(l)==0?0.0:count(l)/total(l);return Scaffold(appBar:AppBar(title:const Row(children:[Icon(Icons.auto_awesome,color:gold),SizedBox(width:8),Text('English Pro',style:TextStyle(fontWeight:FontWeight.bold))]),actions:[IconButton(onPressed:profile,icon:avatar(photo,name,30),tooltip:'Profil'),IconButton(onPressed:settings,icon:const Icon(Icons.settings_outlined),tooltip:'Paramètres')]),body:ListView(padding:const EdgeInsets.all(16),children:[
+ Container(padding:const EdgeInsets.all(20),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(24)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text('BON RETOUR, ${name.toUpperCase()}',style:const TextStyle(color:gold,fontSize:11,fontWeight:FontWeight.bold,letterSpacing:1)),const SizedBox(height:9),const Text('Chaque leçon te rapproche de ton objectif.',style:TextStyle(color:Colors.white,fontSize:24,fontWeight:FontWeight.bold)),const SizedBox(height:7),Text('Niveau actuel : $l • ${levelNames[l]}',style:const TextStyle(color:Colors.white70)),const SizedBox(height:17),Row(children:[stat(Icons.bolt,'$xp','XP'),const SizedBox(width:8),stat(Icons.local_fire_department,'$streak','JOURS'),const SizedBox(width:8),stat(Icons.menu_book,'${done.length}','LEÇONS')])]),
+ const SizedBox(height:14),Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[const Icon(Icons.flag_outlined,color:blue),const SizedBox(width:8),const Expanded(child:Text('Objectif quotidien',style:TextStyle(fontWeight:FontWeight.bold))),Text('$todayXp / $goal XP',style:const TextStyle(color:blue,fontWeight:FontWeight.bold))]),const SizedBox(height:10),ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:(todayXp/goal).clamp(0,1),minHeight:8,color:blue,backgroundColor:const Color(0xFFE7E8F2)))])),
+ if(next!=null) ...[const SizedBox(height:16),Container(padding:const EdgeInsets.all(17),decoration:BoxDecoration(color:const Color(0xFFFFF7E5),borderRadius:BorderRadius.circular(18)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('REPRENDRE MON PARCOURS',style:TextStyle(color:Color(0xFF946200),fontWeight:FontWeight.bold,fontSize:11)),const SizedBox(height:8),Text(next!.title,style:const TextStyle(fontSize:18,fontWeight:FontWeight.bold,color:navy)),Text(next!.subtitle,style:const TextStyle(color:Colors.black54)),const SizedBox(height:10),SizedBox(width:double.infinity,child:FilledButton.icon(onPressed:()=>openLesson(next!),icon:const Icon(Icons.play_arrow),label:const Text('Continuer')))])],
+ const SizedBox(height:22),const Text('Mon parcours',style:TextStyle(fontSize:21,fontWeight:FontWeight.bold,color:navy)),const SizedBox(height:4),const Text('Les niveaux se débloquent automatiquement. Termine chaque leçon.',style:TextStyle(color:Colors.black54)),
+ const SizedBox(height:12),...levels.map((lev){final all=lessons.where((x)=>x.level==lev).toList();final n=count(lev);final idx=levels.indexOf(lev);final unlocked=idx==0||count(levels[idx-1])==total(levels[idx-1]);final active=lev==l;return Container(margin:const EdgeInsets.only(bottom:12),padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18),border:Border.all(color:active?blue:const Color(0xFFE5E6F0),width:active?2:1)),child:Column(children:[Row(children:[Container(width:44,height:44,decoration:BoxDecoration(color:unlocked?blue.withValues(alpha:.1):const Color(0xFFF0F0F5),borderRadius:BorderRadius.circular(13)),child:Icon(unlocked?Icons.school_outlined:Icons.lock_outline,color:unlocked?blue:Colors.grey)),const SizedBox(width:10),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text('$lev • ${levelNames[lev]}',style:const TextStyle(fontWeight:FontWeight.bold,color:navy,fontSize:15)),Text('$n / ${all.length} étapes terminées',style:const TextStyle(color:Colors.black54,fontSize:12))])),if(n==all.length)const Icon(Icons.check_circle,color:Colors.green),if(!unlocked)const Icon(Icons.lock,color:Colors.grey)]),const SizedBox(height:9),ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:all.isEmpty?0:n/all.length,minHeight:7,color:n==all.length?Colors.green:blue,backgroundColor:const Color(0xFFE8E9F3))),if(active)...[const SizedBox(height:8),...current.map((x){final open=isUnlocked(x),finished=done.contains(x.id);return ListTile(dense:true,contentPadding:EdgeInsets.zero,leading:CircleAvatar(backgroundColor:finished?const Color(0xFFE3F6E9):open?blue.withValues(alpha:.1):const Color(0xFFF0F0F5),child:Icon(finished?Icons.check:open?Icons.play_arrow:Icons.lock,color:finished?Colors.green:open?blue:Colors.grey)),title:Text(x.title,style:TextStyle(fontSize:13,fontWeight:FontWeight.w600,color:open||finished?navy:Colors.grey)),subtitle:Text(x.subtitle,style:const TextStyle(fontSize:11)),trailing:const Icon(Icons.chevron_right,size:18),onTap:()=>openLesson(x));})] else if(unlocked&&n<all.length)const Padding(padding:EdgeInsets.only(top:8),child:Align(alignment:Alignment.centerLeft,child:Text('Niveau débloqué après la fin du niveau précédent.',style:TextStyle(fontSize:12,color:Colors.black54))))]));}),
+ const SizedBox(height:12),const Center(child:Text('English Pro • Créé par Joseph Marchand',style:TextStyle(color:Colors.black45,fontSize:11)))
+ ]));}
+ Widget stat(IconData i,String v,String label)=>Expanded(child:Container(padding:const EdgeInsets.symmetric(vertical:10),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.12),borderRadius:BorderRadius.circular(12)),child:Column(children:[Icon(i,color:gold),Text(v,style:const TextStyle(color:Colors.white,fontWeight:FontWeight.bold,fontSize:16)),Text(label,style:const TextStyle(color:Colors.white70,fontSize:9))])));
 }
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
+class LessonPage extends StatefulWidget {
+ final StudyLesson lesson; final bool alreadyDone; final Future<void> Function() onComplete;
+ const LessonPage({super.key,required this.lesson,required this.alreadyDone,required this.onComplete});
+ @override State<LessonPage> createState()=>_LessonPageState();
+}
+class _LessonPageState extends State<LessonPage>{
+ int step=0,score=0; int? selected; bool checked=false,finished=false;
+ @override Widget build(BuildContext context){final l=widget.lesson;return Scaffold(appBar:AppBar(title:Text('${l.level} • Leçon'),leading:IconButton(onPressed:()=>Navigator.pop(context),icon:const Icon(Icons.close))),body:SafeArea(child:Column(children:[
+ Padding(padding:const EdgeInsets.fromLTRB(18,14,18,8),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[Expanded(child:Text(l.title,style:const TextStyle(color:navy,fontWeight:FontWeight.bold,fontSize:18))),Text('${step+1}/3',style:const TextStyle(color:blue,fontWeight:FontWeight.bold))]),const SizedBox(height:8),ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:(step+1)/3,minHeight:7,color:blue,backgroundColor:const Color(0xFFE7E8F2)))])),
+ Expanded(child:SingleChildScrollView(padding:const EdgeInsets.all(18),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+ Container(width:double.infinity,padding:const EdgeInsets.all(19),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(22)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('APPRENDS',style:TextStyle(color:gold,fontWeight:FontWeight.bold,letterSpacing:1.2)),const SizedBox(height:12),Text(l.explanation,style:const TextStyle(color:Colors.white,fontSize:18,height:1.45)),const SizedBox(height:17),Container(width:double.infinity,padding:const EdgeInsets.all(13),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.13),borderRadius:BorderRadius.circular(14)),child:Text(l.example,style:const TextStyle(color:Colors.white,fontSize:17,fontWeight:FontWeight.w600,height:1.5))),const SizedBox(height:8),Text(l.french,style:const TextStyle(color:Colors.white70,height:1.5))]),
+ const SizedBox(height:22),const Text('EXERCICE',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),const SizedBox(height:9),Text(l.question,style:const TextStyle(fontSize:19,fontWeight:FontWeight.bold,color:navy)),const SizedBox(height:12),
+ ...List.generate(l.options.length,(i){final sel=selected==i,correct=checked&&i==l.answer,wrong=checked&&sel&&i!=l.answer;final c=correct?Colors.green:wrong?Colors.red:sel?blue:const Color(0xFFE4E6F0);return Container(margin:const EdgeInsets.only(bottom:9),child:InkWell(onTap:checked?null:()=>setState(()=>selected=i),borderRadius:BorderRadius.circular(14),child:Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:correct?const Color(0xFFE8F8ED):wrong?const Color(0xFFFFEEEE):sel?const Color(0xFFEEEEFF):Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:c,width:sel||correct?2:1)),child:Row(children:[Expanded(child:Text(l.options[i],style:const TextStyle(color:navy,fontSize:15))),if(correct)const Icon(Icons.check_circle,color:Colors.green),if(wrong)const Icon(Icons.cancel,color:Colors.red)]))));}),
+ if(checked)Container(width:double.infinity,padding:const EdgeInsets.all(12),decoration:BoxDecoration(color:selected==l.answer?const Color(0xFFE8F8ED):const Color(0xFFFFF4DF),borderRadius:BorderRadius.circular(12)),child:Text(selected==l.answer?'Bonne réponse ! Continue.':'Réponse correcte : ${l.options[l.answer]}',style:TextStyle(fontWeight:FontWeight.w600,color:selected==l.answer?Colors.green.shade800:Colors.brown)))
+ ]))),
+ Padding(padding:const EdgeInsets.all(18),child:SizedBox(width:double.infinity,child:FilledButton(onPressed:()async{if(finished){Navigator.pop(context);return;}if(!checked){if(selected==null){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Choisis une réponse.')));return;}setState((){checked=true;if(selected==l.answer)score++;});}else if(step<2){setState((){step++;selected=null;checked=false;});}else if(score>=2||widget.alreadyDone){await widget.onComplete();if(mounted)setState(()=>finished=true);}else{setState((){step=0;score=0;selected=null;checked=false;});ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Il faut au moins 2 bonnes réponses sur 3. Relis puis réessaie.')));}},child:Text(finished?'Retour au parcours':!checked?'Vérifier':step<2?'Continuer':score>=2||widget.alreadyDone?'Terminer • +10 XP':'Réessayer'))))
+ ])));}
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  String level = 'A1';
-  int xp = 0;
-  final Set<String> completed = {};
-  static const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-  static const lessons = [
-    Lesson('Hello! Introducing yourself', 'Greetings and introductions', 'A1', 'Hello! My name is Anna. Nice to meet you.'),
-    Lesson('The verb “to be”', 'Build simple sentences', 'A1', 'I am a student. You are my friend. She is happy.'),
-    Lesson('Everyday vocabulary', 'Words for daily life', 'A1', 'house = maison • water = eau • friend = ami(e)'),
-    Lesson('Talking about your day', 'Simple present tense', 'A1', 'I wake up early. I go to school every day.'),
-    Lesson('Past experiences', 'Describe yesterday', 'A2', 'Yesterday, I studied English and played football.'),
-    Lesson('Expressing your opinion', 'Give reasons clearly', 'B1', 'In my opinion, learning English creates opportunities.'),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProgress();
-  }
-
-  Future<void> _loadProgress() async {
-    final p = await SharedPreferences.getInstance();
-    if (!mounted) return;
-    setState(() {
-      xp = p.getInt('xp') ?? 0;
-      level = p.getString('level') ?? 'A1';
-      completed.addAll(p.getStringList('completed') ?? []);
-    });
-  }
-
-  Future<void> _saveProgress() async {
-    final p = await SharedPreferences.getInstance();
-    await p.setInt('xp', xp);
-    await p.setString('level', level);
-    await p.setStringList('completed', completed.toList());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final items = lessons.where((l) => l.level == level).toList();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Row(children: [
-          Icon(Icons.language, color: gold, size: 29),
-          SizedBox(width: 9),
-          Text('English Pro', style: TextStyle(fontWeight: FontWeight.bold)),
-        ]),
-        actions: [IconButton(
-          tooltip: 'About',
-          icon: const Icon(Icons.info_outline),
-          onPressed: () => showAboutDialog(context: context, applicationName: 'English Pro',
-            applicationVersion: '1.0.0', children: const [Text('Learn English from A1 to C2. Your progress is saved on this device.')]),
-        )],
-      ),
-      body: SafeArea(child: ListView(padding: const EdgeInsets.all(18), children: [
-        Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [navy, blue], begin: Alignment.topLeft, end: Alignment.bottomRight),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('YOUR ENGLISH JOURNEY', style: TextStyle(color: gold, letterSpacing: 1.4, fontSize: 12, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            const Text('Small steps.\nBig possibilities.', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold, height: 1.2)),
-            const SizedBox(height: 8),
-            const Text('Learn at your own pace, every day.', style: TextStyle(color: Colors.white70)),
-            const SizedBox(height: 18),
-            Row(children: [
-              _stat(Icons.bolt, '$xp XP', 'Your points'),
-              const SizedBox(width: 12),
-              _stat(Icons.menu_book, '${completed.length}', 'Lessons done'),
-            ]),
-          ]),
-        ),
-        const SizedBox(height: 24),
-        const Text('Choose your level', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: navy)),
-        const SizedBox(height: 12),
-        Wrap(spacing: 8, runSpacing: 8, children: levels.map((l) => ChoiceChip(
-          label: Text(l), selected: level == l,
-          onSelected: (_) async {
-            setState(() => level = l);
-            await _saveProgress();
-          },
-          selectedColor: blue.withValues(alpha: 0.14),
-          labelStyle: TextStyle(fontWeight: FontWeight.bold, color: level == l ? blue : navy),
-        )).toList()),
-        const SizedBox(height: 22),
-        const Text('Your lessons', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: navy)),
-        const SizedBox(height: 12),
-        if (items.isEmpty)
-          Container(padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
-            child: Text('More $level lessons are coming soon. Start with A1 to build strong foundations.'))
-        else
-          ...items.map(_lessonCard),
-        const SizedBox(height: 18),
-        Container(padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18)),
-          child: const Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Icon(Icons.lightbulb_outline, color: blue, size: 28),
-            SizedBox(width: 12),
-            Expanded(child: Text('Learning tip: practise for 10 minutes every day. Say new sentences out loud and review what you learned.', style: TextStyle(height: 1.5))),
-          ]),
-        ),
-      ])),
-    );
-  }
-
-  Widget _stat(IconData icon, String value, String label) => Expanded(child: Container(
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(15)),
-    child: Row(children: [
-      Icon(icon, color: gold, size: 24),
-      const SizedBox(width: 8),
-      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11)),
-      ])),
-    ]),
-  ));
-
-  Widget _lessonCard(Lesson lesson) {
-    final done = completed.contains(lesson.title);
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      color: Colors.white,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18), side: BorderSide(color: Colors.grey.shade200)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-        leading: CircleAvatar(
-          backgroundColor: done ? Colors.green.shade50 : blue.withValues(alpha: 0.10),
-          child: Icon(done ? Icons.check_circle : Icons.menu_book_outlined, color: done ? Colors.green : blue),
-        ),
-        title: Text(lesson.title, style: const TextStyle(fontWeight: FontWeight.bold, color: navy)),
-        subtitle: Padding(padding: const EdgeInsets.only(top: 5), child: Text(lesson.subtitle)),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: () => _openLesson(lesson),
-      ),
-    );
-  }
-
-  void _openLesson(Lesson lesson) {
-    final done = completed.contains(lesson.title);
-    showModalBottomSheet<void>(
-      context: context, isScrollControlled: true, backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        padding: const EdgeInsets.fromLTRB(22, 12, 22, 28),
-        decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(26))),
-        child: SafeArea(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Center(child: Container(width: 42, height: 4, decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(9)))),
-          const SizedBox(height: 22),
-          Text(lesson.level, style: const TextStyle(color: blue, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 7),
-          Text(lesson.title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: navy)),
-          const SizedBox(height: 12),
-          Text(lesson.subtitle, style: const TextStyle(color: Colors.black54)),
-          const SizedBox(height: 18),
-          Container(width: double.infinity, padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: const Color(0xFFF2F3FF), borderRadius: BorderRadius.circular(16)),
-            child: Text(lesson.example, style: const TextStyle(fontSize: 17, height: 1.6))),
-          const SizedBox(height: 20),
-          SizedBox(width: double.infinity, child: FilledButton.icon(
-            onPressed: done ? null : () async {
-              setState(() { completed.add(lesson.title); xp += 10; });
-              await _saveProgress();
-              if (ctx.mounted) Navigator.pop(ctx);
-            },
-            icon: Icon(done ? Icons.check : Icons.stars),
-            label: Text(done ? 'Lesson completed' : 'Complete lesson • +10 XP'),
-            style: FilledButton.styleFrom(backgroundColor: blue, padding: const EdgeInsets.symmetric(vertical: 15)),
-          )),
-        ])),
-      ),
-    );
-  }
+class SettingsPage extends StatelessWidget{
+ final int goal; final ValueChanged<int> onGoal; final VoidCallback onContact,onReset;
+ const SettingsPage({super.key,required this.goal,required this.onGoal,required this.onContact,required this.onReset});
+ @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Paramètres')),body:ListView(padding:const EdgeInsets.all(18),children:[
+ const Text('APPRENTISSAGE',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),const SizedBox(height:10),Card(color:Colors.white,child:Column(children:[const ListTile(leading:Icon(Icons.flag_outlined,color:blue),title:Text('Objectif quotidien'),subtitle:Text('Choisis ton objectif en XP par jour')),Padding(padding:const EdgeInsets.symmetric(horizontal:14),child:Wrap(spacing:7,children:[10,15,20,30,50].map((v)=>ChoiceChip(label:Text('$v XP'),selected:goal==v,onSelected:(_)=>onGoal(v))).toList())),const SizedBox(height:10),const Divider(),const ListTile(leading:Icon(Icons.offline_bolt,color:blue),title:Text('Apprentissage hors ligne'),subtitle:Text('Les leçons et la progression sont enregistrées sur cet appareil.'))])),const SizedBox(height:18),
+ const Text('À PROPOS ET CONTACT',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),const SizedBox(height:10),Card(color:Colors.white,child:Column(children:[const ListTile(leading:Icon(Icons.person_outline,color:blue),title:Text('Créé par Joseph Marchand'),subtitle:Text('English Pro • parcours A1 à C2')),const ListTile(leading:Icon(Icons.chat,color:Colors.green),title:Text('WhatsApp'),subtitle:Text('+243 986 230 968')),ListTile(leading:const Icon(Icons.open_in_new,color:Colors.green),title:const Text('Nous contacter sur WhatsApp'),trailing:const Icon(Icons.chevron_right),onTap:onContact)])),const SizedBox(height:18),Card(color:Colors.white,child:ListTile(leading:const Icon(Icons.restart_alt,color:Colors.red),title:const Text('Réinitialiser ma progression'),subtitle:const Text('Effacer les leçons terminées et les XP'),onTap:onReset)),const SizedBox(height:18),const Center(child:Text('English Pro • Version 2.0',style:TextStyle(color:Colors.black45)))
+ ]));
 }
-
-class Lesson {
-  final String title, subtitle, level, example;
-  const Lesson(this.title, this.subtitle, this.level, this.example);
-}
+Widget avatar(String? data,String name,double size){Widget child;if(data!=null){try{child=Image.memory(base64Decode(data),width:size,height:size,fit:BoxFit.cover);}catch(_){child=Text(name.isEmpty?'E':name[0].toUpperCase());}}else{child=Text(name.isEmpty?'E':name[0].toUpperCase());}return CircleAvatar(radius:size/2,backgroundColor:gold,child:ClipOval(child:SizedBox(width:size,height:size,child:Center(child:child))));}
