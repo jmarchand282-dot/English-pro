@@ -28,4 +28,4 @@
 
 Ce contrôle vérifie la structure, le décompte, l’unicité des titres et l’alignement textuel des réponses. Il ne prouve pas que chaque explication est pédagogiquement parfaite, que chaque traduction est idiomatique, ni que chaque question est suffisamment variée. Une relecture humaine complète et des tests dans l’application restent nécessaires.
 
-Les contenus A2, B1, B2, C1 et C2 ne sont pas encore rédigés en lots de 500 leçons ; leur feuille de route est disponible dans `docs/A2_C2_CURRICULUM_ROADMAP.md`.
+Les contenus A2, B1, B2, C1 et C2 ne sont pas encore rédigés en lots de 500 leçons ; leur feuille de route est disponible dans `docs/A2_C2_CURRICULUM_ROADMAP.md`. Le fichier de données intégré à l’application a également été contrôlé : 500 entrées, tous les champs requis présents, trois options par quiz, aucun doublon d’option détecté et aucun champ `undefined`.
