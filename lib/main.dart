@@ -293,22 +293,153 @@ class UnitLessonsPage extends StatefulWidget {
  @override State<UnitLessonsPage> createState()=>_UnitLessonsPageState();
 }
 class _UnitLessonsPageState extends State<UnitLessonsPage>{
- @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:Text('${widget.level} • Leçons')),body:ListView(padding:const EdgeInsets.all(16),children:[
-  Text(widget.title,style:const TextStyle(fontSize:21,fontWeight:FontWeight.bold,color:navy)),
-  const SizedBox(height:6),
-  Text('${widget.done.where((id)=>widget.lessons.any((l)=>l.id==id)).length} / ${widget.lessons.length} leçons terminées',style:const TextStyle(color:Colors.black54)),
-  const SizedBox(height:12),
-  ...widget.lessons.map((lesson){
-   final finished=widget.done.contains(lesson.id);final unlocked=widget.lessonUnlocked(lesson);
-   return Container(margin:const EdgeInsets.only(bottom:8),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:finished?Colors.green.withValues(alpha:.45):const Color(0xFFE6E7F0))),child:ListTile(
-    leading:CircleAvatar(backgroundColor:finished?const Color(0xFFE3F6E9):unlocked?blue.withValues(alpha:.1):const Color(0xFFF0F0F5),child:Icon(finished?Icons.check:unlocked?Icons.play_arrow:Icons.lock,color:finished?Colors.green:unlocked?blue:Colors.grey)),
-    title:Text(lesson.title,style:TextStyle(fontSize:14,fontWeight:FontWeight.w600,color:unlocked||finished?navy:Colors.grey)),
-    subtitle:Text(lesson.subtitle,style:const TextStyle(fontSize:11)),
-    trailing:const Icon(Icons.chevron_right,size:18),
-    onTap:()=>widget.onOpenLesson(lesson).then((_){if(mounted)setState((){});}),
-   ));
-  })
- ]));
+ @override Widget build(BuildContext context){
+  final completed=widget.lessons.where((l)=>widget.done.contains(l.id)).length;
+  final allLessonsDone=completed==widget.lessons.length;
+  final conversationKey='${widget.level}-U${widget.unit}';
+  final conversationValidated=widget.conversationsDone.contains(conversationKey);
+  return Scaffold(appBar:AppBar(title:Text('${widget.level} • Leçons')),body:ListView(padding:const EdgeInsets.all(16),children:[
+   Text(widget.title,style:const TextStyle(fontSize:21,fontWeight:FontWeight.bold,color:navy)),
+   const SizedBox(height:6),
+   Text('$completed / ${widget.lessons.length} leçons terminées',style:const TextStyle(color:Colors.black54)),
+   const SizedBox(height:12),
+   ...widget.lessons.map((lesson){
+    final finished=widget.done.contains(lesson.id);final unlocked=widget.lessonUnlocked(lesson);
+    return Container(margin:const EdgeInsets.only(bottom:8),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:finished?Colors.green.withValues(alpha:.45):const Color(0xFFE6E7F0))),child:ListTile(
+     leading:CircleAvatar(backgroundColor:finished?const Color(0xFFE3F6E9):unlocked?blue.withValues(alpha:.1):const Color(0xFFF0F0F5),child:Icon(finished?Icons.check:unlocked?Icons.play_arrow:Icons.lock,color:finished?Colors.green:unlocked?blue:Colors.grey)),
+     title:Text(lesson.title,style:TextStyle(fontSize:14,fontWeight:FontWeight.w600,color:unlocked||finished?navy:Colors.grey)),
+     subtitle:Text(lesson.subtitle,style:const TextStyle(fontSize:11)),
+     trailing:const Icon(Icons.chevron_right,size:18),
+     onTap:()=>widget.onOpenLesson(lesson).then((_){if(mounted)setState((){});}),
+    ));
+   }),
+   const SizedBox(height:12),
+   Card(color:Colors.white,child:ListTile(
+    leading:Icon(conversationValidated?Icons.check_circle:allLessonsDone?Icons.forum_outlined:Icons.lock,color:conversationValidated?Colors.green:allLessonsDone?blue:Colors.grey,size:30),
+    title:const Text('Conversation de validation',style:TextStyle(fontWeight:FontWeight.bold,color:navy)),
+    subtitle:Text(conversationValidated?'Conversation validée — sous-chapitre terminé':allLessonsDone?'Réponds naturellement dans une conversation pour débloquer la suite':'Termine toutes les leçons pour ouvrir la conversation'),
+    trailing:Icon(conversationValidated?Icons.check_circle:allLessonsDone?Icons.chevron_right:Icons.lock,color:conversationValidated?Colors.green:allLessonsDone?blue:Colors.grey),
+    onTap:!allLessonsDone?(){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine les leçons de ce sous-chapitre avant la conversation.')));}:()async{
+     await Navigator.push(context,MaterialPageRoute(builder:(_)=>ConversationValidationPage(level:widget.level,unit:widget.unit,title:widget.title,onComplete:()=>widget.onConversationComplete(widget.level,widget.unit))));
+     if(mounted)setState((){});
+    },
+   )),
+  ]));
+ }
+}
+
+
+
+class _ConversationTurn{
+ final String prompt; final List<String> options; final int answer; final String explanation;
+ const _ConversationTurn(this.prompt,this.options,this.answer,this.explanation);
+}
+List<_ConversationTurn> _conversationTurns(String level,int unit){
+ if(level!='A1')return const [
+  _ConversationTurn('Can you tell me more about that?', ['Certainly. Here is one example.','I am ten years old.','Turn left at the corner.'],0,'Cette réponse continue la conversation et donne un exemple.'),
+  _ConversationTurn('What is your opinion?', ['I think it is useful.','At seven o’clock.','I have two brothers.'],0,'I think… sert à exprimer une opinion.'),
+  _ConversationTurn('Could you explain that again?', ['Of course. Let me explain it another way.','It costs five dollars.','I am wearing a coat.'],0,'Cette réponse répond directement à la demande de clarification.'),
+  _ConversationTurn('How would you summarize your idea?', ['The main point is that practice helps us improve.','My name is Alex.','The bus stop is near the bank.'],0,'Un résumé présente l’idée principale en une phrase claire.'),
+ ];
+ switch(unit){
+  case 1:return const [
+   _ConversationTurn('Hello! What’s your name?',['My name is Alex.','I’m fine, thanks.','See you tomorrow.'],0,'My name is… sert à se présenter.'),
+   _ConversationTurn('How are you?',['I’m fine, thanks. And you?','I’m twelve years old.','It’s blue.'],0,'I’m fine, thanks est une réponse naturelle à How are you?'),
+   _ConversationTurn('Nice to meet you.',['Nice to meet you too.','Where is the bus?','I like rice.'],0,'Too signifie aussi : Nice to meet you too.'),
+   _ConversationTurn('Could you spell your name, please?',['A-L-E-X.','I’m from Canada.','At seven o’clock.'],0,'Spell demande de donner les lettres du nom.'),
+  ];
+  case 2:return const [
+   _ConversationTurn('What is this?',['It’s a book.','I’m fifteen.','Go straight.'],0,'It’s a… identifie un objet singulier.'),
+   _ConversationTurn('Are you ready?',['Yes, I am.','Yes, I do.','Yes, I can.'],0,'La réponse courte reprend be : Yes, I am.'),
+   _ConversationTurn('Who is she?',['She is my sister.','It is on the table.','I am fine.'],0,'Who demande l’identité d’une personne.'),
+   _ConversationTurn('Where is the pen?',['It’s on the table.','I am a student.','It’s expensive.'],0,'Where demande un lieu ; on indique la position de l’objet.'),
+  ];
+  case 3:return const [
+   _ConversationTurn('What do you want to learn?',['I want to learn English.','I want English learns.','I learning English.'],0,'Want to + verbe exprime une action souhaitée.'),
+   _ConversationTurn('Do you like music?',['Yes, I do.','Yes, I am.','Yes, I can.'],0,'La réponse courte à Do you…? reprend do.'),
+   _ConversationTurn('Can you help me?',['Yes, of course. What do you need?','I’m ten o’clock.','It’s blue.'],0,'Can you help me? demande de l’aide ; la réponse propose d’aider.'),
+   _ConversationTurn('How do you get to school?',['I go by bus.','I am bus.','I go school bus.'],0,'By bus indique le moyen de transport.'),
+  ];
+  case 4:return const [
+   _ConversationTurn('Who is that woman?',['She is my aunt.','It is under the table.','I’m hungry.'],0,'Aunt signifie tante.'),
+   _ConversationTurn('What does your brother look like?',['He is tall and friendly.','He is at seven.','He likes rice yesterday.'],0,'Pour décrire une personne, utilise he is + adjectifs.'),
+   _ConversationTurn('What are you wearing?',['I’m wearing a blue shirt.','I’m wear a blue shirt.','I wearing yesterday.'],0,'I’m wearing décrit les vêtements portés.'),
+   _ConversationTurn('Whose bag is this?',['It’s mine.','It’s my.','I mine bag.'],0,'Mine remplace my + nom.'),
+  ];
+  case 5:return const [
+   _ConversationTurn('What time do you wake up?',['I wake up at six.','I’m wake at six.','I wake up Monday six.'],0,'Les habitudes utilisent le présent simple.'),
+   _ConversationTurn('What day is it today?',['It’s Tuesday.','It’s seven dollars.','I’m a teacher.'],0,'La réponse donne un jour de la semaine.'),
+   _ConversationTurn('How often do you study English?',['I study every day.','I am study yesterday.','I study at the blue.'],0,'Every day indique une fréquence quotidienne.'),
+   _ConversationTurn('Are you free on Saturday?',['Yes, I’m free.','Yes, I free at.','I’m yesterday.'],0,'I’m free signifie je suis disponible.'),
+  ];
+  case 6:return const [
+   _ConversationTurn('Excuse me, where is the bank?',['Go straight and turn left.','I’m twelve years old.','I’d like a sandwich.'],0,'Go straight et turn left sont des consignes de direction.'),
+   _ConversationTurn('Is it far from here?',['No, it’s near the park.','I’m wearing a coat.','It costs two dollars.'],0,'Near signifie près de.'),
+   _ConversationTurn('How can I get to the station?',['You can take the bus.','I have two sisters.','I’m hungry.'],0,'Take the bus indique un moyen de transport.'),
+   _ConversationTurn('Where is the library?',['It’s next to the school.','It’s a red.','I can library.'],0,'Next to signifie à côté de.'),
+  ];
+  case 7:return const [
+   _ConversationTurn('What would you like to drink?',['I’d like some water, please.','I’m from Canada.','Turn right.'],0,'I’d like est une formule polie pour commander.'),
+   _ConversationTurn('How much is the sandwich?',['It’s five dollars.','I’m five years.','It is on the table.'],0,'How much is…? demande un prix.'),
+   _ConversationTurn('For here or to go?',['To go, please.','At seven o’clock.','I’m a student.'],0,'To go signifie à emporter.'),
+   _ConversationTurn('Anything else?',['No, that’s all, thank you.','I’m your name.','Turn left.'],0,'That’s all signifie ce sera tout.'),
+  ];
+  case 8:return const [
+   _ConversationTurn('What do you do for fun?',['I play football with my friends.','I’m at seven.','It’s under the desk.'],0,'Cette réponse décrit une activité de loisir.'),
+   _ConversationTurn('Would you like to play basketball?',['I’d love to!','I’m twelve o’clock.','I’m play yesterday.'],0,'I’d love to accepte une invitation avec enthousiasme.'),
+   _ConversationTurn('Can you swim?',['No, I can’t.','No, I’m not.','No, I don’t can.'],0,'La réponse courte reprend can/can’t.'),
+   _ConversationTurn('When can we meet?',['How about Saturday?','It is my book.','I like the red.'],0,'How about Saturday? propose un autre moment.'),
+  ];
+  case 9:return const [
+   _ConversationTurn('What are you doing?',['I’m studying now.','I study yesterday now.','I am study.'],0,'Le présent continu décrit une action en cours.'),
+   _ConversationTurn('What’s the weather like?',['It’s rainy and windy.','It’s seven o’clock.','I’m from Canada.'],0,'Rainy et windy décrivent la météo.'),
+   _ConversationTurn('Sorry, I didn’t understand.',['Could you say that again, please?','I’m wearing shoes.','It costs two dollars.'],0,'Cette expression demande de répéter.'),
+   _ConversationTurn('Can you help me? I’m lost.',['Of course. Where do you need to go?','I like apples.','Good night.'],0,'La réponse aide la personne et poursuit la conversation.'),
+  ];
+  default:return const [
+   _ConversationTurn('Hello! Can you introduce yourself?',['Hi, I’m Alex. I’m from Canada.','Turn left at the corner.','It costs five dollars.'],0,'Une présentation donne le prénom et peut donner le pays d’origine.'),
+   _ConversationTurn('What do you usually do every day?',['I go to school and study English.','I am go yesterday.','The book is under.'],0,'Le présent simple décrit une routine.'),
+   _ConversationTurn('Could you repeat the question?',['Of course. I’ll say it more slowly.','I’m hungry.','It’s blue.'],0,'Une réponse utile confirme que l’on va répéter plus lentement.'),
+   _ConversationTurn('What would you like to do this weekend?',['I’d like to play football with my friends.','I am fourteen o’clock.','Where is my name?'],0,'I’d like to + verbe permet de parler d’un projet ou d’un souhait.'),
+  ];
+ }
+}
+class ConversationValidationPage extends StatefulWidget{
+ final String level; final int unit; final String title; final Future<void> Function() onComplete;
+ const ConversationValidationPage({super.key,required this.level,required this.unit,required this.title,required this.onComplete});
+ @override State<ConversationValidationPage> createState()=>_ConversationValidationPageState();
+}
+class _ConversationValidationPageState extends State<ConversationValidationPage>{
+ late final List<_ConversationTurn> turns=_conversationTurns(widget.level,widget.unit);
+ final FlutterTts tts=FlutterTts();
+ int index=0;int? selected;bool checked=false,finished=false,saving=false;
+ @override void dispose(){tts.stop();super.dispose();}
+ Future<void> speakPrompt(String text)async{try{await tts.setLanguage('en-US');await tts.setSpeechRate(0.42);await tts.speak(text);}catch(_){}}
+ @override Widget build(BuildContext context){
+  final turn=turns[index];final correct=checked&&selected==turn.answer;
+  return Scaffold(appBar:AppBar(title:const Text('Conversation de validation')),body:ListView(padding:const EdgeInsets.all(18),children:[
+   Text(widget.title,style:const TextStyle(color:navy,fontSize:21,fontWeight:FontWeight.bold)),
+   const SizedBox(height:8),
+   Text('Échange ${index+1} sur ${turns.length} • Réponds comme dans une vraie conversation.',style:const TextStyle(color:Colors.black54)),
+   const SizedBox(height:14),
+   Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+    const Text('INTERLOCUTEUR',style:TextStyle(color:gold,fontWeight:FontWeight.bold,fontSize:11)),
+    const SizedBox(height:10),
+    Row(children:[Expanded(child:Text(turn.prompt,style:const TextStyle(color:Colors.white,fontSize:19,fontWeight:FontWeight.bold))),IconButton(onPressed:()=>speakPrompt(turn.prompt),icon:const Icon(Icons.volume_up,color:gold))])
+   ])),
+   const SizedBox(height:14),
+   ...List.generate(turn.options.length,(i){final sel=selected==i,good=checked&&i==turn.answer,bad=checked&&sel&&i!=turn.answer;return Container(margin:const EdgeInsets.only(bottom:9),child:InkWell(onTap:checked?null:()=>setState(()=>selected=i),borderRadius:BorderRadius.circular(14),child:Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:good?const Color(0xFFE8F8ED):bad?const Color(0xFFFFEEEE):sel?const Color(0xFFEEEEFF):Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:good?Colors.green:bad?Colors.red:sel?blue:const Color(0xFFE4E6F0),width:sel||good?2:1)),child:Row(children:[Expanded(child:Text(turn.options[i],style:const TextStyle(color:navy))),if(good)const Icon(Icons.check_circle,color:Colors.green),if(bad)const Icon(Icons.cancel,color:Colors.red)]))));}),
+   if(checked)Container(padding:const EdgeInsets.all(13),decoration:BoxDecoration(color:correct?const Color(0xFFE8F8ED):const Color(0xFFFFF4DF),borderRadius:BorderRadius.circular(13)),child:Text(correct?'Bonne réponse. ${turn.explanation}':'Réponse conseillée : ${turn.options[turn.answer]}. ${turn.explanation}',style:const TextStyle(color:navy,height:1.4))),
+   if(finished)Container(margin:const EdgeInsets.only(top:14),padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:const Color(0xFFE8F8ED),borderRadius:BorderRadius.circular(14)),child:const Text('Conversation réussie ! Tu as terminé les quatre échanges. Valide maintenant pour déverrouiller le sous-chapitre suivant.',style:TextStyle(color:navy,height:1.4))),
+   const SizedBox(height:18),
+   SizedBox(height:54,child:FilledButton(onPressed:()async{
+    if(finished){if(saving)return;setState(()=>saving=true);await widget.onComplete();if(context.mounted)Navigator.pop(context);return;}
+    if(!checked){if(selected==null){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Choisis une réponse pour continuer la conversation.')));return;}setState(()=>checked=true);return;}
+    if(!correct){setState((){selected=null;checked=false;});return;}
+    if(index<turns.length-1){setState((){index++;selected=null;checked=false;});}else{setState(()=>finished=true);}
+   },child:Text(finished?'VALIDER LA CONVERSATION':!checked?'RÉPONDRE':correct?index<turns.length-1?'CONTINUER LA CONVERSATION':'TERMINER LA CONVERSATION':'RÉESSAYER APRÈS LA CORRECTION')))
+  ]));
+ }
 }
 
 String lessonIllustration(StudyLesson lesson){
