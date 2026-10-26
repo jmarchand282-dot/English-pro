@@ -9,7 +9,7 @@ Chaque leçon propose une explication, des exemples traduits, un quiz corrigé e
 ## Leçon 01 — Comprendre ce qu’est un verbe
 
 **Explication**  
-Le verbe ou thème principal est **verb**. Son sens de base ici est **action**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Un verbe exprime une action, un état ou un événement. Dans une phrase, il indique ce que fait le sujet ou comment il est.
 
 **Exemples anglais-français**  
 Run is a verb. = Run est un verbe.
@@ -29,7 +29,7 @@ undefined
 ## Leçon 02 — Distinguer verbe et nom
 
 **Explication**  
-Le verbe ou thème principal est **work**. Son sens de base ici est **travailler / travail**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Un même mot peut avoir des rôles différents. Dans « I work every day », work est un verbe ; dans « my work », work est un nom.
 
 **Exemples anglais-français**  
 I work every day. = Je travaille chaque jour.
@@ -49,7 +49,7 @@ undefined
 ## Leçon 03 — Be : am, is, are
 
 **Explication**  
-Le verbe ou thème principal est **be**. Son sens de base ici est **être**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+To be signifie être. Au présent, les formes sont am avec I, is avec he/she/it et are avec you/we/they.
 
 **Exemples anglais-français**  
 I am ready. / She is happy. / They are here.
@@ -69,7 +69,7 @@ undefined
 ## Leçon 04 — Have et has
 
 **Explication**  
-Le verbe ou thème principal est **have**. Son sens de base ici est **avoir**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Have signifie avoir. Utilise have avec I/you/we/they et has avec he/she/it au présent simple.
 
 **Exemples anglais-français**  
 I have a book. / She has a bike.
@@ -89,7 +89,7 @@ undefined
 ## Leçon 05 — Do comme verbe principal
 
 **Explication**  
-Le verbe ou thème principal est **do**. Son sens de base ici est **faire**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Do signifie faire dans « do homework ». Il sert aussi d’auxiliaire dans les questions et les négations au présent simple.
 
 **Exemples anglais-français**  
 I do my homework. = Je fais mes devoirs.
@@ -109,7 +109,7 @@ undefined
 ## Leçon 06 — Do et does pour les questions
 
 **Explication**  
-Le verbe ou thème principal est **do**. Son sens de base ici est **auxiliaire des questions au présent**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Pour les questions au présent simple, do accompagne I/you/we/they et does accompagne he/she/it. Après does, le verbe reste à la base.
 
 **Exemples anglais-français**  
 Do you like music? / Does she play football?
@@ -129,7 +129,7 @@ undefined
 ## Leçon 07 — Go et ses usages
 
 **Explication**  
-Le verbe ou thème principal est **go**. Son sens de base ici est **aller**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Go signifie aller. On dit souvent go to school, mais les expressions go home et go there ne prennent normalement pas to.
 
 **Exemples anglais-français**  
 I go to school. / We go home.
@@ -149,7 +149,7 @@ undefined
 ## Leçon 08 — Come dans les invitations
 
 **Explication**  
-Le verbe ou thème principal est **come**. Son sens de base ici est **venir**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Come signifie venir. Come here demande à quelqu’un de venir ici ; come with me l’invite à t’accompagner.
 
 **Exemples anglais-français**  
 Come with me. = Viens avec moi.
@@ -169,7 +169,7 @@ undefined
 ## Leçon 09 — Eat avec des aliments
 
 **Explication**  
-Le verbe ou thème principal est **eat**. Son sens de base ici est **manger**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Eat signifie manger. Au présent, he/she/it prennent eats ; le passé simple est ate.
 
 **Exemples anglais-français**  
 I eat rice. / She eats an apple.
@@ -189,7 +189,7 @@ undefined
 ## Leçon 10 — Drink avec des boissons
 
 **Explication**  
-Le verbe ou thème principal est **drink**. Son sens de base ici est **boire**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Drink signifie boire. Ses formes irrégulières sont drink, drank et drunk ; mémorise-les avec des exemples.
 
 **Exemples anglais-français**  
 I drink water. / Yesterday, I drank tea.
@@ -209,7 +209,7 @@ undefined
 ## Leçon 11 — Want pour exprimer un désir
 
 **Explication**  
-Le verbe ou thème principal est **want**. Son sens de base ici est **vouloir**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Want signifie vouloir. Utilise want + nom ou want to + verbe de base pour parler d’un désir ou d’un projet.
 
 **Exemples anglais-français**  
 I want water. / I want to learn English.
@@ -229,7 +229,7 @@ undefined
 ## Leçon 12 — Need pour exprimer un besoin
 
 **Explication**  
-Le verbe ou thème principal est **need**. Son sens de base ici est **avoir besoin de**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Need signifie avoir besoin de. Utilise need + nom ou need to + verbe pour exprimer une nécessité.
 
 **Exemples anglais-français**  
 I need help. / I need to study.
@@ -249,7 +249,7 @@ undefined
 ## Leçon 13 — Like pour les goûts
 
 **Explication**  
-Le verbe ou thème principal est **like**. Son sens de base ici est **aimer**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Like signifie aimer ou apprécier. Il peut être suivi d’un nom ou d’un verbe en -ing pour parler d’une activité.
 
 **Exemples anglais-français**  
 I like football. / I like reading.
@@ -269,7 +269,7 @@ undefined
 ## Leçon 14 — Love et intensité de préférence
 
 **Explication**  
-Le verbe ou thème principal est **love**. Son sens de base ici est **adorer / aimer fortement**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Love exprime un goût très fort ou l’amour. Pour une activité, on peut utiliser love + nom ou love + verbe en -ing.
 
 **Exemples anglais-français**  
 I love music. / She loves dancing.
@@ -289,7 +289,7 @@ undefined
 ## Leçon 15 — Know pour les informations connues
 
 **Explication**  
-Le verbe ou thème principal est **know**. Son sens de base ici est **savoir / connaître**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Know signifie savoir ou connaître. Know how to signifie savoir faire quelque chose, comme I know how to swim.
 
 **Exemples anglais-français**  
 I know his name. / I know how to swim.
@@ -309,7 +309,7 @@ undefined
 ## Leçon 16 — Understand dans une conversation
 
 **Explication**  
-Le verbe ou thème principal est **understand**. Son sens de base ici est **comprendre**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Understand signifie comprendre. La négation courante est I don’t understand ; au passé, on utilise understood.
 
 **Exemples anglais-français**  
 I understand the question. / I didn’t understand.
@@ -329,7 +329,7 @@ undefined
 ## Leçon 17 — Speak pour les langues
 
 **Explication**  
-Le verbe ou thème principal est **speak**. Son sens de base ici est **parler une langue**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Speak signifie parler, notamment une langue. Au présent simple, he/she/it prennent speaks ; les autres sujets utilisent speak.
 
 **Exemples anglais-français**  
 I speak English. / He speaks French.
@@ -349,7 +349,7 @@ undefined
 ## Leçon 18 — Say pour les paroles
 
 **Explication**  
-Le verbe ou thème principal est **say**. Son sens de base ici est **dire des mots**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Say met l’accent sur les mots prononcés : say hello, say something, say a word.
 
 **Exemples anglais-français**  
 Say hello to your teacher.
@@ -369,7 +369,7 @@ undefined
 ## Leçon 19 — Tell pour transmettre une information
 
 **Explication**  
-Le verbe ou thème principal est **tell**. Son sens de base ici est **dire à quelqu’un / raconter**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Tell signifie dire à quelqu’un ou raconter. Il est souvent suivi directement de la personne : tell me, tell her, tell us.
 
 **Exemples anglais-français**  
 Tell me your name. / She told me a story.
@@ -389,7 +389,7 @@ undefined
 ## Leçon 20 — Ask pour poser une question
 
 **Explication**  
-Le verbe ou thème principal est **ask**. Son sens de base ici est **demander**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Ask signifie demander ou poser une question. On dit ask a question, ask for help ou ask someone.
 
 **Exemples anglais-français**  
 I ask a question. / She asked for help.
@@ -409,7 +409,7 @@ undefined
 ## Leçon 21 — Answer pour répondre
 
 **Explication**  
-Le verbe ou thème principal est **answer**. Son sens de base ici est **répondre**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Answer signifie répondre comme verbe, et réponse comme nom. Il s’utilise souvent avec question, call ou message selon le contexte.
 
 **Exemples anglais-français**  
 Please answer the question.
@@ -429,7 +429,7 @@ undefined
 ## Leçon 22 — Listen et listen to
 
 **Explication**  
-Le verbe ou thème principal est **listen**. Son sens de base ici est **écouter attentivement**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Listen signifie écouter attentivement. Devant l’objet écouté, utilise normalement listen to ; hear signifie entendre.
 
 **Exemples anglais-français**  
 Listen to the teacher. / Listen to music.
@@ -449,7 +449,7 @@ undefined
 ## Leçon 23 — Hear comme perception
 
 **Explication**  
-Le verbe ou thème principal est **hear**. Son sens de base ici est **entendre**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Hear signifie entendre un son, parfois sans chercher à l’écouter. Listen insiste sur l’attention portée au son.
 
 **Exemples anglais-français**  
 I can hear music. = J’entends de la musique.
@@ -469,7 +469,7 @@ undefined
 ## Leçon 24 — See et look at
 
 **Explication**  
-Le verbe ou thème principal est **see**. Son sens de base ici est **voir**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+See signifie voir ; look at signifie regarder volontairement vers quelque chose. Look at est suivi de l’objet regardé.
 
 **Exemples anglais-français**  
 I can see a bird. / Look at this picture.
@@ -489,7 +489,7 @@ undefined
 ## Leçon 25 — Watch pour regarder un contenu
 
 **Explication**  
-Le verbe ou thème principal est **watch**. Son sens de base ici est **regarder un contenu**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Watch s’utilise souvent pour regarder un contenu qui dure ou bouge, comme un film, une vidéo ou un match.
 
 **Exemples anglais-français**  
 I watch a video. / We watch football.
@@ -509,7 +509,7 @@ undefined
 ## Leçon 26 — Read avec livres et messages
 
 **Explication**  
-Le verbe ou thème principal est **read**. Son sens de base ici est **lire**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Read signifie lire. Son orthographe est identique au présent et au passé, mais sa prononciation change au passé.
 
 **Exemples anglais-français**  
 I read books. / Yesterday, I read a story.
@@ -529,7 +529,7 @@ undefined
 ## Leçon 27 — Write avec mots et phrases
 
 **Explication**  
-Le verbe ou thème principal est **write**. Son sens de base ici est **écrire**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Write signifie écrire. Ses formes sont write, wrote et written ; apprends-les en phrases.
 
 **Exemples anglais-français**  
 Write your name. / I wrote a message.
@@ -549,7 +549,7 @@ undefined
 ## Leçon 28 — Learn et study : différence
 
 **Explication**  
-Le verbe ou thème principal est **learn**. Son sens de base ici est **apprendre**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Learn signifie apprendre ou acquérir une compétence ; study signifie étudier une matière ou travailler pour apprendre.
 
 **Exemples anglais-français**  
 I study English. / I learn new words.
@@ -569,7 +569,7 @@ undefined
 ## Leçon 29 — Teach avec l’école
 
 **Explication**  
-Le verbe ou thème principal est **teach**. Son sens de base ici est **enseigner**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Teach signifie enseigner. Ses formes irrégulières sont teach, taught et taught ; teacher désigne la personne qui enseigne.
 
 **Exemples anglais-français**  
 She teaches English. / He taught me.
@@ -589,7 +589,7 @@ undefined
 ## Leçon 30 — Work avec les métiers
 
 **Explication**  
-Le verbe ou thème principal est **work**. Son sens de base ici est **travailler**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Work signifie travailler ou travail selon la phrase. Pour un métier, on peut dire work as a teacher ou work as a nurse.
 
 **Exemples anglais-français**  
 I work at a school. / She works as a nurse.
@@ -609,7 +609,7 @@ undefined
 ## Leçon 31 — Live pour le lieu d’habitation
 
 **Explication**  
-Le verbe ou thème principal est **live**. Son sens de base ici est **habiter / vivre**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Live signifie habiter ou vivre. Utilise généralement live in avec une ville ou un pays.
 
 **Exemples anglais-français**  
 I live in a city. / They live in Canada.
@@ -629,7 +629,7 @@ undefined
 ## Leçon 32 — Stay pour une durée ou un séjour
 
 **Explication**  
-Le verbe ou thème principal est **stay**. Son sens de base ici est **rester / séjourner**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Stay signifie rester ou séjourner, souvent temporairement. Live décrit plutôt le lieu où l’on habite habituellement.
 
 **Exemples anglais-français**  
 I’m staying with my aunt. / Stay here, please.
@@ -649,7 +649,7 @@ undefined
 ## Leçon 33 — Make dans les expressions simples
 
 **Explication**  
-Le verbe ou thème principal est **make**. Son sens de base ici est **faire / fabriquer / créer**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Make signifie fabriquer, créer ou produire. Apprends les expressions make breakfast, make a cake et make a mistake.
 
 **Exemples anglais-français**  
 make breakfast; make a cake; make a mistake.
@@ -669,7 +669,7 @@ undefined
 ## Leçon 34 — Take dans les usages courants
 
 **Explication**  
-Le verbe ou thème principal est **take**. Son sens de base ici est **prendre**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Take signifie prendre et apparaît dans des expressions comme take a seat, take a photo et take a bus.
 
 **Exemples anglais-français**  
 Take a seat. / Take a photo.
@@ -689,7 +689,7 @@ undefined
 ## Leçon 35 — Give et receive
 
 **Explication**  
-Le verbe ou thème principal est **give**. Son sens de base ici est **donner**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Give signifie donner ; receive signifie recevoir. Ces verbes décrivent les deux côtés d’un échange.
 
 **Exemples anglais-français**  
 Give me the book. / I received a message.
@@ -709,7 +709,7 @@ undefined
 ## Leçon 36 — Get dans les phrases fréquentes
 
 **Explication**  
-Le verbe ou thème principal est **get**. Son sens de base ici est **obtenir / recevoir / devenir selon le contexte**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Get a plusieurs sens selon le contexte : obtenir, recevoir, devenir ou arriver. Apprends-le dans des expressions complètes.
 
 **Exemples anglais-français**  
 I get a message. / I get tired.
@@ -729,7 +729,7 @@ undefined
 ## Leçon 37 — Put et place
 
 **Explication**  
-Le verbe ou thème principal est **put**. Son sens de base ici est **mettre / poser**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Put signifie mettre ou poser ; place signifie placer. Put est très courant dans les instructions quotidiennes.
 
 **Exemples anglais-français**  
 Put the book on the table.
@@ -749,7 +749,7 @@ undefined
 ## Leçon 38 — Open et close
 
 **Explication**  
-Le verbe ou thème principal est **open**. Son sens de base ici est **ouvrir**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Open signifie ouvrir ; close signifie fermer. On les utilise avec des portes, fenêtres, livres et applications.
 
 **Exemples anglais-français**  
 Open the door. / Close your book.
@@ -769,7 +769,7 @@ undefined
 ## Leçon 39 — Start et finish
 
 **Explication**  
-Le verbe ou thème principal est **start**. Son sens de base ici est **commencer**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Start signifie commencer ; finish signifie finir ou terminer. Ils peuvent accompagner une activité ou un objet.
 
 **Exemples anglais-français**  
 The class starts at eight. / I finish my homework.
@@ -789,7 +789,7 @@ undefined
 ## Leçon 40 — Play avec jeux et sports
 
 **Explication**  
-Le verbe ou thème principal est **play**. Son sens de base ici est **jouer**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Play signifie jouer. On l’utilise avec de nombreux sports et jeux, par exemple play football et play chess.
 
 **Exemples anglais-français**  
 I play football. / They play chess.
@@ -809,7 +809,7 @@ undefined
 ## Leçon 41 — Run et walk
 
 **Explication**  
-Le verbe ou thème principal est **run**. Son sens de base ici est **courir**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Run signifie courir ; walk signifie marcher. Au présent simple, he/she/it prennent runs et walks.
 
 **Exemples anglais-français**  
 I run fast. / I walk to school.
@@ -829,7 +829,7 @@ undefined
 ## Leçon 42 — Sit et stand
 
 **Explication**  
-Le verbe ou thème principal est **sit**. Son sens de base ici est **s’asseoir / être assis**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Sit signifie s’asseoir ou être assis ; stand signifie se tenir debout. Leurs passés sont sat et stood.
 
 **Exemples anglais-français**  
 Sit down, please. / Stand here.
@@ -849,7 +849,7 @@ undefined
 ## Leçon 43 — Sleep et wake up
 
 **Explication**  
-Le verbe ou thème principal est **sleep**. Son sens de base ici est **dormir**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Sleep signifie dormir ; wake up signifie se réveiller. Get up signifie se lever du lit, une action différente.
 
 **Exemples anglais-français**  
 I sleep at night. / I wake up at six.
@@ -869,7 +869,7 @@ undefined
 ## Leçon 44 — Get up et go to bed
 
 **Explication**  
-Le verbe ou thème principal est **get up**. Son sens de base ici est **se lever du lit**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Get up signifie se lever du lit ; go to bed signifie aller se coucher. Fall asleep signifie s’endormir.
 
 **Exemples anglais-français**  
 I get up at seven. / I go to bed at ten.
@@ -889,7 +889,7 @@ undefined
 ## Leçon 45 — Buy et pay
 
 **Explication**  
-Le verbe ou thème principal est **buy**. Son sens de base ici est **acheter**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Buy signifie acheter ; pay signifie payer. Le passé de buy est bought et celui de pay est paid.
 
 **Exemples anglais-français**  
 I buy bread. / I paid yesterday.
@@ -909,7 +909,7 @@ undefined
 ## Leçon 46 — Help et use
 
 **Explication**  
-Le verbe ou thème principal est **help**. Son sens de base ici est **aider**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Help signifie aider ; use signifie utiliser. Help peut être suivi d’une personne ; use est suivi d’un objet ou d’un outil.
 
 **Exemples anglais-français**  
 Can you help me? / I use my phone.
@@ -929,7 +929,7 @@ undefined
 ## Leçon 47 — Call et text
 
 **Explication**  
-Le verbe ou thème principal est **call**. Son sens de base ici est **appeler**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Call signifie appeler, souvent au téléphone ; text signifie envoyer un message écrit ou un SMS.
 
 **Exemples anglais-français**  
 I’ll call you. / Text me later.
@@ -949,7 +949,7 @@ undefined
 ## Leçon 48 — Think et feel
 
 **Explication**  
-Le verbe ou thème principal est **think**. Son sens de base ici est **penser**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Think signifie penser ; feel signifie ressentir ou se sentir. Think introduit souvent une opinion ; feel décrit une sensation ou un état.
 
 **Exemples anglais-français**  
 I think it’s good. / I feel happy.
@@ -969,7 +969,7 @@ undefined
 ## Leçon 49 — Try et practise
 
 **Explication**  
-Le verbe ou thème principal est **try**. Son sens de base ici est **essayer**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Try signifie essayer. Practice est l’orthographe américaine du verbe s’entraîner ; try again encourage à faire une nouvelle tentative.
 
 **Exemples anglais-français**  
 Try again. / Practice English every day.
@@ -989,7 +989,7 @@ undefined
 ## Leçon 50 — Révision : base verbale et phrase complète
 
 **Explication**  
-Le verbe ou thème principal est **Réutilise les verbes dans des phrases complètes. Observe le sujet, le temps, la négation et les mots qui accompagnent chaque verbe.**. Son sens de base ici est **I eat rice. Yesterday, I drank water. I want to learn English. = Je mange du riz. Hier, j’ai bu de l’eau. Je veux apprendre l’anglais.**. Apprends-le dans la phrase et observe comment il fonctionne avec le sujet et le contexte. Certains verbes ont plusieurs sens ; la phrase aide à choisir la bonne traduction.
+Révise les verbes en phrases complètes. Vérifie le sujet, le temps et les mots qui accompagnent le verbe ; ne mémorise pas uniquement une traduction isolée.
 
 **Exemples anglais-français**  
 Which sentence is correct?
