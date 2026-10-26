@@ -305,6 +305,35 @@ class _UnitLessonsPageState extends State<UnitLessonsPage>{
  ]));
 }
 
+String lessonIllustration(StudyLesson lesson){
+ final text='${lesson.title} ${lesson.example}'.toLowerCase();
+ if(text.contains('foot')||text.contains('pied'))return '🦶';
+ if(text.contains('hand')||text.contains('main'))return '✋';
+ if(text.contains('head')||text.contains('tête'))return '🧠';
+ if(text.contains('eye')||text.contains('eyes')||text.contains('visage'))return '👀';
+ if(text.contains('apple')||text.contains('pomme'))return '🍎';
+ if(text.contains('banana')||text.contains('banane'))return '🍌';
+ if(text.contains('orange'))return '🍊';
+ if(text.contains('fruit')||text.contains('food')||text.contains('nourriture'))return '🍎';
+ if(text.contains('eat')||text.contains('repas')||text.contains('dinner')||text.contains('breakfast'))return '🍽️';
+ if(text.contains('drink')||text.contains('water')||text.contains('boisson'))return '🥤';
+ if(text.contains('family')||text.contains('mother')||text.contains('father')||text.contains('sister')||text.contains('brother'))return '👨‍👩‍👧‍👦';
+ if(text.contains('house')||text.contains('bedroom')||text.contains('kitchen')||text.contains('maison'))return '🏠';
+ if(text.contains('bus')||text.contains('car')||text.contains('transport'))return '🚌';
+ if(text.contains('weather')||text.contains('rain')||text.contains('sunny')||text.contains('météo'))return '🌦️';
+ if(text.contains('football')||text.contains('soccer'))return '⚽';
+ if(text.contains('basketball'))return '🏀';
+ if(text.contains('color')||text.contains('couleur'))return '🎨';
+ if(text.contains('shop')||text.contains('buy')||text.contains('price')||text.contains('magasin'))return '🛍️';
+ if(text.contains('time')||text.contains('calendar')||text.contains('heure')||text.contains('date'))return '🗓️';
+ if(text.contains('book')||text.contains('read')||text.contains('lesson')||text.contains('school'))return '📚';
+ if(text.contains('listen')||text.contains('pronunciation')||text.contains('audio'))return '🎧';
+ if(text.contains('phone')||text.contains('call')||text.contains('text'))return '📱';
+ if(text.contains('sleep')||text.contains('bed')||text.contains('wake up'))return '🛏️';
+ if(text.contains('hello')||text.contains('greeting')||text.contains('salut'))return '👋';
+ return '';
+}
+
 class LessonPage extends StatefulWidget {
  final StudyLesson lesson; final bool alreadyDone; final Future<void> Function() onComplete;
  const LessonPage({super.key,required this.lesson,required this.alreadyDone,required this.onComplete});
@@ -339,6 +368,7 @@ class _LessonPageState extends State<LessonPage>{
    body:SafeArea(child:Column(children:[
     Padding(padding:const EdgeInsets.fromLTRB(18,14,18,8),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
      Text(l.title,style:const TextStyle(color:navy,fontWeight:FontWeight.bold,fontSize:20)),
+     if(lessonIllustration(l).isNotEmpty)Padding(padding:const EdgeInsets.only(top:8,bottom:4),child:Row(children:[Text(lessonIllustration(l),style:const TextStyle(fontSize:32)),const SizedBox(width:9),const Text('Aide visuelle',style:TextStyle(color:Colors.black54,fontSize:12))])),
      const SizedBox(height:8),
      ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value: finished ? 1 : (checked ? 0.72 : 0.42),minHeight:7,color:blue,backgroundColor:const Color(0xFFE7E8F2))),
      const SizedBox(height:7),
