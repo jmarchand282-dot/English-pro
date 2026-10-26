@@ -153,8 +153,8 @@ class _OnboardingPageState extends State<OnboardingPage>{
      const SizedBox(height:16),
      SizedBox(height:52,child:FilledButton(onPressed:(){
       if(!checked){if(selected==null){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Choisis une réponse.')));return;}setState(()=>checked=true);if(selected==q.answer)score++;return;}
-      if(selected!=q.answer){setState(()=>{selected=null});return;}
-      if(index<_placementQuestions.length-1){setState(()=>{index++;selected=null;checked=false;});}else{setState(()=>page=2);}
+      if(selected!=q.answer){setState((){selected=null;checked=false;});return;}
+      if(index<_placementQuestions.length-1){setState((){index++;selected=null;checked=false;});}else{setState(()=>page=2);}
      },child:Text(!checked?'VÉRIFIER':selected!=q.answer?'RÉESSAYER':index<_placementQuestions.length-1?'QUESTION SUIVANTE':'VOIR MON RÉSULTAT')))
     ] else...[
      const Text('3. Ton résultat',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold,color:navy)),
