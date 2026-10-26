@@ -1,5 +1,9 @@
 name: Build English Pro
 
+concurrency:
+  group: english-pro-android-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches: [main, 'planning/**']
