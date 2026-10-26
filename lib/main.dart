@@ -174,7 +174,7 @@ class _OnboardingPageState extends State<OnboardingPage>{
      const SizedBox(height:18),
      SizedBox(height:54,child:FilledButton(onPressed:()=>setState(()=>page=1),child:const Text('FAIRE LE TEST DE NIVEAU →',style:TextStyle(fontWeight:FontWeight.bold))))
     ] else if(page==1)...[
-     Row(children:[Expanded(child:const Text('2. Test de positionnement',style:TextStyle(fontSize:21,fontWeight:FontWeight.bold,color:navy))),Text('${index+1}/${_placementQuestions.length}',style:const TextStyle(color:blue,fontWeight:FontWeight.bold))]),
+     Row(children:[const Expanded(child:Text('2. Test de positionnement',style:TextStyle(fontSize:21,fontWeight:FontWeight.bold,color:navy))),Text('${index+1}/${_placementQuestions.length}',style:const TextStyle(color:blue,fontWeight:FontWeight.bold))]),
      const SizedBox(height:8),
      LinearProgressIndicator(value:(index+1)/_placementQuestions.length,color:blue,backgroundColor:const Color(0xFFE7E8F2),minHeight:7),
      const SizedBox(height:20),
@@ -346,7 +346,7 @@ class _LessonPageState extends State<LessonPage>{
  int? selected; bool checked=false,finished=false,listening=false,quizStarted=false,timedOut=false; int secondsLeft=10; Timer? quizTimer; String recognized='';
  final FlutterTts tts=FlutterTts(); final SpeechToText speech=SpeechToText();
  @override void dispose(){quizTimer?.cancel();tts.stop();speech.stop();super.dispose();}
- void startQuiz(){quizTimer?.cancel();setState((){quizStarted=true;secondsLeft=10;timedOut=false;selected=null;checked=false;});quizTimer=Timer.periodic(const Duration(seconds:1),(timer){if(secondsLeft<=1){timer.cancel();if(mounted)setState((){secondsLeft=0;timedOut=true;checked=true;});}else if(mounted)setState(()=>secondsLeft--);});}
+ void startQuiz(){quizTimer?.cancel();setState((){quizStarted=true;secondsLeft=10;timedOut=false;selected=null;checked=false;});quizTimer=Timer.periodic(const Duration(seconds:1),(timer){if(secondsLeft<=1){timer.cancel();if(mounted)setState((){secondsLeft=0;timedOut=true;checked=true;});}else if(mounted){setState(()=>secondsLeft--);}});}
  String targetPhrase(StudyLesson l){var t=l.example.split(' = ').first.trim();t=t.split(' / ').first.trim();return t.replaceFirst(RegExp(r'^[^:]+:\s*'), '').trim();}
  Future<void> speakText(String text,{bool french=false})async{try{await tts.setLanguage(french?'fr-FR':'en-US');await tts.setSpeechRate(french?0.48:0.42);await tts.speak(text);}catch(_){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('La voix n’est pas disponible sur cet appareil.')));}}
  Future<void> testPronunciation()async{
@@ -354,7 +354,7 @@ class _LessonPageState extends State<LessonPage>{
    final available=await speech.initialize(onStatus:(status){if(status=='done'||status=='notListening'){if(mounted)setState(()=>listening=false);}},onError:(_){if(mounted)setState(()=>listening=false);});
    if(!available){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('La reconnaissance vocale n’est pas disponible. Vérifie la langue et les autorisations du téléphone.')));return;}
    setState((){recognized='';listening=true;});
-   await speech.listen(localeId:'en_US',listenFor:const Duration(seconds:8),pauseFor:const Duration(seconds:3),onResult:(result){if(mounted)setState(()=>recognized=result.recognizedWords);if(result.finalResult&&mounted)setState(()=>listening=false);});
+   await speech.listen(options:SpeechListenOptions(localeId:'en_US',listenFor:const Duration(seconds:8),pauseFor:const Duration(seconds:3)),onResult:(result){if(mounted)setState(()=>recognized=result.recognizedWords);if(result.finalResult&&mounted)setState(()=>listening=false);});
   }catch(_){if(mounted){setState(()=>listening=false);ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Impossible de démarrer le test vocal.')));}}
  }
  int? pronunciationPercent(String target,String heard){
@@ -524,7 +524,7 @@ class _OfflineChatPageState extends State<OfflineChatPage>{
   final scored=widget.lessons.map((l){
    final text='${l.title} ${l.explanation} ${l.example} ${l.french}'.toLowerCase();
    var score=0;
-   for(final term in terms){if(l.title.toLowerCase().contains(term))score+=4;else if(text.contains(term))score++;}
+   for(final term in terms){if(l.title.toLowerCase().contains(term)){score+=4;}else if(text.contains(term)){score++;}}
    return (lesson:l,score:score);
   }).where((x)=>x.score>0).toList()..sort((a,b)=>b.score.compareTo(a.score));
   if(scored.isEmpty)return 'Je n’ai pas encore trouvé une réponse précise dans le cours installé. Essaie un mot-clé plus court, ou consulte le Livre de référence. JoBot utilise une base locale : il ne connaît pas encore toutes les questions possibles.';
