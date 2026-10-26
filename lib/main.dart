@@ -49,7 +49,7 @@ class EnglishProApp extends StatelessWidget {
 class AppHome extends StatefulWidget { const AppHome({super.key}); @override State<AppHome> createState()=>_AppHomeState(); }
 class _AppHomeState extends State<AppHome> {
  late SharedPreferences prefs; late List<StudyLesson> lessons;
- Set<String> done={}; int xp=0,goal=15,streak=0; String name='Learner',lastDate='',placementLevel='A1'; String? photo; bool loading=true,needsOnboarding=true,darkMode=false,remindersEnabled=false,reminderSound=true; int reminderHour=18,reminderMinute=0;
+ Set<String> done={},conversationsDone={}; int xp=0,goal=15,streak=0; String name='Learner',lastDate='',placementLevel='A1'; String? photo; bool loading=true,needsOnboarding=true,darkMode=false,remindersEnabled=false,reminderSound=true; int reminderHour=18,reminderMinute=0;
  @override void initState(){super.initState();lessons=buildCurriculum();init();}
  Future<void> init() async {prefs=await SharedPreferences.getInstance();done=(prefs.getStringList('completed_v2')??[]).toSet();xp=prefs.getInt('xp_v2')??0;goal=prefs.getInt('daily_goal')??15;streak=prefs.getInt('streak')??0;name=prefs.getString('learner_name')??'Learner';lastDate=prefs.getString('last_study_date')??'';photo=prefs.getString('photo_data');placementLevel=prefs.getString('placement_level')??'A1';darkMode=prefs.getBool('dark_mode')??false;appThemeMode.value=darkMode?ThemeMode.dark:ThemeMode.light;remindersEnabled=prefs.getBool('reminders_enabled')??false;reminderSound=prefs.getBool('reminder_sound')??true;reminderHour=prefs.getInt('reminder_hour')??18;reminderMinute=prefs.getInt('reminder_minute')??0;if(remindersEnabled){try{await scheduleDailyReminder(hour:reminderHour,minute:reminderMinute,sound:reminderSound);}catch(_){}}needsOnboarding=!(prefs.getBool('profile_setup_complete')??false);if(mounted)setState(()=>loading=false);}
  Future<void> save() async {await prefs.setStringList('completed_v2',done.toList());await prefs.setInt('xp_v2',xp);await prefs.setInt('daily_goal',goal);await prefs.setInt('streak',streak);await prefs.setString('learner_name',name);await prefs.setString('last_study_date',lastDate);await prefs.setBool('dark_mode',darkMode);await prefs.setBool('reminders_enabled',remindersEnabled);await prefs.setBool('reminder_sound',reminderSound);await prefs.setInt('reminder_hour',reminderHour);await prefs.setInt('reminder_minute',reminderMinute);if(photo!=null)await prefs.setString('photo_data',photo!);}
@@ -91,7 +91,7 @@ class _AppHomeState extends State<AppHome> {
      const SizedBox(height:20),
      SizedBox(width:double.infinity,height:62,child:FilledButton.icon(
       style:FilledButton.styleFrom(backgroundColor:gold,foregroundColor:navy,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(18)),textStyle:const TextStyle(fontSize:18,fontWeight:FontWeight.w900,letterSpacing:1)),
-      onPressed:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>CoursePathPage(lessons:lessons,done:done,currentLevel:level,levelUnlocked:(lev){final i=levels.indexOf(lev);return i<=0||count(levels[i-1])==total(levels[i-1]);},completedCount:count,totalCount:total,lessonUnlocked:isUnlocked,onOpenLesson:openLesson))),
+      onPressed:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>CoursePathPage(lessons:lessons,done:done,conversationsDone:conversationsDone,currentLevel:level,levelUnlocked:(lev){final i=levels.indexOf(lev);return i<=0||count(levels[i-1])==total(levels[i-1]);},completedCount:count,totalCount:total,lessonUnlocked:isUnlocked,onOpenLesson:openLesson,onConversationComplete:(lev,unit)async{conversationsDone.add('${lev}-U${unit}');await save();if(mounted)setState((){});}))),
       icon:const Icon(Icons.play_arrow_rounded,size:30),label:const Text('COMMENCER')
      ))
     ])),
@@ -225,10 +225,10 @@ const a1UnitTitles=<int,String>{
  10:'Conversations, compréhension et validation A1',
 };
 class CoursePathPage extends StatelessWidget {
- final List<StudyLesson> lessons; final Set<String> done; final String currentLevel;
+ final List<StudyLesson> lessons; final Set<String> done,conversationsDone; final String currentLevel;
  final bool Function(String) levelUnlocked; final int Function(String) completedCount; final int Function(String) totalCount;
- final bool Function(StudyLesson) lessonUnlocked; final Future<void> Function(StudyLesson) onOpenLesson;
- const CoursePathPage({super.key,required this.lessons,required this.done,required this.currentLevel,required this.levelUnlocked,required this.completedCount,required this.totalCount,required this.lessonUnlocked,required this.onOpenLesson});
+ final bool Function(StudyLesson) lessonUnlocked; final Future<void> Function(StudyLesson) onOpenLesson; final Future<void> Function(String,int) onConversationComplete;
+ const CoursePathPage({super.key,required this.lessons,required this.done,required this.conversationsDone,required this.currentLevel,required this.levelUnlocked,required this.completedCount,required this.totalCount,required this.lessonUnlocked,required this.onOpenLesson,required this.onConversationComplete});
  @override Widget build(BuildContext context)=>Scaffold(
   appBar:AppBar(title:const Text('Mon parcours')),
   body:ListView(padding:const EdgeInsets.all(16),children:[
@@ -244,16 +244,16 @@ class CoursePathPage extends StatelessWidget {
      title:Text('$lev • ${levelNames[lev]}',style:const TextStyle(fontWeight:FontWeight.bold,color:navy)),
      subtitle:Text('${completedCount(lev)} / ${totalCount(lev)} leçons terminées'),
      trailing:Icon(finished?Icons.check_circle:unlocked?Icons.chevron_right:Icons.lock,color:finished?Colors.green:unlocked?blue:Colors.grey),
-     onTap:!unlocked?(){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine le niveau précédent pour déverrouiller celui-ci.')));}:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>SubchapterPage(level:lev,lessons:lessons,done:done,lessonUnlocked:lessonUnlocked,onOpenLesson:onOpenLesson))),
+     onTap:!unlocked?(){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine le niveau précédent pour déverrouiller celui-ci.')));}:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>SubchapterPage(level:lev,lessons:lessons,done:done,conversationsDone:conversationsDone,lessonUnlocked:lessonUnlocked,onOpenLesson:onOpenLesson,onConversationComplete:onConversationComplete))),
     ));
    })
   ])
  );
 }
 class SubchapterPage extends StatefulWidget {
- final String level; final List<StudyLesson> lessons; final Set<String> done;
- final bool Function(StudyLesson) lessonUnlocked; final Future<void> Function(StudyLesson) onOpenLesson;
- const SubchapterPage({super.key,required this.level,required this.lessons,required this.done,required this.lessonUnlocked,required this.onOpenLesson});
+ final String level; final List<StudyLesson> lessons; final Set<String> done,conversationsDone;
+ final bool Function(StudyLesson) lessonUnlocked; final Future<void> Function(StudyLesson) onOpenLesson; final Future<void> Function(String,int) onConversationComplete;
+ const SubchapterPage({super.key,required this.level,required this.lessons,required this.done,required this.conversationsDone,required this.lessonUnlocked,required this.onOpenLesson,required this.onConversationComplete});
  @override State<SubchapterPage> createState()=>_SubchapterPageState();
 }
 class _SubchapterPageState extends State<SubchapterPage>{
@@ -277,16 +277,16 @@ class _SubchapterPageState extends State<SubchapterPage>{
      title:Text(title,style:const TextStyle(fontWeight:FontWeight.bold,color:navy)),
      subtitle:Text('$doneCount / ${list.length} leçons'),
      trailing:Icon(unlocked?Icons.chevron_right:Icons.lock,color:unlocked?blue:Colors.grey),
-     onTap:!unlocked?(){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine le sous-chapitre précédent pour débloquer celui-ci.')));}:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>UnitLessonsPage(level:widget.level,unit:unit,title:title,lessons:list,done:widget.done,lessonUnlocked:widget.lessonUnlocked,onOpenLesson:widget.onOpenLesson))).then((_){if(mounted)setState((){});}),
+     onTap:!unlocked?(){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine le sous-chapitre précédent pour débloquer celui-ci.')));}:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>UnitLessonsPage(level:widget.level,unit:unit,title:title,lessons:list,done:widget.done,conversationsDone:widget.conversationsDone,lessonUnlocked:widget.lessonUnlocked,onOpenLesson:widget.onOpenLesson,onConversationComplete:widget.onConversationComplete))).then((_){if(mounted)setState((){});}),
     ));
    })
   ]));
  }
 }
 class UnitLessonsPage extends StatefulWidget {
- final String level; final int unit; final String title; final List<StudyLesson> lessons; final Set<String> done;
- final bool Function(StudyLesson) lessonUnlocked; final Future<void> Function(StudyLesson) onOpenLesson;
- const UnitLessonsPage({super.key,required this.level,required this.unit,required this.title,required this.lessons,required this.done,required this.lessonUnlocked,required this.onOpenLesson});
+ final String level; final int unit; final String title; final List<StudyLesson> lessons; final Set<String> done,conversationsDone;
+ final bool Function(StudyLesson) lessonUnlocked; final Future<void> Function(StudyLesson) onOpenLesson; final Future<void> Function(String,int) onConversationComplete;
+ const UnitLessonsPage({super.key,required this.level,required this.unit,required this.title,required this.lessons,required this.done,required this.conversationsDone,required this.lessonUnlocked,required this.onOpenLesson,required this.onConversationComplete});
  @override State<UnitLessonsPage> createState()=>_UnitLessonsPageState();
 }
 class _UnitLessonsPageState extends State<UnitLessonsPage>{
