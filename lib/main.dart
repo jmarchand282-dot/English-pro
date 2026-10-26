@@ -16,9 +16,9 @@ class EnglishProApp extends StatelessWidget {
 class AppHome extends StatefulWidget { const AppHome({super.key}); @override State<AppHome> createState()=>_AppHomeState(); }
 class _AppHomeState extends State<AppHome> {
  late SharedPreferences prefs; late List<StudyLesson> lessons;
- Set<String> done={}; int xp=0,goal=15,streak=0; String name='Learner',lastDate=''; String? photo; bool loading=true;
+ Set<String> done={}; int xp=0,goal=15,streak=0; String name='Learner',lastDate='',placementLevel='A1'; String? photo; bool loading=true,needsOnboarding=true;
  @override void initState(){super.initState();lessons=buildCurriculum();init();}
- Future<void> init() async {prefs=await SharedPreferences.getInstance();done=(prefs.getStringList('completed_v2')??[]).toSet();xp=prefs.getInt('xp_v2')??0;goal=prefs.getInt('daily_goal')??15;streak=prefs.getInt('streak')??0;name=prefs.getString('learner_name')??'Learner';lastDate=prefs.getString('last_study_date')??'';photo=prefs.getString('photo_data');if(mounted)setState(()=>loading=false);}
+ Future<void> init() async {prefs=await SharedPreferences.getInstance();done=(prefs.getStringList('completed_v2')??[]).toSet();xp=prefs.getInt('xp_v2')??0;goal=prefs.getInt('daily_goal')??15;streak=prefs.getInt('streak')??0;name=prefs.getString('learner_name')??'Learner';lastDate=prefs.getString('last_study_date')??'';photo=prefs.getString('photo_data');placementLevel=prefs.getString('placement_level')??'A1';needsOnboarding=!(prefs.getBool('profile_setup_complete')??false);if(mounted)setState(()=>loading=false);}
  Future<void> save() async {await prefs.setStringList('completed_v2',done.toList());await prefs.setInt('xp_v2',xp);await prefs.setInt('daily_goal',goal);await prefs.setInt('streak',streak);await prefs.setString('learner_name',name);await prefs.setString('last_study_date',lastDate);if(photo!=null)await prefs.setString('photo_data',photo!);}
  String get currentLevel {for(final l in levels){if(!lessons.where((x)=>x.level==l).every((x)=>done.contains(x.id)))return l;}return 'C2';}
  int count(String l)=>lessons.where((x)=>x.level==l&&done.contains(x.id)).length;
@@ -27,7 +27,7 @@ class _AppHomeState extends State<AppHome> {
  bool isUnlocked(StudyLesson l){final i=lessons.indexWhere((x)=>x.id==l.id);return i==0||done.contains(l.id)||done.contains(lessons[i-1].id);}
  int get todayXp=>prefs.getInt('today_xp')??0;
  Future<void> complete(StudyLesson l) async {if(done.contains(l.id))return;final n=DateTime.now();final today='${n.year}-${n.month}-${n.day}';if(lastDate!=today){final y=n.subtract(const Duration(days:1));final yesterday='${y.year}-${y.month}-${y.day}';streak=lastDate==yesterday?streak+1:1;lastDate=today;await prefs.setInt('today_xp',0);}done.add(l.id);xp+=10;await prefs.setInt('today_xp',todayXp+10);await save();if(mounted)setState((){});}
- void openLesson(StudyLesson l){if(!isUnlocked(l)){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine la leçon précédente pour débloquer celle-ci.')));return;}Navigator.push(context,MaterialPageRoute(builder:(_)=>LessonPage(lesson:l,alreadyDone:done.contains(l.id),onComplete:()=>complete(l)))).then((_){if(mounted)setState((){});});}
+ Future<void> openLesson(StudyLesson l) async {if(!isUnlocked(l)){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine la leçon précédente pour débloquer celle-ci.')));return;}await Navigator.push(context,MaterialPageRoute(builder:(_)=>LessonPage(lesson:l,alreadyDone:done.contains(l.id),onComplete:()=>complete(l))));if(mounted)setState((){});}
  Future<void> pickPhoto() async {try{final f=await ImagePicker().pickImage(source:ImageSource.gallery,imageQuality:65,maxWidth:420);if(f==null)return;photo=base64Encode(await f.readAsBytes());await save();if(mounted)setState((){});}catch(_){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Photo impossible à charger. Réessaie.')));}}
  void profile(){final c=TextEditingController(text:name=='Learner'?'':name);showModalBottomSheet(context:context,isScrollControlled:true,builder:(ctx)=>Padding(padding:EdgeInsets.fromLTRB(22,22,22,MediaQuery.of(ctx).viewInsets.bottom+24),child:Column(mainAxisSize:MainAxisSize.min,children:[const Text('Mon profil',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold,color:navy)),const SizedBox(height:14),GestureDetector(onTap:pickPhoto,child:avatar(photo,name,78)),TextButton.icon(onPressed:pickPhoto,icon:const Icon(Icons.photo_camera_outlined),label:const Text('Choisir une photo')),TextField(controller:c,decoration:const InputDecoration(labelText:'Ton nom',border:OutlineInputBorder())),const SizedBox(height:14),SizedBox(width:double.infinity,child:FilledButton(onPressed:()async{name=c.text.trim().isEmpty?'Learner':c.text.trim();await save();if(ctx.mounted)Navigator.pop(ctx);if(mounted)setState((){});},child:const Text('Enregistrer')))])));}
  void settings(){Navigator.push(context,MaterialPageRoute(builder:(_)=>SettingsPage(goal:goal,onGoal:(v)async{goal=v;await save();if(mounted)setState((){});},onContact:contact,onReset:reset)));}
@@ -74,7 +74,9 @@ class _AppHomeState extends State<AppHome> {
      const SizedBox(height:10),
      ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:(todayXp/goal).clamp(0,1),minHeight:8,color:blue,backgroundColor:const Color(0xFFE7E8F2))),
      const SizedBox(height:8),
-     Text('Niveau actuel : $level • ${levelNames[level]}',style:const TextStyle(color:Colors.black54,fontSize:13)),
+     Text('Niveau conseillé par le test : $placementLevel • ${levelNames[placementLevel]}',style:const TextStyle(color:Colors.black54,fontSize:13)),
+     const SizedBox(height:4),
+     Text('Le parcours reste progressif : A1 se termine avant le déverrouillage de A2.',style:TextStyle(color:Colors.blueGrey.shade700,fontSize:12)),
      const SizedBox(height:8),
      Text('Progression A1 : $completedA1 / $totalA1 leçons',style:const TextStyle(color:navy,fontWeight:FontWeight.w600)),
      const SizedBox(height:6),
@@ -91,6 +93,88 @@ class _AppHomeState extends State<AppHome> {
  Widget stat(IconData i,String v,String label)=>Expanded(child:Container(padding:const EdgeInsets.symmetric(vertical:10),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.12),borderRadius:BorderRadius.circular(12)),child:Column(children:[Icon(i,color:gold),Text(v,style:const TextStyle(color:Colors.white,fontWeight:FontWeight.bold,fontSize:16)),Text(label,style:const TextStyle(color:Colors.white70,fontSize:9))])));
 }
 
+
+
+class _PlacementQuestion {
+ final String question,explanation; final List<String> options; final int answer;
+ const _PlacementQuestion(this.question,this.explanation,this.options,this.answer);
+}
+const _placementQuestions=< _PlacementQuestion>[
+ _PlacementQuestion('I ___ a student.','Avec I, la forme du verbe to be au présent est am.',['am','is','are'],0),
+ _PlacementQuestion('She ___ football every Sunday.','Le présent simple décrit une habitude ; avec she, le verbe prend -s.',['play','plays','playing'],1),
+ _PlacementQuestion('Yesterday, we ___ a film.','Yesterday indique le passé ; watch devient watched au passé simple.',['watch','watched','watching'],1),
+ _PlacementQuestion('I have lived here ___ 2020.','Since indique le point de départ d’une durée ; for indique sa longueur.',['for','since','during'],1),
+ _PlacementQuestion('If I ___ more time, I would travel.','Dans cette hypothèse irréelle, la proposition avec if utilise le past simple : had.',['have','had','will have'],1),
+ _PlacementQuestion('Despite ___ tired, she kept working.','Après despite, on peut utiliser un nom ou une forme en -ing : being tired.',['be','being','was'],1),
+ _PlacementQuestion('Had I known, I ___ earlier.','Cette inversion conditionnelle renvoie à une situation passée irréelle : would have left.',['would leave','would have left','will leave'],1),
+ _PlacementQuestion('The proposal, ___ merits remain contested, was approved.','Whose indique la possession et peut se rapporter à une chose : the proposal’s merits.',['which','whose','who'],1),
+];
+class OnboardingPage extends StatefulWidget {
+ final String initialName; final String? photo; final Future<void> Function() onPickPhoto; final Future<void> Function(String,int) onComplete;
+ const OnboardingPage({super.key,required this.initialName,required this.photo,required this.onPickPhoto,required this.onComplete});
+ @override State<OnboardingPage> createState()=>_OnboardingPageState();
+}
+class _OnboardingPageState extends State<OnboardingPage>{
+ late final TextEditingController nameController=TextEditingController(text:widget.initialName=='Learner'?'':widget.initialName);
+ int page=0,index=0,score=0;int? selected;bool checked=false,saving=false;
+ @override void dispose(){nameController.dispose();super.dispose();}
+ @override Widget build(BuildContext context){
+  final q=_placementQuestions[index];
+  return Scaffold(
+   body:SafeArea(child:ListView(padding:const EdgeInsets.all(22),children:[
+    const SizedBox(height:12),
+    const Center(child:Text('🇺🇸',style:TextStyle(fontSize:48))),
+    const SizedBox(height:8),
+    const Center(child:Text('HELLO! WELCOME TO ENGLISH PRO',textAlign:TextAlign.center,style:TextStyle(color:blue,fontSize:20,fontWeight:FontWeight.w900))),
+    const SizedBox(height:8),
+    const Center(child:Text('Apprends l’anglais étape par étape.',style:TextStyle(color:Colors.black54))),
+    const SizedBox(height:22),
+    if(page==0)...[
+     const Text('1. Créons ton profil',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold,color:navy)),
+     const SizedBox(height:14),
+     Center(child:GestureDetector(onTap:()=>widget.onPickPhoto(),child:avatar(widget.photo,nameController.text,54))),
+     Center(child:TextButton.icon(onPressed:()=>widget.onPickPhoto(),icon:const Icon(Icons.photo_camera_outlined),label:const Text('Ajouter une photo'))),
+     TextField(controller:nameController,decoration:const InputDecoration(labelText:'Ton nom',hintText:'Entre ton nom',border:OutlineInputBorder(),prefixIcon:Icon(Icons.person_outline))),
+     const SizedBox(height:18),
+     SizedBox(height:54,child:FilledButton(onPressed:()=>setState(()=>page=1),child:const Text('FAIRE LE TEST DE NIVEAU →',style:TextStyle(fontWeight:FontWeight.bold))))
+    ] else if(page==1)...[
+     Row(children:[Expanded(child:Text('2. Test de positionnement',style:const TextStyle(fontSize:21,fontWeight:FontWeight.bold,color:navy))),Text('${index+1}/${_placementQuestions.length}',style:const TextStyle(color:blue,fontWeight:FontWeight.bold))]),
+     const SizedBox(height:8),
+     LinearProgressIndicator(value:(index+1)/_placementQuestions.length,color:blue,backgroundColor:const Color(0xFFE7E8F2),minHeight:7),
+     const SizedBox(height:20),
+     Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+      const Text('CHOISIS LA BONNE RÉPONSE',style:TextStyle(color:gold,fontWeight:FontWeight.bold,fontSize:11)),
+      const SizedBox(height:12),
+      Text(q.question,style:const TextStyle(color:Colors.white,fontSize:22,fontWeight:FontWeight.bold))
+     ])),
+     const SizedBox(height:14),
+     ...List.generate(q.options.length,(i){final sel=selected==i,correct=checked&&i==q.answer,wrong=checked&&sel&&i!=q.answer;return Container(margin:const EdgeInsets.only(bottom:9),child:InkWell(onTap:checked?null:()=>setState(()=>selected=i),borderRadius:BorderRadius.circular(14),child:Container(padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:correct?const Color(0xFFE8F8ED):wrong?const Color(0xFFFFEEEE):sel?const Color(0xFFEEEEFF):Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:correct?Colors.green:wrong?Colors.red:sel?blue:const Color(0xFFE4E6F0),width:sel||correct?2:1)),child:Text(q.options[i],style:const TextStyle(color:navy,fontSize:16)))));}),
+     if(checked)Container(padding:const EdgeInsets.all(13),decoration:BoxDecoration(color:selected==q.answer?const Color(0xFFE8F8ED):const Color(0xFFFFF4DF),borderRadius:BorderRadius.circular(13)),child:Text(selected==q.answer?'Bonne réponse ! ${q.explanation}':'Réponse correcte : ${q.options[q.answer]}. ${q.explanation}',style:const TextStyle(color:navy,height:1.4))),
+     const SizedBox(height:16),
+     SizedBox(height:52,child:FilledButton(onPressed:(){
+      if(!checked){if(selected==null){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Choisis une réponse.')));return;}setState(()=>checked=true);if(selected==q.answer)score++;return;}
+      if(selected!=q.answer){setState(()=>{selected=null});return;}
+      if(index<_placementQuestions.length-1){setState(()=>{index++;selected=null;checked=false;});}else{setState(()=>page=2);}
+     },child:Text(!checked?'VÉRIFIER':selected!=q.answer?'RÉESSAYER':index<_placementQuestions.length-1?'QUESTION SUIVANTE':'VOIR MON RÉSULTAT')))
+    ] else...[
+     const Text('3. Ton résultat',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold,color:navy)),
+     const SizedBox(height:16),
+     Container(padding:const EdgeInsets.all(22),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(22)),child:Column(children:[
+      const Icon(Icons.emoji_events_outlined,color:gold,size:48),
+      const SizedBox(height:10),
+      Text('$score / ${_placementQuestions.length}',style:const TextStyle(color:Colors.white,fontSize:30,fontWeight:FontWeight.bold)),
+      const SizedBox(height:8),
+      Text('Niveau conseillé : ${score<=2?'A1':score<=3?'A2':score<=4?'B1':score<=5?'B2':score<=6?'C1':'C2'}',style:const TextStyle(color:gold,fontSize:18,fontWeight:FontWeight.bold)),
+      const SizedBox(height:8),
+      const Text('Ce test donne une première indication. Pour apprendre solidement, ton parcours commence par A1 et les niveaux suivants se débloquent après validation.',textAlign:TextAlign.center,style:TextStyle(color:Colors.white,height:1.4))
+     ])),
+     const SizedBox(height:18),
+     SizedBox(height:56,child:FilledButton(onPressed:saving?null:()async{setState(()=>saving=true);await widget.onComplete(nameController.text,score);},child:const Text('ENTRER DANS ENGLISH PRO',style:TextStyle(fontWeight:FontWeight.bold))))
+    ]
+   ]))
+  );
+ }
+}
 
 const a1UnitTitles=<int,String>{
  1:'Premiers contacts, sons et alphabet',
