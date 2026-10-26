@@ -313,18 +313,18 @@ class _LessonPageState extends State<LessonPage>{
  int? selected; bool checked=false,finished=false,listening=false; String recognized='';
  final FlutterTts tts=FlutterTts(); final SpeechToText speech=SpeechToText();
  @override void dispose(){tts.stop();speech.stop();super.dispose();}
- String targetPhrase(StudyLesson l){var t=l.example.split(' = ').first.trim();t=t.split(' / ').first.trim();return t.replaceFirst(RegExp(r'^[^:]+:\\s*'), '').trim();}
+ String targetPhrase(StudyLesson l){var t=l.example.split(' = ').first.trim();t=t.split(' / ').first.trim();return t.replaceFirst(RegExp(r'^[^:]+:\s*'), '').trim();}
  Future<void> speakText(String text,{bool french=false})async{try{await tts.setLanguage(french?'fr-FR':'en-US');await tts.setSpeechRate(french?0.48:0.42);await tts.speak(text);}catch(_){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('La voix n’est pas disponible sur cet appareil.')));}}
  Future<void> testPronunciation()async{
   try{
    final available=await speech.initialize(onStatus:(status){if(status=='done'||status=='notListening'){if(mounted)setState(()=>listening=false);}},onError:(_){if(mounted)setState(()=>listening=false);});
    if(!available){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('La reconnaissance vocale n’est pas disponible. Vérifie la langue et les autorisations du téléphone.')));return;}
-   setState(()=>{recognized='',listening=true});
+   setState((){recognized='';listening=true;});
    await speech.listen(localeId:'en_US',listenFor:const Duration(seconds:8),pauseFor:const Duration(seconds:3),onResult:(result){if(mounted)setState(()=>recognized=result.recognizedWords);if(result.finalResult&&mounted)setState(()=>listening=false);});
   }catch(_){if(mounted){setState(()=>listening=false);ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Impossible de démarrer le test vocal.')));}}
  }
  int? pronunciationPercent(String target,String heard){
-  final expected=target.toLowerCase().replaceAll(RegExp(r'[^a-z0-9 ]'),' ').split(RegExp(r'\\s+')).where((w)=>w.isNotEmpty).toSet();
+  final expected=target.toLowerCase().replaceAll(RegExp(r'[^a-z0-9 ]'),' ').split(RegExp(r'\s+')).where((w)=>w.isNotEmpty).toSet();
   final spoken=heard.toLowerCase().replaceAll(RegExp(r'[^a-z0-9 ]'),' ').split(RegExp(r'\\s+')).where((w)=>w.isNotEmpty).toSet();
   if(expected.isEmpty||spoken.isEmpty)return null;
   return ((expected.where(spoken.contains).length/expected.length)*100).round();
@@ -356,7 +356,7 @@ class _LessonPageState extends State<LessonPage>{
      const SizedBox(height:22),
      const Text('VÉRIFIE TA COMPRÉHENSION',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),
      const SizedBox(height:9),
-     Row(children:[Expanded(child:Text(l.question,style:const TextStyle(fontSize:19,fontWeight:FontWeight.bold,color:navy))),IconButton(onPressed:()=>speakText(l.question,french:RegExp(r'\\b(quelle|quel|comment|que|complète|choisis|dans|trouve|lequel|laquelle)\\b',caseSensitive:false).hasMatch(l.question)),icon:const Icon(Icons.volume_up,color:blue),tooltip:'Écouter la question')]),
+     Row(children:[Expanded(child:Text(l.question,style:const TextStyle(fontSize:19,fontWeight:FontWeight.bold,color:navy))),IconButton(onPressed:()=>speakText(l.question,french:RegExp(r'\b(quelle|quel|comment|que|complète|choisis|dans|trouve|lequel|laquelle)\b',caseSensitive:false).hasMatch(l.question)),icon:const Icon(Icons.volume_up,color:blue),tooltip:'Écouter la question')]),
      const SizedBox(height:12),
      ...List.generate(l.options.length,(i){
       final sel=selected==i,correct=checked&&i==l.answer,wrong=checked&&sel&&i!=l.answer;
