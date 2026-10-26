@@ -399,7 +399,7 @@ class _LessonPageState extends State<LessonPage>{
       final sel=selected==i,correct=checked&&i==l.answer,wrong=checked&&sel&&i!=l.answer;
       final border=correct?Colors.green:wrong?Colors.red:sel?blue:const Color(0xFFE4E6F0);
       return Container(margin:const EdgeInsets.only(bottom:9),child:InkWell(
-       onTap:checked?null:()=>setState(()=>selected=i),
+       onTap:(!quizStarted||checked)?null:()=>setState(()=>selected=i),
        borderRadius:BorderRadius.circular(14),
        child:Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:correct?const Color(0xFFE8F8ED):wrong?const Color(0xFFFFEEEE):sel?const Color(0xFFEEEEFF):Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:border,width:sel||correct?2:1)),
         child:Row(children:[Expanded(child:Text(l.options[i],style:const TextStyle(color:navy,fontSize:15))),if(correct)const Icon(Icons.check_circle,color:Colors.green),if(wrong)const Icon(Icons.cancel,color:Colors.red)])
