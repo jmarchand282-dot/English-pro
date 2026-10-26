@@ -24,7 +24,7 @@ jobs:
         with:
           channel: stable
           cache: true
-      - name: Generate Android and Web platform files
+      - name: Generate Android platform files
         run: flutter create --platforms=android,web --org com.englishpro.app --project-name english_pro /tmp/english_pro
       - name: Configure Android notification scheduling
         run: |
