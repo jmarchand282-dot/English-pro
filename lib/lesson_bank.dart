@@ -1,5 +1,3 @@
-import 'dart:math';
-
 class Topic {
  final String title, explanation, example, french, question;
  final List<String> options; final int answer;
