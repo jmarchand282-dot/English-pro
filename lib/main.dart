@@ -21,7 +21,7 @@ Future<void> scheduleDailyReminder({required int hour,required int minute,requir
  final now=tz.TZDateTime.now(tz.local);
  var scheduled=tz.TZDateTime(tz.local,now.year,now.month,now.day,hour,minute);
  if(!scheduled.isAfter(now)) scheduled=scheduled.add(const Duration(days:1));
- await localNotifications.zonedSchedule(100,'English Pro','Il est temps de pratiquer ton anglais !',scheduled,NotificationDetails(android:AndroidNotificationDetails(sound?'english_pro_reminders_sound':'english_pro_reminders_silent','Rappels English Pro',channelDescription:'Rappel quotidien pour réviser les leçons',importance:Importance.high,priority:Priority.high,playSound:sound)),androidScheduleMode:AndroidScheduleMode.inexactAllowWhileIdle,matchDateTimeComponents:DateTimeComponents.time);
+ await localNotifications.zonedSchedule(100,'English Pro','Il est temps de pratiquer ton anglais !',scheduled,NotificationDetails(android:AndroidNotificationDetails(sound?'english_pro_reminders_sound':'english_pro_reminders_silent','Rappels English Pro',channelDescription:'Rappel quotidien pour réviser les leçons',importance:Importance.high,priority:Priority.high,playSound:sound)),androidScheduleMode:AndroidScheduleMode.inexactAllowWhileIdle,uiLocalNotificationDateInterpretation:UILocalNotificationDateInterpretation.absoluteTime,matchDateTimeComponents:DateTimeComponents.time);
 }
 Future<void> cancelDailyReminder() async { await localNotifications.cancel(100); }
 Future<void> main() async { WidgetsFlutterBinding.ensureInitialized(); try { await initializeLocalNotifications(); } catch (_) {} runApp(const EnglishProApp()); }
@@ -389,7 +389,27 @@ class _ReferenceBookPageState extends State<ReferenceBookPage>{
    Padding(padding:const EdgeInsets.all(16),child:TextField(onChanged:(v)=>setState(()=>query=v),decoration:const InputDecoration(prefixIcon:Icon(Icons.search),labelText:'Rechercher une notion, un verbe ou une expression',border:OutlineInputBorder()))),
    Padding(padding:const EdgeInsets.symmetric(horizontal:16),child:Align(alignment:Alignment.centerLeft,child:Text('${filtered.length} résultats • hors connexion',style:const TextStyle(color:Colors.black54,fontSize:12)))),
    const SizedBox(height:8),
-   Expanded(child:filtered.isEmpty?const Center(child:Text('Aucun résultat. Essaie un mot plus simple.')):ListView.builder(padding:const EdgeInsets.fromLTRB(16,0,16,16),itemCount:filtered.length,itemBuilder:(context,i){final l=filtered[i];return Card(color:Colors.white,margin:const EdgeInsets.only(bottom:8),child:ListTile(title:Text(l.title,style:const TextStyle(fontWeight:FontWeight.bold,color:navy)),subtitle:Text('${l.level} • ${l.subtitle}',maxLines:2,overflow:TextOverflow.ellipsis),trailing:const Icon(Icons.chevron_right),onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>ReferenceEntryPage(lesson:l))));}))
+    Expanded(
+     child: filtered.isEmpty
+      ? const Center(child:Text('Aucun résultat. Essaie un mot plus simple.'))
+      : ListView.builder(
+       padding:const EdgeInsets.fromLTRB(16,0,16,16),
+       itemCount:filtered.length,
+       itemBuilder:(context,i){
+        final l=filtered[i];
+        return Card(
+         color:Colors.white,
+         margin:const EdgeInsets.only(bottom:8),
+         child:ListTile(
+          title:Text(l.title,style:const TextStyle(fontWeight:FontWeight.bold,color:navy)),
+          subtitle:Text('${l.level} • ${l.subtitle}',maxLines:2,overflow:TextOverflow.ellipsis),
+          trailing:const Icon(Icons.chevron_right),
+          onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>ReferenceEntryPage(lesson:l))),
+         ),
+        );
+       },
+      ),
+    ),
   ]));
  }
 }
