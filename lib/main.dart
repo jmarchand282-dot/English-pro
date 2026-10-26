@@ -354,7 +354,7 @@ class _LessonPageState extends State<LessonPage>{
    final available=await speech.initialize(onStatus:(status){if(status=='done'||status=='notListening'){if(mounted)setState(()=>listening=false);}},onError:(_){if(mounted)setState(()=>listening=false);});
    if(!available){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('La reconnaissance vocale n’est pas disponible. Vérifie la langue et les autorisations du téléphone.')));return;}
    setState((){recognized='';listening=true;});
-   await speech.listen(options:SpeechListenOptions(localeId:'en_US',listenFor:const Duration(seconds:8),pauseFor:const Duration(seconds:3)),onResult:(result){if(mounted)setState(()=>recognized=result.recognizedWords);if(result.finalResult&&mounted)setState(()=>listening=false);});
+   await speech.listen(listenOptions:SpeechListenOptions(localeId:'en_US',listenFor:const Duration(seconds:8),pauseFor:const Duration(seconds:3)),onResult:(result){if(mounted)setState(()=>recognized=result.recognizedWords);if(result.finalResult&&mounted)setState(()=>listening=false);});
   }catch(_){if(mounted){setState(()=>listening=false);ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Impossible de démarrer le test vocal.')));}}
  }
  int? pronunciationPercent(String target,String heard){
