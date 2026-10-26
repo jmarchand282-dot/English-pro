@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
             setState(() => level = l);
             await _saveProgress();
           },
-          selectedColor: blue.withOpacity(0.14),
+          selectedColor: blue.withValues(alpha: 0.14),
           labelStyle: TextStyle(fontWeight: FontWeight.bold, color: level == l ? blue : navy),
         )).toList()),
         const SizedBox(height: 22),
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _stat(IconData icon, String value, String label) => Expanded(child: Container(
     padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(color: Colors.white.withOpacity(0.12), borderRadius: BorderRadius.circular(15)),
+    decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(15)),
     child: Row(children: [
       Icon(icon, color: gold, size: 24),
       const SizedBox(width: 8),
@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
         leading: CircleAvatar(
-          backgroundColor: done ? Colors.green.shade50 : blue.withOpacity(0.10),
+          backgroundColor: done ? Colors.green.shade50 : blue.withValues(alpha: 0.10),
           child: Icon(done ? Icons.check_circle : Icons.menu_book_outlined, color: done ? Colors.green : blue),
         ),
         title: Text(lesson.title, style: const TextStyle(fontWeight: FontWeight.bold, color: navy)),
