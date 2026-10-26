@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -405,6 +406,15 @@ List<_ConversationTurn> _conversationTurns(String level,int unit){
   ];
  }
 }
+List<_ConversationTurn> _shuffleConversation(List<_ConversationTurn> turns){
+ final random=Random();
+ return turns.map((turn){
+  final options=turn.options.toList();
+  final correctText=options[turn.answer];
+  options.shuffle(random);
+  return _ConversationTurn(turn.prompt,options,options.indexOf(correctText),turn.explanation);
+ }).toList();
+}
 class ConversationValidationPage extends StatefulWidget{
  final String level; final int unit; final String title; final Future<void> Function() onComplete;
  const ConversationValidationPage({super.key,required this.level,required this.unit,required this.title,required this.onComplete});
@@ -414,7 +424,7 @@ class _ConversationValidationPageState extends State<ConversationValidationPage>
  late final List<_ConversationTurn> turns;
  final FlutterTts tts=FlutterTts();
  int index=0;int? selected;bool checked=false,finished=false,saving=false;
- @override void initState(){super.initState();turns=_conversationTurns(widget.level,widget.unit);}
+ @override void initState(){super.initState();turns=_shuffleConversation(_conversationTurns(widget.level,widget.unit));}
  @override void dispose(){tts.stop();super.dispose();}
  Future<void> speakPrompt(String text)async{try{await tts.setLanguage('en-US');await tts.setSpeechRate(0.42);await tts.speak(text);}catch(_){}}
  @override Widget build(BuildContext context){
@@ -479,8 +489,9 @@ class LessonPage extends StatefulWidget {
  @override State<LessonPage> createState()=>_LessonPageState();
 }
 class _LessonPageState extends State<LessonPage>{
- int? selected; bool checked=false,finished=false,listening=false,quizStarted=false,timedOut=false; int secondsLeft=10; Timer? quizTimer; String recognized='';
+ int? selected; bool checked=false,finished=false,listening=false,quizStarted=false,timedOut=false; int secondsLeft=10; Timer? quizTimer; String recognized=''; late List<String> displayOptions; late int correctIndex;
  final FlutterTts tts=FlutterTts(); final SpeechToText speech=SpeechToText();
+ @override void initState(){super.initState();displayOptions=widget.lesson.options.toList();final correctText=displayOptions[widget.lesson.answer];displayOptions.shuffle(Random());correctIndex=displayOptions.indexOf(correctText);}
  @override void dispose(){quizTimer?.cancel();tts.stop();speech.stop();super.dispose();}
  void startQuiz(){quizTimer?.cancel();setState((){quizStarted=true;secondsLeft=10;timedOut=false;selected=null;checked=false;});quizTimer=Timer.periodic(const Duration(seconds:1),(timer){if(secondsLeft<=1){timer.cancel();if(mounted)setState((){secondsLeft=0;timedOut=true;checked=true;});}else if(mounted){setState(()=>secondsLeft--);}});}
  String targetPhrase(StudyLesson l){var t=l.example.split(' = ').first.trim();t=t.split(' / ').first.trim();return t.replaceFirst(RegExp(r'^[^:]+:\s*'), '').trim();}
@@ -501,7 +512,7 @@ class _LessonPageState extends State<LessonPage>{
  }
  @override Widget build(BuildContext context){
   final l=widget.lesson;
-  final isCorrect=checked&&selected==l.answer;
+  final isCorrect=checked&&selected==correctIndex;
   return Scaffold(
    appBar:AppBar(title:Text('${l.level} • Leçon'),leading:IconButton(onPressed:()=>Navigator.pop(context),icon:const Icon(Icons.close))),
    body:SafeArea(child:Column(children:[
@@ -531,14 +542,14 @@ class _LessonPageState extends State<LessonPage>{
      const SizedBox(height:12),
      if(!quizStarted)SizedBox(width:double.infinity,child:FilledButton.icon(onPressed:startQuiz,icon:const Icon(Icons.timer_outlined),label:const Text('DÉMARRER LE QUIZ • 10 SECONDES'))),
      if(quizStarted&&!checked)Padding(padding:const EdgeInsets.only(bottom:10),child:Row(children:[const Icon(Icons.timer_outlined,color:blue),const SizedBox(width:6),Text('Temps restant : $secondsLeft s',style:TextStyle(color:secondsLeft<=3?Colors.red:blue,fontWeight:FontWeight.bold))])),
-     ...List.generate(l.options.length,(i){
-      final sel=selected==i,correct=checked&&i==l.answer,wrong=checked&&sel&&i!=l.answer;
+     ...List.generate(displayOptions.length,(i){
+      final sel=selected==i,correct=checked&&i==correctIndex,wrong=checked&&sel&&i!=l.answer;
       final border=correct?Colors.green:wrong?Colors.red:sel?blue:const Color(0xFFE4E6F0);
       return Container(margin:const EdgeInsets.only(bottom:9),child:InkWell(
        onTap:(!quizStarted||checked)?null:()=>setState(()=>selected=i),
        borderRadius:BorderRadius.circular(14),
        child:Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:correct?const Color(0xFFE8F8ED):wrong?const Color(0xFFFFEEEE):sel?const Color(0xFFEEEEFF):Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:border,width:sel||correct?2:1)),
-        child:Row(children:[Expanded(child:Text(l.options[i],style:const TextStyle(color:navy,fontSize:15))),if(correct)const Icon(Icons.check_circle,color:Colors.green),if(wrong)const Icon(Icons.cancel,color:Colors.red)])
+        child:Row(children:[Expanded(child:Text(displayOptions[i],style:const TextStyle(color:navy,fontSize:15))),if(correct)const Icon(Icons.check_circle,color:Colors.green),if(wrong)const Icon(Icons.cancel,color:Colors.red)])
        )
       ));
      }),
@@ -555,7 +566,7 @@ class _LessonPageState extends State<LessonPage>{
      if(checked)Container(width:double.infinity,margin:const EdgeInsets.only(top:4),padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:isCorrect?const Color(0xFFE8F8ED):const Color(0xFFFFF4DF),borderRadius:BorderRadius.circular(14)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
       Text(isCorrect?'Bonne réponse !':timedOut?'Temps écoulé — on corrige ensemble':'On corrige ensemble',style:TextStyle(fontWeight:FontWeight.bold,color:isCorrect?Colors.green.shade800:Colors.brown.shade800,fontSize:16)),
       const SizedBox(height:6),
-      Text(isCorrect?'Tu as bien compris cette question.':'Réponse correcte : ${l.options[l.answer]}',style:const TextStyle(fontWeight:FontWeight.w600,color:navy)),
+      Text(isCorrect?'Tu as bien compris cette question.':'Réponse correcte : ${displayOptions[correctIndex]}',style:const TextStyle(fontWeight:FontWeight.w600,color:navy)),
       const SizedBox(height:6),
       Text(l.correction,style:const TextStyle(color:navy,height:1.45))
      ]))
