@@ -1,0 +1,55 @@
+name: Build English Pro
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate Android and Web platform files
+        run: flutter create --platforms=android,web --org com.englishpro.app --project-name english_pro /tmp/english_pro
+      - name: Copy application source
+        run: |
+          cp pubspec.yaml /tmp/english_pro/pubspec.yaml
+          cp -r lib /tmp/english_pro/lib
+          cd /tmp/english_pro
+          flutter pub get
+      - name: Check Dart code
+        working-directory: /tmp/english_pro
+        run: flutter analyze
+      - name: Build Android APK
+        working-directory: /tmp/english_pro
+        run: flutter build apk --release
+      - name: Build Web
+        working-directory: /tmp/english_pro
+        run: flutter build web --release
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: English-Pro-Android-APK
+          path: /tmp/english_pro/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+      - name: Upload Web build
+        uses: actions/upload-artifact@v4
+        with:
+          name: English-Pro-Web
+          path: /tmp/english_pro/build/web/
+          if-no-files-found: error
