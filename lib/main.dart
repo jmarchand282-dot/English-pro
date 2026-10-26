@@ -173,7 +173,7 @@ class _OnboardingPageState extends State<OnboardingPage>{
      Center(child:TextButton.icon(onPressed:()=>widget.onPickPhoto(),icon:const Icon(Icons.photo_camera_outlined),label:const Text('Ajouter une photo'))),
      TextField(controller:nameController,decoration:const InputDecoration(labelText:'Ton nom',hintText:'Entre ton nom',border:OutlineInputBorder(),prefixIcon:Icon(Icons.person_outline))),
      const SizedBox(height:18),
-     SizedBox(height:54,child:FilledButton(onPressed:()=>setState(()=>page=1),child:const Text('FAIRE LE TEST DE NIVEAU →',style:TextStyle(fontWeight:FontWeight.bold))))
+     SizedBox(height:54,child:FilledButton(onPressed:(){if(nameController.text.trim().isEmpty){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Entre ton nom pour créer ton profil.')));return;}setState(()=>page=1);},child:const Text('FAIRE LE TEST DE NIVEAU →',style:TextStyle(fontWeight:FontWeight.bold))))
     ] else if(page==1)...[
      Row(children:[const Expanded(child:Text('2. Test de positionnement',style:TextStyle(fontSize:21,fontWeight:FontWeight.bold,color:navy))),Text('${index+1}/${_placementQuestions.length}',style:const TextStyle(color:blue,fontWeight:FontWeight.bold))]),
      const SizedBox(height:8),
