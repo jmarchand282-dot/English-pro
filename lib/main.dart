@@ -341,7 +341,7 @@ List<_ConversationTurn> _conversationTurns(String level,int unit){
   _ConversationTurn('What is your opinion?', ['I think it is useful.','At seven o’clock.','I have two brothers.'],0,'I think… sert à exprimer une opinion.'),
   _ConversationTurn('Could you explain that again?', ['Of course. Let me explain it another way.','It costs five dollars.','I am wearing a coat.'],0,'Cette réponse répond directement à la demande de clarification.'),
   _ConversationTurn('How would you summarize your idea?', ['The main point is that practice helps us improve.','My name is Alex.','The bus stop is near the bank.'],0,'Un résumé présente l’idée principale en une phrase claire.'),
- ];
+ ];}
  switch(unit){
   case 1:return const [
    _ConversationTurn('Hello! What’s your name?',['My name is Alex.','I’m fine, thanks.','See you tomorrow.'],0,'My name is… sert à se présenter.'),
