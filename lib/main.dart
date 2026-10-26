@@ -33,14 +33,112 @@ class _AppHomeState extends State<AppHome> {
  void settings(){Navigator.push(context,MaterialPageRoute(builder:(_)=>SettingsPage(goal:goal,onGoal:(v)async{goal=v;await save();if(mounted)setState((){});},onContact:contact,onReset:reset)));}
  Future<void> contact()async{final u=Uri.parse('https://wa.me/243986230968?text=Bonjour%20English%20Pro%2C%20j%27ai%20besoin%20d%27aide.');if(!await launchUrl(u,mode:LaunchMode.externalApplication)&&mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('WhatsApp ne peut pas être ouvert.')));}
  Future<void> reset()async{final ok=await showDialog<bool>(context:context,builder:(c)=>AlertDialog(title:const Text('Effacer la progression ?'),content:const Text('Toutes les leçons terminées et les XP seront supprimés sur cet appareil.'),actions:[TextButton(onPressed:()=>Navigator.pop(c,false),child:const Text('Annuler')),FilledButton(onPressed:()=>Navigator.pop(c,true),child:const Text('Effacer'))]));if(ok!=true)return;done.clear();xp=0;streak=0;lastDate='';await save();if(mounted)setState((){});}
- @override Widget build(BuildContext context){if(loading)return const Scaffold(body:Center(child:CircularProgressIndicator()));final l=currentLevel;final current=lessons.where((x)=>x.level==l).toList();return Scaffold(appBar:AppBar(title:const Row(children:[Icon(Icons.auto_awesome,color:gold),SizedBox(width:8),Text('English Pro',style:TextStyle(fontWeight:FontWeight.bold))]),actions:[IconButton(onPressed:profile,icon:avatar(photo,name,30),tooltip:'Profil'),IconButton(onPressed:settings,icon:const Icon(Icons.settings_outlined),tooltip:'Paramètres')]),body:ListView(padding:const EdgeInsets.all(16),children:[
- Container(padding:const EdgeInsets.all(20),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(24)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text('BON RETOUR, ${name.toUpperCase()}',style:const TextStyle(color:gold,fontSize:11,fontWeight:FontWeight.bold,letterSpacing:1)),const SizedBox(height:9),const Text('Chaque leçon te rapproche de ton objectif.',style:TextStyle(color:Colors.white,fontSize:24,fontWeight:FontWeight.bold)),const SizedBox(height:7),Text('Niveau actuel : $l • ${levelNames[l]}',style:const TextStyle(color:Colors.white70)),const SizedBox(height:17),Row(children:[stat(Icons.bolt,'$xp','XP'),const SizedBox(width:8),stat(Icons.local_fire_department,'$streak','JOURS'),const SizedBox(width:8),stat(Icons.menu_book,'${done.length}','LEÇONS')])]),
- const SizedBox(height:14),Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Row(children:[const Icon(Icons.flag_outlined,color:blue),const SizedBox(width:8),const Expanded(child:Text('Objectif quotidien',style:TextStyle(fontWeight:FontWeight.bold))),Text('$todayXp / $goal XP',style:const TextStyle(color:blue,fontWeight:FontWeight.bold))]),const SizedBox(height:10),ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:(todayXp/goal).clamp(0,1),minHeight:8,color:blue,backgroundColor:const Color(0xFFE7E8F2)))])),
- if(next!=null) ...[const SizedBox(height:16),Container(padding:const EdgeInsets.all(17),decoration:BoxDecoration(color:const Color(0xFFFFF7E5),borderRadius:BorderRadius.circular(18)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('REPRENDRE MON PARCOURS',style:TextStyle(color:Color(0xFF946200),fontWeight:FontWeight.bold,fontSize:11)),const SizedBox(height:8),Text(next!.title,style:const TextStyle(fontSize:18,fontWeight:FontWeight.bold,color:navy)),Text(next!.subtitle,style:const TextStyle(color:Colors.black54)),const SizedBox(height:10),SizedBox(width:double.infinity,child:FilledButton.icon(onPressed:()=>openLesson(next!),icon:const Icon(Icons.play_arrow),label:const Text('Continuer')))])],
- const SizedBox(height:22),const Text('Mon parcours',style:TextStyle(fontSize:21,fontWeight:FontWeight.bold,color:navy)),const SizedBox(height:4),const Text('Les niveaux se débloquent automatiquement. Termine chaque leçon.',style:TextStyle(color:Colors.black54)),
- const SizedBox(height:12),...levels.map((lev){final all=lessons.where((x)=>x.level==lev).toList();final n=count(lev);final idx=levels.indexOf(lev);final unlocked=idx==0||count(levels[idx-1])==total(levels[idx-1]);final active=lev==l;return Container(margin:const EdgeInsets.only(bottom:12),padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18),border:Border.all(color:active?blue:const Color(0xFFE5E6F0),width:active?2:1)),child:Column(children:[Row(children:[Container(width:44,height:44,decoration:BoxDecoration(color:unlocked?blue.withValues(alpha:.1):const Color(0xFFF0F0F5),borderRadius:BorderRadius.circular(13)),child:Icon(unlocked?Icons.school_outlined:Icons.lock_outline,color:unlocked?blue:Colors.grey)),const SizedBox(width:10),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text('$lev • ${levelNames[lev]}',style:const TextStyle(fontWeight:FontWeight.bold,color:navy,fontSize:15)),Text('$n / ${all.length} étapes terminées',style:const TextStyle(color:Colors.black54,fontSize:12))])),if(n==all.length)const Icon(Icons.check_circle,color:Colors.green),if(!unlocked)const Icon(Icons.lock,color:Colors.grey)]),const SizedBox(height:9),ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:all.isEmpty?0:n/all.length,minHeight:7,color:n==all.length?Colors.green:blue,backgroundColor:const Color(0xFFE8E9F3))),if(active)...[const SizedBox(height:8),...current.map((x){final open=isUnlocked(x),finished=done.contains(x.id);return ListTile(dense:true,contentPadding:EdgeInsets.zero,leading:CircleAvatar(backgroundColor:finished?const Color(0xFFE3F6E9):open?blue.withValues(alpha:.1):const Color(0xFFF0F0F5),child:Icon(finished?Icons.check:open?Icons.play_arrow:Icons.lock,color:finished?Colors.green:open?blue:Colors.grey)),title:Text(x.title,style:TextStyle(fontSize:13,fontWeight:FontWeight.w600,color:open||finished?navy:Colors.grey)),subtitle:Text(x.subtitle,style:const TextStyle(fontSize:11)),trailing:const Icon(Icons.chevron_right,size:18),onTap:()=>openLesson(x));})] else if(unlocked&&n<all.length)const Padding(padding:EdgeInsets.only(top:8),child:Align(alignment:Alignment.centerLeft,child:Text('Niveau débloqué après la fin du niveau précédent.',style:TextStyle(fontSize:12,color:Colors.black54))))]));}),
- const SizedBox(height:12),const Center(child:Text('English Pro • Créé par Joseph Marchand',style:TextStyle(color:Colors.black45,fontSize:11)))
- ]));}
+ @override
+ Widget build(BuildContext context) {
+  if (loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+  final level = currentLevel;
+  final current = lessons.where((x) => x.level == level).toList();
+  final upcoming = next;
+  return Scaffold(
+   appBar: AppBar(
+    title: const Row(children: [Icon(Icons.auto_awesome, color: gold), SizedBox(width: 8), Text('English Pro', style: TextStyle(fontWeight: FontWeight.bold))]),
+    actions: [
+     IconButton(onPressed: profile, icon: avatar(photo, name, 30), tooltip: 'Profil'),
+     IconButton(onPressed: settings, icon: const Icon(Icons.settings_outlined), tooltip: 'Paramètres'),
+    ],
+   ),
+   body: ListView(
+    padding: const EdgeInsets.all(16),
+    children: [
+     Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(gradient: const LinearGradient(colors: [navy, blue]), borderRadius: BorderRadius.circular(24)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+       Text('BON RETOUR, ${name.toUpperCase()}', style: const TextStyle(color: gold, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1)),
+       const SizedBox(height: 9),
+       const Text('Chaque leçon te rapproche de ton objectif.', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+       const SizedBox(height: 7),
+       Text('Niveau actuel : $level • ${levelNames[level]}', style: const TextStyle(color: Colors.white70)),
+       const SizedBox(height: 17),
+       Row(children: [stat(Icons.bolt, '$xp', 'XP'), const SizedBox(width: 8), stat(Icons.local_fire_department, '$streak', 'JOURS'), const SizedBox(width: 8), stat(Icons.menu_book, '${done.length}', 'LEÇONS')]),
+      ]),
+     ),
+     const SizedBox(height: 14),
+     Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+       Row(children: [const Icon(Icons.flag_outlined, color: blue), const SizedBox(width: 8), const Expanded(child: Text('Objectif quotidien', style: TextStyle(fontWeight: FontWeight.bold))), Text('$todayXp / $goal XP', style: const TextStyle(color: blue, fontWeight: FontWeight.bold))]),
+       const SizedBox(height: 10),
+       ClipRRect(borderRadius: BorderRadius.circular(8), child: LinearProgressIndicator(value: (todayXp / goal).clamp(0, 1), minHeight: 8, color: blue, backgroundColor: const Color(0xFFE7E8F2))),
+      ]),
+     ),
+     if (upcoming != null) ...[
+      const SizedBox(height: 16),
+      Container(
+       padding: const EdgeInsets.all(17),
+       decoration: BoxDecoration(color: const Color(0xFFFFF7E5), borderRadius: BorderRadius.circular(18)),
+       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text('REPRENDRE MON PARCOURS', style: TextStyle(color: Color(0xFF946200), fontWeight: FontWeight.bold, fontSize: 11)),
+        const SizedBox(height: 8),
+        Text(upcoming.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: navy)),
+        Text(upcoming.subtitle, style: const TextStyle(color: Colors.black54)),
+        const SizedBox(height: 10),
+        SizedBox(width: double.infinity, child: FilledButton.icon(onPressed: () => openLesson(upcoming), icon: const Icon(Icons.play_arrow), label: const Text('Continuer'))),
+       ]),
+      ),
+     ],
+     const SizedBox(height: 22),
+     const Text('Mon parcours', style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: navy)),
+     const SizedBox(height: 4),
+     const Text('Les niveaux se débloquent automatiquement. Termine chaque leçon.', style: TextStyle(color: Colors.black54)),
+     const SizedBox(height: 12),
+     ...levels.map((lev) {
+      final all = lessons.where((x) => x.level == lev).toList();
+      final completedCount = count(lev);
+      final index = levels.indexOf(lev);
+      final levelUnlocked = index == 0 || count(levels[index - 1]) == total(levels[index - 1]);
+      final active = lev == level;
+      return Container(
+       margin: const EdgeInsets.only(bottom: 12),
+       padding: const EdgeInsets.all(14),
+       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), border: Border.all(color: active ? blue : const Color(0xFFE5E6F0), width: active ? 2 : 1)),
+       child: Column(children: [
+        Row(children: [
+         Container(width: 44, height: 44, decoration: BoxDecoration(color: levelUnlocked ? blue.withValues(alpha: .1) : const Color(0xFFF0F0F5), borderRadius: BorderRadius.circular(13)), child: Icon(levelUnlocked ? Icons.school_outlined : Icons.lock_outline, color: levelUnlocked ? blue : Colors.grey)),
+         const SizedBox(width: 10),
+         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('$lev • ${levelNames[lev]}', style: const TextStyle(fontWeight: FontWeight.bold, color: navy, fontSize: 15)), Text('$completedCount / ${all.length} étapes terminées', style: const TextStyle(color: Colors.black54, fontSize: 12))])),
+         if (completedCount == all.length) const Icon(Icons.check_circle, color: Colors.green),
+         if (!levelUnlocked) const Icon(Icons.lock, color: Colors.grey),
+        ]),
+        const SizedBox(height: 9),
+        ClipRRect(borderRadius: BorderRadius.circular(8), child: LinearProgressIndicator(value: all.isEmpty ? 0 : completedCount / all.length, minHeight: 7, color: completedCount == all.length ? Colors.green : blue, backgroundColor: const Color(0xFFE8E9F3))),
+        if (active) ...[
+         const SizedBox(height: 8),
+         ...current.map((lesson) {
+          final canOpen = isUnlocked(lesson);
+          final finishedLesson = done.contains(lesson.id);
+          return ListTile(
+           dense: true,
+           contentPadding: EdgeInsets.zero,
+           leading: CircleAvatar(backgroundColor: finishedLesson ? const Color(0xFFE3F6E9) : canOpen ? blue.withValues(alpha: .1) : const Color(0xFFF0F0F5), child: Icon(finishedLesson ? Icons.check : canOpen ? Icons.play_arrow : Icons.lock, color: finishedLesson ? Colors.green : canOpen ? blue : Colors.grey)),
+           title: Text(lesson.title, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: canOpen || finishedLesson ? navy : Colors.grey)),
+           subtitle: Text(lesson.subtitle, style: const TextStyle(fontSize: 11)),
+           trailing: const Icon(Icons.chevron_right, size: 18),
+           onTap: () => openLesson(lesson),
+          );
+         }),
+        ] else if (levelUnlocked && completedCount < all.length)
+         const Padding(padding: EdgeInsets.only(top: 8), child: Align(alignment: Alignment.centerLeft, child: Text('Ce niveau se débloquera dans le parcours après le précédent.', style: TextStyle(fontSize: 12, color: Colors.black54)))),
+       ]),
+      );
+     }),
+     const SizedBox(height: 12),
+     const Center(child: Text('English Pro • Créé par Joseph Marchand', style: TextStyle(color: Colors.black45, fontSize: 11))),
+    ],
+   ),
+  );
+ }
  Widget stat(IconData i,String v,String label)=>Expanded(child:Container(padding:const EdgeInsets.symmetric(vertical:10),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.12),borderRadius:BorderRadius.circular(12)),child:Column(children:[Icon(i,color:gold),Text(v,style:const TextStyle(color:Colors.white,fontWeight:FontWeight.bold,fontSize:16)),Text(label,style:const TextStyle(color:Colors.white70,fontSize:9))])));
 }
 
