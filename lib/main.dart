@@ -7,6 +7,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import 'lesson_bank.dart';
 
 final FlutterLocalNotificationsPlugin localNotifications=FlutterLocalNotificationsPlugin();
@@ -308,7 +310,25 @@ class LessonPage extends StatefulWidget {
  @override State<LessonPage> createState()=>_LessonPageState();
 }
 class _LessonPageState extends State<LessonPage>{
- int? selected; bool checked=false,finished=false;
+ int? selected; bool checked=false,finished=false,listening=false; String recognized='';
+ final FlutterTts tts=FlutterTts(); final SpeechToText speech=SpeechToText();
+ @override void dispose(){tts.stop();speech.stop();super.dispose();}
+ String targetPhrase(StudyLesson l){var t=l.example.split(' = ').first.trim();t=t.split(' / ').first.trim();return t.replaceFirst(RegExp(r'^[^:]+:\\s*'), '').trim();}
+ Future<void> speakText(String text,{bool french=false})async{try{await tts.setLanguage(french?'fr-FR':'en-US');await tts.setSpeechRate(french?0.48:0.42);await tts.speak(text);}catch(_){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('La voix n’est pas disponible sur cet appareil.')));}}
+ Future<void> testPronunciation()async{
+  try{
+   final available=await speech.initialize(onStatus:(status){if(status=='done'||status=='notListening'){if(mounted)setState(()=>listening=false);}},onError:(_){if(mounted)setState(()=>listening=false);});
+   if(!available){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('La reconnaissance vocale n’est pas disponible. Vérifie la langue et les autorisations du téléphone.')));return;}
+   setState(()=>{recognized='',listening=true});
+   await speech.listen(localeId:'en_US',listenFor:const Duration(seconds:8),pauseFor:const Duration(seconds:3),onResult:(result){if(mounted)setState(()=>recognized=result.recognizedWords);if(result.finalResult&&mounted)setState(()=>listening=false);});
+  }catch(_){if(mounted){setState(()=>listening=false);ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Impossible de démarrer le test vocal.')));}}
+ }
+ int? pronunciationPercent(String target,String heard){
+  final expected=target.toLowerCase().replaceAll(RegExp(r'[^a-z0-9 ]'),' ').split(RegExp(r'\\s+')).where((w)=>w.isNotEmpty).toSet();
+  final spoken=heard.toLowerCase().replaceAll(RegExp(r'[^a-z0-9 ]'),' ').split(RegExp(r'\\s+')).where((w)=>w.isNotEmpty).toSet();
+  if(expected.isEmpty||spoken.isEmpty)return null;
+  return ((expected.where(spoken.contains).length/expected.length)*100).round();
+ }
  @override Widget build(BuildContext context){
   final l=widget.lesson;
   final isCorrect=checked&&selected==l.answer;
@@ -330,12 +350,13 @@ class _LessonPageState extends State<LessonPage>{
       const SizedBox(height:17),
       Container(width:double.infinity,padding:const EdgeInsets.all(13),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.13),borderRadius:BorderRadius.circular(14)),child:Text(l.example,style:const TextStyle(color:Colors.white,fontSize:16,fontWeight:FontWeight.w600,height:1.5))),
       const SizedBox(height:8),
-      Text(l.french,style:const TextStyle(color:Colors.white70,height:1.5))
+      Text(l.french,style:const TextStyle(color:Colors.white70,height:1.5)),
+      Align(alignment:Alignment.centerRight,child:TextButton.icon(onPressed:()=>speakText(targetPhrase(l)),icon:const Icon(Icons.volume_up,color:gold),label:const Text('Écouter en anglais',style:TextStyle(color:Colors.white))))
      ])),
      const SizedBox(height:22),
      const Text('VÉRIFIE TA COMPRÉHENSION',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),
      const SizedBox(height:9),
-     Text(l.question,style:const TextStyle(fontSize:19,fontWeight:FontWeight.bold,color:navy)),
+     Row(children:[Expanded(child:Text(l.question,style:const TextStyle(fontSize:19,fontWeight:FontWeight.bold,color:navy))),IconButton(onPressed:()=>speakText(l.question,french:RegExp(r'\\b(quelle|quel|comment|que|complète|choisis|dans|trouve|lequel|laquelle)\\b',caseSensitive:false).hasMatch(l.question)),icon:const Icon(Icons.volume_up,color:blue),tooltip:'Écouter la question')]),
      const SizedBox(height:12),
      ...List.generate(l.options.length,(i){
       final sel=selected==i,correct=checked&&i==l.answer,wrong=checked&&sel&&i!=l.answer;
@@ -348,6 +369,16 @@ class _LessonPageState extends State<LessonPage>{
        )
       ));
      }),
+     SizedBox(width:double.infinity,child:OutlinedButton.icon(onPressed:listening?()=>speech.stop():testPronunciation,icon:Icon(listening?Icons.stop_circle_outlined:Icons.mic_none),label:Text(listening?'Arrêter l’écoute (8 s)':'Tester ma prononciation'))),
+     if(recognized.isNotEmpty)Container(width:double.infinity,margin:const EdgeInsets.only(top:4,bottom:10),padding:const EdgeInsets.all(12),decoration:BoxDecoration(color:const Color(0xFFEEEEFF),borderRadius:BorderRadius.circular(12)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+      const Text('Résultat vocal indicatif',style:TextStyle(color:navy,fontWeight:FontWeight.bold)),
+      const SizedBox(height:5),
+      Text('Phrase cible : ${targetPhrase(l)}',style:const TextStyle(color:navy)),
+      Text('Reconnu : $recognized',style:const TextStyle(color:navy)),
+      if(pronunciationPercent(targetPhrase(l),recognized)!=null)Text('Correspondance des mots : ${pronunciationPercent(targetPhrase(l),recognized)}% • ce n’est pas une note parfaite de prononciation.',style:const TextStyle(color:navy,fontSize:12)),
+      const SizedBox(height:4),
+      const Text('La reconnaissance dépend du microphone et de la langue vocale installée. Elle peut fonctionner différemment hors connexion.',style:TextStyle(color:Colors.black54,fontSize:11))
+     ])),
      if(checked)Container(width:double.infinity,margin:const EdgeInsets.only(top:4),padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:isCorrect?const Color(0xFFE8F8ED):const Color(0xFFFFF4DF),borderRadius:BorderRadius.circular(14)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
       Text(isCorrect?'Bonne réponse !':'On corrige ensemble',style:TextStyle(fontWeight:FontWeight.bold,color:isCorrect?Colors.green.shade800:Colors.brown.shade800,fontSize:16)),
       const SizedBox(height:6),
