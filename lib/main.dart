@@ -410,9 +410,10 @@ class ConversationValidationPage extends StatefulWidget{
  @override State<ConversationValidationPage> createState()=>_ConversationValidationPageState();
 }
 class _ConversationValidationPageState extends State<ConversationValidationPage>{
- late final List<_ConversationTurn> turns=_conversationTurns(widget.level,widget.unit);
+ late final List<_ConversationTurn> turns;
  final FlutterTts tts=FlutterTts();
  int index=0;int? selected;bool checked=false,finished=false,saving=false;
+ @override void initState(){super.initState();turns=_conversationTurns(widget.level,widget.unit);}
  @override void dispose(){tts.stop();super.dispose();}
  Future<void> speakPrompt(String text)async{try{await tts.setLanguage('en-US');await tts.setSpeechRate(0.42);await tts.speak(text);}catch(_){}}
  @override Widget build(BuildContext context){
