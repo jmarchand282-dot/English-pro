@@ -39,7 +39,7 @@ jobs:
           if 'isCoreLibraryDesugaringEnabled = true' not in text:
               text = text.replace('compileOptions {', 'compileOptions {\n        isCoreLibraryDesugaringEnabled = true', 1)
           if 'coreLibraryDesugaring(' not in text:
-              text += '\\n\\ndependencies {\\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\\n}\\n'
+              text += '\n\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
           gradle.write_text(text)
           manifest = Path('/tmp/english_pro/android/app/src/main/AndroidManifest.xml')
           xml = manifest.read_text()
