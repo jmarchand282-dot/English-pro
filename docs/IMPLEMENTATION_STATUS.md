@@ -16,7 +16,7 @@ Dernière mise à jour : 2026-10-26
 - [x] Refonte de l’accueil : bouton COMMENCER, XP, progression et accès aux paramètres.
 - [x] Écrans séparés des niveaux, sous-chapitres et leçons, avec verrouillage séquentiel.
 - [x] Moteur d’apprentissage : explication avant quiz, correction après erreur, nouvelle tentative et progression séquentielle.
-- [ ] Conversations finales distinctes des quiz : à enrichir et tester dans l’application.
+- [x] Conversation guidée distincte du quiz à la fin de chaque sous-chapitre ; à tester en situation réelle.
 - [ ] Profil local avec nom et photo.
 - [x] Mode sombre, rappel quotidien avec choix d’heure, sonnerie du rappel, objectif quotidien et contact.
 - [x] Livre de référence consultable et JoBot local qui recherche dans le cours installé.
