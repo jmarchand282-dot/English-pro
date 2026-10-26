@@ -10,6 +10,7 @@ Dernière mise à jour : 2026-10-26
 - [x] Cahier des charges Android enregistré dans `docs/ANDROID_APP_SPEC.md`.
 - [x] Plan détaillé des objectifs A1 enregistré dans `docs/A1_CURRICULUM_PLAN.md`.
 - [ ] Relecture pédagogique complète des 500 leçons.
+- [ ] Ajouter plusieurs exercices variés par leçon (le prototype actuel a un quiz principal par leçon).
 - [ ] Vérification approfondie des réponses de quiz, des traductions et de la non-répétition du contenu.
 - [x] Conversion des 500 brouillons A1 en données Dart structurées et branchement au moteur de cours.
 - [x] Premier test de positionnement (8 questions) et création initiale du profil.
