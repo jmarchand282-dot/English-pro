@@ -11,17 +11,17 @@ Dernière mise à jour : 2026-10-26
 - [x] Plan détaillé des objectifs A1 enregistré dans `docs/A1_CURRICULUM_PLAN.md`.
 - [ ] Relecture pédagogique complète des 500 leçons.
 - [ ] Vérification approfondie des réponses de quiz, des traductions et de la non-répétition du contenu.
-- [ ] Conversion du contenu en données structurées utilisables directement par l’application.
-- [ ] Implémentation du test de positionnement initial.
-- [ ] Refonte de l’accueil avec un seul grand bouton COMMENCER, XP, progression et accès aux paramètres.
-- [ ] Écrans séparés des niveaux, sous-chapitres et leçons avec verrouillage réel.
-- [ ] Moteur d’apprentissage : explication avant quiz, correction après erreur, nouvelle tentative, validation et déverrouillage automatique.
-- [ ] Conversations de validation à la fin de chaque sous-chapitre.
+- [x] Conversion des 500 brouillons A1 en données Dart structurées et branchement au moteur de cours.
+- [x] Premier test de positionnement (8 questions) et création initiale du profil.
+- [x] Refonte de l’accueil : bouton COMMENCER, XP, progression et accès aux paramètres.
+- [x] Écrans séparés des niveaux, sous-chapitres et leçons, avec verrouillage séquentiel.
+- [x] Moteur d’apprentissage : explication avant quiz, correction après erreur, nouvelle tentative et progression séquentielle.
+- [ ] Conversations finales distinctes des quiz : à enrichir et tester dans l’application.
 - [ ] Profil local avec nom et photo.
-- [ ] Paramètres : mode sombre, son, notifications, rappels et heure, objectif quotidien, contact.
-- [ ] Bibliothèque de référence et chatbot local fondé sur des réponses vérifiées.
-- [ ] Intégration de ressources audio et illustrations légères, avec test hors connexion.
-- [ ] Compilation de l’APK release, installation et tests réels sur Android.
+- [x] Mode sombre, rappel quotidien avec choix d’heure, sonnerie du rappel, objectif quotidien et contact.
+- [x] Livre de référence consultable et JoBot local qui recherche dans le cours installé.
+- [x] Lecture vocale, test de reconnaissance de prononciation à titre indicatif et pictogrammes pertinents ; reste à tester hors connexion.
+- [ ] Compilation de l’APK release, installation et tests réels sur Android (compilation GitHub Actions en cours).
 
 ## Qualité du contenu — point important
 
