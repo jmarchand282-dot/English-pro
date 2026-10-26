@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -180,7 +181,7 @@ class _OnboardingPageState extends State<OnboardingPage>{
       Text(q.question,style:const TextStyle(color:Colors.white,fontSize:22,fontWeight:FontWeight.bold))
      ])),
      const SizedBox(height:14),
-     ...List.generate(q.options.length,(i){final sel=selected==i,correct=checked&&i==q.answer,wrong=checked&&sel&&i!=q.answer;return Container(margin:const EdgeInsets.only(bottom:9),child:InkWell(onTap:checked?null:()=>setState(()=>selected=i),borderRadius:BorderRadius.circular(14),child:Container(padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:correct?const Color(0xFFE8F8ED):wrong?const Color(0xFFFFEEEE):sel?const Color(0xFFEEEEFF):Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:correct?Colors.green:wrong?Colors.red:sel?blue:const Color(0xFFE4E6F0),width:sel||correct?2:1)),child:Text(q.options[i],style:const TextStyle(color:navy,fontSize:16)))));}),
+     ...List.generate(q.options.length,(i){final sel=selected==i,correct=checked&&i==q.answer,wrong=checked&&sel&&i!=q.answer;return Container(margin:const EdgeInsets.only(bottom:9),child:InkWell(onTap:(!quizStarted||checked)?null:()=>setState(()=>selected=i),borderRadius:BorderRadius.circular(14),child:Container(padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:correct?const Color(0xFFE8F8ED):wrong?const Color(0xFFFFEEEE):sel?const Color(0xFFEEEEFF):Colors.white,borderRadius:BorderRadius.circular(14),border:Border.all(color:correct?Colors.green:wrong?Colors.red:sel?blue:const Color(0xFFE4E6F0),width:sel||correct?2:1)),child:Text(q.options[i],style:const TextStyle(color:navy,fontSize:16)))));}),
      if(checked)Container(padding:const EdgeInsets.all(13),decoration:BoxDecoration(color:selected==q.answer?const Color(0xFFE8F8ED):const Color(0xFFFFF4DF),borderRadius:BorderRadius.circular(13)),child:Text(selected==q.answer?'Bonne réponse ! ${q.explanation}':'Réponse correcte : ${q.options[q.answer]}. ${q.explanation}',style:const TextStyle(color:navy,height:1.4))),
      const SizedBox(height:16),
      SizedBox(height:52,child:FilledButton(onPressed:(){
@@ -310,9 +311,10 @@ class LessonPage extends StatefulWidget {
  @override State<LessonPage> createState()=>_LessonPageState();
 }
 class _LessonPageState extends State<LessonPage>{
- int? selected; bool checked=false,finished=false,listening=false; String recognized='';
+ int? selected; bool checked=false,finished=false,listening=false,quizStarted=false,timedOut=false; int secondsLeft=10; Timer? quizTimer; String recognized='';
  final FlutterTts tts=FlutterTts(); final SpeechToText speech=SpeechToText();
- @override void dispose(){tts.stop();speech.stop();super.dispose();}
+ @override void dispose(){quizTimer?.cancel();tts.stop();speech.stop();super.dispose();}
+ void startQuiz(){quizTimer?.cancel();setState((){quizStarted=true;secondsLeft=10;timedOut=false;selected=null;checked=false;});quizTimer=Timer.periodic(const Duration(seconds:1),(timer){if(secondsLeft<=1){timer.cancel();if(mounted)setState((){secondsLeft=0;timedOut=true;checked=true;});}else if(mounted)setState(()=>secondsLeft--);});}
  String targetPhrase(StudyLesson l){var t=l.example.split(' = ').first.trim();t=t.split(' / ').first.trim();return t.replaceFirst(RegExp(r'^[^:]+:\s*'), '').trim();}
  Future<void> speakText(String text,{bool french=false})async{try{await tts.setLanguage(french?'fr-FR':'en-US');await tts.setSpeechRate(french?0.48:0.42);await tts.speak(text);}catch(_){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('La voix n’est pas disponible sur cet appareil.')));}}
  Future<void> testPronunciation()async{
@@ -358,6 +360,8 @@ class _LessonPageState extends State<LessonPage>{
      const SizedBox(height:9),
      Row(children:[Expanded(child:Text(l.question,style:const TextStyle(fontSize:19,fontWeight:FontWeight.bold,color:navy))),IconButton(onPressed:()=>speakText(l.question,french:RegExp(r'\b(quelle|quel|comment|que|complète|choisis|dans|trouve|lequel|laquelle)\b',caseSensitive:false).hasMatch(l.question)),icon:const Icon(Icons.volume_up,color:blue),tooltip:'Écouter la question')]),
      const SizedBox(height:12),
+     if(!quizStarted)SizedBox(width:double.infinity,child:FilledButton.icon(onPressed:startQuiz,icon:const Icon(Icons.timer_outlined),label:const Text('DÉMARRER LE QUIZ • 10 SECONDES'))),
+     if(quizStarted&&!checked)Padding(padding:const EdgeInsets.only(bottom:10),child:Row(children:[const Icon(Icons.timer_outlined,color:blue),const SizedBox(width:6),Text('Temps restant : $secondsLeft s',style:TextStyle(color:secondsLeft<=3?Colors.red:blue,fontWeight:FontWeight.bold))])),
      ...List.generate(l.options.length,(i){
       final sel=selected==i,correct=checked&&i==l.answer,wrong=checked&&sel&&i!=l.answer;
       final border=correct?Colors.green:wrong?Colors.red:sel?blue:const Color(0xFFE4E6F0);
@@ -380,7 +384,7 @@ class _LessonPageState extends State<LessonPage>{
       const Text('La reconnaissance dépend du microphone et de la langue vocale installée. Elle peut fonctionner différemment hors connexion.',style:TextStyle(color:Colors.black54,fontSize:11))
      ])),
      if(checked)Container(width:double.infinity,margin:const EdgeInsets.only(top:4),padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:isCorrect?const Color(0xFFE8F8ED):const Color(0xFFFFF4DF),borderRadius:BorderRadius.circular(14)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-      Text(isCorrect?'Bonne réponse !':'On corrige ensemble',style:TextStyle(fontWeight:FontWeight.bold,color:isCorrect?Colors.green.shade800:Colors.brown.shade800,fontSize:16)),
+      Text(isCorrect?'Bonne réponse !':timedOut?'Temps écoulé — on corrige ensemble':'On corrige ensemble',style:TextStyle(fontWeight:FontWeight.bold,color:isCorrect?Colors.green.shade800:Colors.brown.shade800,fontSize:16)),
       const SizedBox(height:6),
       Text(isCorrect?'Tu as bien compris cette question.':'Réponse correcte : ${l.options[l.answer]}',style:const TextStyle(fontWeight:FontWeight.w600,color:navy)),
       const SizedBox(height:6),
@@ -390,15 +394,16 @@ class _LessonPageState extends State<LessonPage>{
     Padding(padding:const EdgeInsets.all(18),child:SizedBox(width:double.infinity,child:FilledButton(
      onPressed:()async{
       if(finished){Navigator.pop(context);return;}
+      if(!quizStarted){startQuiz();return;}
       if(!checked){
        if(selected==null){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Choisis une réponse pour continuer.')));return;}
-       setState(()=>checked=true);return;
+       quizTimer?.cancel();setState(()=>checked=true);return;
       }
-      if(!isCorrect){setState((){selected=null;checked=false;});return;}
-      await widget.onComplete();
+      if(!isCorrect){setState((){selected=null;checked=false;quizStarted=false;secondsLeft=10;timedOut=false;});return;}
+      quizTimer?.cancel();await widget.onComplete();
       if(mounted)setState(()=>finished=true);
      },
-     child:Text(finished?'Retour au parcours':!checked?'Vérifier ma réponse':isCorrect?'Terminer • +10 XP':'Réessayer après correction')
+     child:Text(finished?'Retour au parcours':!quizStarted?'Démarrer le quiz • 10 s':!checked?'Vérifier ma réponse':isCorrect?'Terminer • +10 XP':'Réessayer après correction')
     )))
    ]))
   );
