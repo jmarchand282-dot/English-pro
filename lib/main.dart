@@ -30,7 +30,7 @@ class _AppHomeState extends State<AppHome> {
  Future<void> openLesson(StudyLesson l) async {if(!isUnlocked(l)){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine la leçon précédente pour débloquer celle-ci.')));return;}await Navigator.push(context,MaterialPageRoute(builder:(_)=>LessonPage(lesson:l,alreadyDone:done.contains(l.id),onComplete:()=>complete(l))));if(mounted)setState((){});}
  Future<void> pickPhoto() async {try{final f=await ImagePicker().pickImage(source:ImageSource.gallery,imageQuality:65,maxWidth:420);if(f==null)return;photo=base64Encode(await f.readAsBytes());await save();if(mounted)setState((){});}catch(_){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Photo impossible à charger. Réessaie.')));}}
  void profile(){final c=TextEditingController(text:name=='Learner'?'':name);showModalBottomSheet(context:context,isScrollControlled:true,builder:(ctx)=>Padding(padding:EdgeInsets.fromLTRB(22,22,22,MediaQuery.of(ctx).viewInsets.bottom+24),child:Column(mainAxisSize:MainAxisSize.min,children:[const Text('Mon profil',style:TextStyle(fontSize:22,fontWeight:FontWeight.bold,color:navy)),const SizedBox(height:14),GestureDetector(onTap:pickPhoto,child:avatar(photo,name,78)),TextButton.icon(onPressed:pickPhoto,icon:const Icon(Icons.photo_camera_outlined),label:const Text('Choisir une photo')),TextField(controller:c,decoration:const InputDecoration(labelText:'Ton nom',border:OutlineInputBorder())),const SizedBox(height:14),SizedBox(width:double.infinity,child:FilledButton(onPressed:()async{name=c.text.trim().isEmpty?'Learner':c.text.trim();await save();if(ctx.mounted)Navigator.pop(ctx);if(mounted)setState((){});},child:const Text('Enregistrer')))])));}
- void settings(){Navigator.push(context,MaterialPageRoute(builder:(_)=>SettingsPage(goal:goal,onGoal:(v)async{goal=v;await save();if(mounted)setState((){});},onContact:contact,onReset:reset)));}
+ void settings(){Navigator.push(context,MaterialPageRoute(builder:(_)=>SettingsPage(goal:goal,onGoal:(v)async{goal=v;await save();if(mounted)setState((){});},onContact:contact,onReset:reset,onBook:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>ReferenceBookPage(lessons:lessons))),onChat:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>OfflineChatPage(lessons:lessons))))));}
  Future<void> contact()async{final u=Uri.parse('https://wa.me/243843478142?text=Bonjour%20English%20Pro%2C%20j%27ai%20besoin%20d%27aide.');if(!await launchUrl(u,mode:LaunchMode.externalApplication)&&mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('WhatsApp ne peut pas être ouvert.')));}
  Future<void> reset()async{final ok=await showDialog<bool>(context:context,builder:(c)=>AlertDialog(title:const Text('Effacer la progression ?'),content:const Text('Toutes les leçons terminées et les XP seront supprimés sur cet appareil.'),actions:[TextButton(onPressed:()=>Navigator.pop(c,false),child:const Text('Annuler')),FilledButton(onPressed:()=>Navigator.pop(c,true),child:const Text('Effacer'))]));if(ok!=true)return;done.clear();xp=0;streak=0;lastDate='';await save();if(mounted)setState((){});}
  @override
@@ -344,12 +344,94 @@ class _LessonPageState extends State<LessonPage>{
  }
 }
 
+
+class ReferenceBookPage extends StatefulWidget{
+ final List<StudyLesson> lessons;
+ const ReferenceBookPage({super.key,required this.lessons});
+ @override State<ReferenceBookPage> createState()=>_ReferenceBookPageState();
+}
+class _ReferenceBookPageState extends State<ReferenceBookPage>{
+ String query='';
+ @override Widget build(BuildContext context){
+  final q=query.trim().toLowerCase();
+  final filtered=widget.lessons.where((l)=>q.isEmpty||'${l.title} ${l.explanation} ${l.example}'.toLowerCase().contains(q)).toList();
+  return Scaffold(appBar:AppBar(title:const Text('Livre de référence')),body:Column(children:[
+   Padding(padding:const EdgeInsets.all(16),child:TextField(onChanged:(v)=>setState(()=>query=v),decoration:const InputDecoration(prefixIcon:Icon(Icons.search),labelText:'Rechercher une notion, un verbe ou une expression',border:OutlineInputBorder()))),
+   Padding(padding:const EdgeInsets.symmetric(horizontal:16),child:Align(alignment:Alignment.centerLeft,child:Text('${filtered.length} résultats • hors connexion',style:const TextStyle(color:Colors.black54,fontSize:12)))),
+   const SizedBox(height:8),
+   Expanded(child:filtered.isEmpty?const Center(child:Text('Aucun résultat. Essaie un mot plus simple.')):ListView.builder(padding:const EdgeInsets.fromLTRB(16,0,16,16),itemCount:filtered.length,itemBuilder:(context,i){final l=filtered[i];return Card(color:Colors.white,margin:const EdgeInsets.only(bottom:8),child:ListTile(title:Text(l.title,style:const TextStyle(fontWeight:FontWeight.bold,color:navy)),subtitle:Text('${l.level} • ${l.subtitle}',maxLines:2,overflow:TextOverflow.ellipsis),trailing:const Icon(Icons.chevron_right),onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>ReferenceEntryPage(lesson:l))));}))
+  ]));
+ }
+}
+class ReferenceEntryPage extends StatelessWidget{
+ final StudyLesson lesson;
+ const ReferenceEntryPage({super.key,required this.lesson});
+ @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:Text(lesson.level)),body:ListView(padding:const EdgeInsets.all(18),children:[
+  Text(lesson.title,style:const TextStyle(color:navy,fontSize:23,fontWeight:FontWeight.bold)),
+  const SizedBox(height:14),
+  Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+   const Text('EXPLICATION',style:TextStyle(color:gold,fontWeight:FontWeight.bold)),
+   const SizedBox(height:8),
+   Text(lesson.explanation,style:const TextStyle(color:Colors.white,fontSize:17,height:1.5)),
+   const SizedBox(height:18),
+   const Text('EXEMPLE',style:TextStyle(color:gold,fontWeight:FontWeight.bold)),
+   const SizedBox(height:8),
+   Text(lesson.example,style:const TextStyle(color:Colors.white,fontSize:16,height:1.5)),
+   const SizedBox(height:8),
+   Text(lesson.french,style:const TextStyle(color:Colors.white70,height:1.4)),
+  ])),
+  const SizedBox(height:16),
+  const Text('CORRECTION / À RETENIR',style:TextStyle(color:blue,fontWeight:FontWeight.bold)),
+  const SizedBox(height:6),
+  Text(lesson.correction,style:const TextStyle(color:navy,fontSize:16,height:1.5))
+ ]));
+}
+class OfflineChatPage extends StatefulWidget{
+ final List<StudyLesson> lessons;
+ const OfflineChatPage({super.key,required this.lessons});
+ @override State<OfflineChatPage> createState()=>_OfflineChatPageState();
+}
+class _OfflineChatPageState extends State<OfflineChatPage>{
+ final controller=TextEditingController();
+ final scrollController=ScrollController();
+ final messages=<Map<String,String>>[
+  {'role':'bot','text':'Salut ! Je suis JoBot, ton aide pédagogique hors connexion. Pose une question sur une leçon, un verbe ou une expression du cours.'}
+ ];
+ @override void dispose(){controller.dispose();scrollController.dispose();super.dispose();}
+ String answer(String question){
+  final q=question.toLowerCase().replaceAll(RegExp(r'[^a-zàâçéèêëîïôûùüÿñæœ0-9 ]'),' ');
+  final terms=q.split(RegExp(r'\s+')).where((w)=>w.length>2).toSet();
+  if(terms.isEmpty)return 'Écris une question ou un mot, par exemple « eat », « to be », « present simple » ou « comment dire merci ».';
+  final scored=widget.lessons.map((l){
+   final text='${l.title} ${l.explanation} ${l.example} ${l.french}'.toLowerCase();
+   var score=0;
+   for(final term in terms){if(l.title.toLowerCase().contains(term))score+=4;else if(text.contains(term))score++;}
+   return (lesson:l,score:score);
+  }).where((x)=>x.score>0).toList()..sort((a,b)=>b.score.compareTo(a.score));
+  if(scored.isEmpty)return 'Je n’ai pas encore trouvé une réponse précise dans le cours installé. Essaie un mot-clé plus court, ou consulte le Livre de référence. JoBot utilise une base locale : il ne connaît pas encore toutes les questions possibles.';
+  final best=scored.take(2).toList();
+  return best.map((x)=>'Leçon : ${x.lesson.title}\nExplication : ${x.lesson.explanation}\nExemple : ${x.lesson.example}\nEn français : ${x.lesson.french}\nÀ retenir : ${x.lesson.correction}').join('\n\n---\n\n');
+ }
+ void send(){
+  final q=controller.text.trim();if(q.isEmpty)return;
+  setState(()=>messages.add({'role':'user','text':q}));
+  controller.clear();
+  setState(()=>messages.add({'role':'bot','text':answer(q)}));
+  WidgetsBinding.instance.addPostFrameCallback((_){if(scrollController.hasClients)scrollController.animateTo(scrollController.position.maxScrollExtent,duration:const Duration(milliseconds:250),curve:Curves.easeOut);});
+ }
+ @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('JoBot • hors connexion')),body:Column(children:[
+  const Padding(padding:EdgeInsets.all(12),child:Text('JoBot recherche dans le cours installé. Pour les questions hors de sa base, il te le dira au lieu d’inventer une réponse.',style:TextStyle(color:Colors.black54,fontSize:12))),
+  Expanded(child:ListView.builder(controller:scrollController,padding:const EdgeInsets.all(14),itemCount:messages.length,itemBuilder:(context,i){final m=messages[i],isUser=m['role']=='user';return Align(alignment:isUser?Alignment.centerRight:Alignment.centerLeft,child:Container(margin:const EdgeInsets.only(bottom:10),padding:const EdgeInsets.all(13),constraints:const BoxConstraints(maxWidth:340),decoration:BoxDecoration(color:isUser?blue:Colors.white,borderRadius:BorderRadius.circular(16),border:isUser?null:Border.all(color:const Color(0xFFE6E7F0))),child:Text(m['text']??'',style:TextStyle(color:isUser?Colors.white:navy,height:1.4))));})),
+  SafeArea(top:false,child:Padding(padding:const EdgeInsets.fromLTRB(12,6,12,12),child:Row(children:[Expanded(child:TextField(controller:controller,onSubmitted:(_)=>send(),minLines:1,maxLines:4,decoration:const InputDecoration(hintText:'Écris ta question…',border:OutlineInputBorder()))),const SizedBox(width:8),IconButton.filled(onPressed:send,icon:const Icon(Icons.send),tooltip:'Envoyer')]))),
+ ]));
+}
+
 class SettingsPage extends StatelessWidget{
- final int goal; final ValueChanged<int> onGoal; final VoidCallback onContact,onReset;
- const SettingsPage({super.key,required this.goal,required this.onGoal,required this.onContact,required this.onReset});
+ final int goal; final ValueChanged<int> onGoal; final VoidCallback onContact,onReset,onBook,onChat;
+ const SettingsPage({super.key,required this.goal,required this.onGoal,required this.onContact,required this.onReset,required this.onBook,required this.onChat});
  @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Paramètres')),body:ListView(padding:const EdgeInsets.all(18),children:[
  const Text('APPRENTISSAGE',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),const SizedBox(height:10),Card(color:Colors.white,child:Column(children:[const ListTile(leading:Icon(Icons.flag_outlined,color:blue),title:Text('Objectif quotidien'),subtitle:Text('Choisis ton objectif en XP par jour')),Padding(padding:const EdgeInsets.symmetric(horizontal:14),child:Wrap(spacing:7,children:[10,15,20,30,50].map((v)=>ChoiceChip(label:Text('$v XP'),selected:goal==v,onSelected:(_)=>onGoal(v))).toList())),const SizedBox(height:10),const Divider(),const ListTile(leading:Icon(Icons.offline_bolt,color:blue),title:Text('Apprentissage hors ligne'),subtitle:Text('Les leçons et la progression sont enregistrées sur cet appareil.'))])),const SizedBox(height:18),
- const Text('À PROPOS ET CONTACT',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),const SizedBox(height:10),Card(color:Colors.white,child:Column(children:[const ListTile(leading:Icon(Icons.person_outline,color:blue),title:Text('CRÉÉ PAR JOSEPH MARCHAND'),subtitle:Text('DÉVELOPPEUR • English Pro A1 à C2')),const ListTile(leading:Icon(Icons.chat,color:Colors.green),title:Text('WhatsApp'),subtitle:Text('+243 843 478 142')),ListTile(leading:const Icon(Icons.open_in_new,color:Colors.green),title:const Text('Nous contacter sur WhatsApp'),trailing:const Icon(Icons.chevron_right),onTap:onContact)])),const SizedBox(height:18),Card(color:Colors.white,child:ListTile(leading:const Icon(Icons.restart_alt,color:Colors.red),title:const Text('Réinitialiser ma progression'),subtitle:const Text('Effacer les leçons terminées et les XP'),onTap:onReset)),const SizedBox(height:18),const Center(child:Text('English Pro • Version 2.0',style:TextStyle(color:Colors.black45)))
+ const Text('OUTILS D’APPRENTISSAGE',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),const SizedBox(height:10),Card(color:Colors.white,child:Column(children:[ListTile(leading:const Icon(Icons.menu_book,color:blue),title:const Text('Livre de référence'),subtitle:const Text('Rechercher une règle, un mot ou une leçon hors ligne'),trailing:const Icon(Icons.chevron_right),onTap:onBook),const Divider(height:1),ListTile(leading:const Icon(Icons.chat_bubble_outline,color:blue),title:const Text('JoBot — aide pédagogique'),subtitle:const Text('Pose une question sur les notions du cours'),trailing:const Icon(Icons.chevron_right),onTap:onChat)])),const SizedBox(height:18),const Text('À PROPOS ET CONTACT',style:TextStyle(color:blue,fontWeight:FontWeight.bold,letterSpacing:1)),const SizedBox(height:10),Card(color:Colors.white,child:Column(children:[const ListTile(leading:Icon(Icons.person_outline,color:blue),title:Text('CRÉÉ PAR JOSEPH MARCHAND'),subtitle:Text('DÉVELOPPEUR • English Pro A1 à C2')),const ListTile(leading:Icon(Icons.chat,color:Colors.green),title:Text('WhatsApp'),subtitle:Text('+243 843 478 142')),ListTile(leading:const Icon(Icons.open_in_new,color:Colors.green),title:const Text('Nous contacter sur WhatsApp'),trailing:const Icon(Icons.chevron_right),onTap:onContact)])),const SizedBox(height:18),Card(color:Colors.white,child:ListTile(leading:const Icon(Icons.restart_alt,color:Colors.red),title:const Text('Réinitialiser ma progression'),subtitle:const Text('Effacer les leçons terminées et les XP'),onTap:onReset)),const SizedBox(height:18),const Center(child:Text('English Pro • Version 2.0',style:TextStyle(color:Colors.black45)))
  ]));
 }
 Widget avatar(String? data,String name,double size){Widget child;if(data!=null){try{child=Image.memory(base64Decode(data),width:size,height:size,fit:BoxFit.cover);}catch(_){child=Text(name.isEmpty?'E':name[0].toUpperCase());}}else{child=Text(name.isEmpty?'E':name[0].toUpperCase());}return CircleAvatar(radius:size/2,backgroundColor:gold,child:ClipOval(child:SizedBox(width:size,height:size,child:Center(child:child))));}
