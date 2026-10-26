@@ -17,7 +17,7 @@ Dernière mise à jour : 2026-10-26
 - [x] Écrans séparés des niveaux, sous-chapitres et leçons, avec verrouillage séquentiel.
 - [x] Moteur d’apprentissage : explication avant quiz, correction après erreur, nouvelle tentative et progression séquentielle.
 - [x] Conversation guidée distincte du quiz à la fin de chaque sous-chapitre ; à tester en situation réelle.
-- [ ] Profil local avec nom et photo.
+- [x] Profil local avec nom et photo (à confirmer lors d’un test sur téléphone).
 - [x] Mode sombre, rappel quotidien avec choix d’heure, sonnerie du rappel, objectif quotidien et contact.
 - [x] Livre de référence consultable et JoBot local qui recherche dans le cours installé.
 - [x] Lecture vocale, test de reconnaissance de prononciation à titre indicatif et pictogrammes pertinents ; reste à tester hors connexion.
@@ -33,10 +33,10 @@ Le plan de départ prévoit des centaines de leçons distinctes par niveau. Seul
 
 1. Relire et améliorer les brouillons A1, en priorité les quiz, les explications après erreur et les conversations.
 2. Définir un format de données structuré pour les leçons, leurs réponses, les médias et les critères de validation.
-3. Intégrer le contenu A1 dans le moteur de cours Android.
-4. Refaire les écrans et le verrouillage de progression conformément au cahier des charges.
-5. Ajouter les fonctions de profil, paramètres et apprentissage hors connexion.
-6. Compiler et tester l’APK sur Android avant de déclarer une fonction terminée.
+3. Attendre la fin de la compilation Android et corriger les erreurs éventuelles.
+4. Installer l’APK sur un téléphone et tester l’inscription, la progression, les conversations, les rappels et les fonctions vocales.
+5. Relire et améliorer les 500 leçons A1 avant de les qualifier de définitives.
+6. Rédiger et intégrer 500 leçons distinctes pour chacun des niveaux A2, B1, B2, C1 et C2.
 
 ## Paramètres produit à respecter
 
