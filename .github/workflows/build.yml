@@ -3,6 +3,10 @@ name: Build English Pro
 on:
   push:
     branches: [main, 'planning/**']
+    paths:
+      - 'lib/**'
+      - 'pubspec.yaml'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
 
 permissions:
