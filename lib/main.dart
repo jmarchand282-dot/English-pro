@@ -92,7 +92,7 @@ class _AppHomeState extends State<AppHome> {
      const SizedBox(height:20),
      SizedBox(width:double.infinity,height:62,child:FilledButton.icon(
       style:FilledButton.styleFrom(backgroundColor:gold,foregroundColor:navy,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(18)),textStyle:const TextStyle(fontSize:18,fontWeight:FontWeight.w900,letterSpacing:1)),
-      onPressed:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>CoursePathPage(lessons:lessons,done:done,conversationsDone:conversationsDone,currentLevel:level,levelUnlocked:isLevelUnlocked,completedCount:count,totalCount:total,lessonUnlocked:isUnlocked,onOpenLesson:openLesson,onConversationComplete:(lev,unit)async{conversationsDone.add('${lev}-U${unit}');await save();if(mounted)setState((){});}))),
+      onPressed:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>CoursePathPage(lessons:lessons,done:done,conversationsDone:conversationsDone,currentLevel:level,levelUnlocked:isLevelUnlocked,completedCount:count,totalCount:total,lessonUnlocked:isUnlocked,onOpenLesson:openLesson,onConversationComplete:(lev,unit)async{conversationsDone.add('$lev-U$unit');await save();if(mounted)setState((){});}))),
       icon:const Icon(Icons.play_arrow_rounded,size:30),label:const Text('COMMENCER')
      ))
     ])),
@@ -271,8 +271,8 @@ class _SubchapterPageState extends State<SubchapterPage>{
     final doneCount=list.where((l)=>widget.done.contains(l.id)).length;
     final previousUnits=units.where((u)=>u<unit).toList();
     final previousUnit=previousUnits.isEmpty?null:previousUnits.last;
-    final unlocked=previousUnit==null||(levelLessons.where((l)=>l.unit==previousUnit).every((l)=>widget.done.contains(l.id))&&widget.conversationsDone.contains('${widget.level}-U${previousUnit}'));
-    final conversationValidated=widget.conversationsDone.contains('${widget.level}-U${unit}');
+    final unlocked=previousUnit==null||(levelLessons.where((l)=>l.unit==previousUnit).every((l)=>widget.done.contains(l.id))&&widget.conversationsDone.contains('${widget.level}-U$previousUnit'));
+    final conversationValidated=widget.conversationsDone.contains('${widget.level}-U$unit');
     final finished=doneCount==list.length&&conversationValidated;
     final title=widget.level=='A1'?(a1UnitTitles[unit]??'Sous-chapitre $unit'):'Sous-chapitre $unit • ${list.first.title}';
     return Card(color:Colors.white,margin:const EdgeInsets.only(bottom:11),child:ListTile(
