@@ -586,16 +586,16 @@ Les 500 éléments ci-dessous sont des **objectifs de leçons prévus**, pas des
 
 ## Modèle obligatoire pour rédiger chaque leçon
 
-1. Objectif et prérequis.
-2. Explication claire en français avec points importants mis en évidence.
-3. Exemples anglais-français et formes affirmatives, négatives ou interrogatives selon la notion.
-4. Prononciation écrite et audio américain lorsque disponible hors connexion.
-5. Illustration ou pictogramme lorsque cela soutient réellement le sens.
-6. Exercices gradués et variés, avec correction expliquée.
-7. Activité ciblée après une erreur.
-8. Réutilisation dans une phrase, un dialogue ou une situation réelle.
-9. Résumé et suivi des erreurs à revoir.
-10. Critères explicites pour marquer la leçon terminée.
+- Objectif et prérequis.
+- Explication claire en français avec points importants mis en évidence.
+- Exemples anglais-français et formes affirmatives, négatives ou interrogatives selon la notion.
+- Prononciation écrite et audio américain lorsque disponible hors connexion.
+- Illustration ou pictogramme lorsque cela soutient réellement le sens.
+- Exercices gradués et variés, avec correction expliquée.
+- Activité ciblée après une erreur.
+- Réutilisation dans une phrase, un dialogue ou une situation réelle.
+- Résumé et suivi des erreurs à revoir.
+- Critères explicites pour marquer la leçon terminée.
 
 ## Règles de progression à implémenter ultérieurement
 
