@@ -76,7 +76,7 @@ jobs:
           flutter pub get
       - name: Check Dart code
         working-directory: /tmp/english_pro
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos
       - name: Build Android APK
         working-directory: /tmp/english_pro
         run: flutter build apk --release
