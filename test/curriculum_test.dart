@@ -43,6 +43,26 @@ void main() {
     });
   });
 
+  group('Release requirements for every CEFR level', () {
+    final lessons = buildCurriculum();
+    for (final level in ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']) {
+      final levelLessons = lessons.where((lesson) => lesson.level == level).toList();
+      test('$level has 500 lessons across ten subchapters of 50', () {
+        expect(levelLessons, hasLength(500),
+            reason: '$level is not release-ready until all 500 lessons are integrated');
+        expect(levelLessons.map((lesson) => lesson.id).toSet(), hasLength(500));
+        final units = <int, int>{};
+        for (final lesson in levelLessons) {
+          units.update(lesson.unit, (count) => count + 1, ifAbsent: () => 1);
+        }
+        expect(units.keys.toSet(), Set<int>.from(List<int>.generate(10, (i) => i + 1)));
+        for (var unit = 1; unit <= 10; unit++) {
+          expect(units[unit], 50, reason: '$level subchapter $unit must contain 50 lessons');
+        }
+      });
+    }
+  });
+
   group('Progression locks', () {
     final allLessons = buildCurriculum();
     final a1 = allLessons.where((lesson) => lesson.level == 'A1').toList();
