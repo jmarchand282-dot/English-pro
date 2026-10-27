@@ -1,4 +1,5 @@
 import 'a1_course_data.dart';
+import 'a2_course_data.dart';
 
 class Topic {
  final String title, explanation, example, french, question;
@@ -111,8 +112,26 @@ List<StudyLesson> buildCurriculum() {
    phase: 0,
   ));
  }
- // A2-C2 keep the current course bank for now; their expanded lesson content is still to be written.
- for(final entry in curriculum.entries.where((e)=>e.key!='A1')){
+ // A2 Unit 1 contains 50 individually authored lessons; remaining A2 units are still in progress.
+ for(final raw in a2CourseData){
+  result.add(StudyLesson(
+   id: raw['id'] as String,
+   level: 'A2',
+   title: raw['title'] as String,
+   subtitle: raw['subtitle'] as String,
+   explanation: raw['explanation'] as String,
+   example: raw['example'] as String,
+   french: raw['french'] as String,
+   question: raw['question'] as String,
+   correction: raw['correction'] as String,
+   options: (raw['options'] as List).cast<String>(),
+   answer: raw['answer'] as int,
+   unit: raw['unit'] as int,
+   phase: raw['phase'] as int,
+  ));
+ }
+ // Remaining A2 prototype topics and B1-C2 banks are temporary and not release-ready.
+ for(final entry in curriculum.entries.where((e)=>e.key!='A1' && e.key!='A2')){
   var unit=1;
   for(var i=0;i<entry.value.length;i++){
    final t=entry.value[i];
