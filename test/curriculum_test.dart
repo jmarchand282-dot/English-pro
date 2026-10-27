@@ -21,6 +21,13 @@ void main() {
       }
     });
 
+    test('titles, quiz questions, examples, and explanations are not repeated', () {
+      expect(a1.map((lesson) => lesson.title).toSet(), hasLength(500));
+      expect(a1.map((lesson) => lesson.question).toSet(), hasLength(500));
+      expect(a1.map((lesson) => lesson.example).toSet(), hasLength(500));
+      expect(a1.map((lesson) => lesson.explanation).toSet(), hasLength(500));
+    });
+
     test('every lesson has usable learning text and a valid three-option answer', () {
       for (final lesson in a1) {
         expect(lesson.title.trim(), isNotEmpty, reason: lesson.id);
