@@ -76,11 +76,16 @@ jobs:
           cp pubspec.yaml /tmp/english_pro/pubspec.yaml
           cp -r lib/. /tmp/english_pro/lib/
           rm -rf /tmp/english_pro/test
+          mkdir -p /tmp/english_pro/test
+          cp -r test/. /tmp/english_pro/test/
           cd /tmp/english_pro
           flutter pub get
       - name: Check Dart code
         working-directory: /tmp/english_pro
         run: flutter analyze --no-fatal-infos
+      - name: Test curriculum integrity
+        working-directory: /tmp/english_pro
+        run: flutter test
       - name: Build Android APK
         working-directory: /tmp/english_pro
         run: flutter build apk --release
