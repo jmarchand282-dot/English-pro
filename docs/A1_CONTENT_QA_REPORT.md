@@ -1,12 +1,15 @@
 # English Pro — Rapport de contrôle initial du contenu A1
 
-**Date :** 26 octobre 2026  
+**Date :** 27 octobre 2026  
 **Périmètre :** contrôle structurel des brouillons Markdown A1, avant relecture pédagogique complète.
 
 ## Résultats vérifiés
 
 - Leçons rédigées en brouillon : **500**.
 - Titres distincts : **500**.
+- Questions de quiz distinctes : **500** (contrôle automatisé ajouté).
+- Exemples distincts : **500** (contrôle automatisé ajouté).
+- Explications distinctes : **500** (contrôle automatisé ajouté).
 - Quiz dont la réponse correcte correspond exactement à une option : **500 / 500**.
 - Leçons sans correspondance exacte entre la réponse correcte et une option : **0**.
 - Répartition attendue : 10 sous-chapitres × 50 leçons.
