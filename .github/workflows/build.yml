@@ -9,6 +9,7 @@ on:
     branches: [main, 'planning/**']
     paths:
       - 'lib/**'
+      - 'test/**'
       - 'pubspec.yaml'
       - '.github/workflows/build.yml'
   workflow_dispatch:
