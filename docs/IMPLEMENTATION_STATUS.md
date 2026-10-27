@@ -38,6 +38,10 @@ Dernière mise à jour : 2026-10-27
 | C1 | 30 | 500 | Incomplet |
 | C2 | 30 | 500 | Incomplet |
 
+
+
+**Barrière de livraison ajoutée le 27 octobre 2026 :** les tests CI exigent désormais, pour chacun des six niveaux, exactement 500 leçons, 10 sous-chapitres de 50 et 500 titres, questions, exemples et explications distincts. Le pipeline doit échouer tant que les contenus actuels ne satisfont pas ces critères. Un APK compilé avant réussite de ces contrôles n’est pas une livraison finale.
+
 Les niveaux A2 à C2 ne doivent pas être présentés comme terminés. Leurs petites banques actuelles sont des prototypes, pas les 500 leçons promises par le cahier des charges. En outre, plusieurs entrées actuelles A2–C2 sont générées comme variantes « Learn / Practice / Review » d’une même question; le nombre de lignes ne signifie donc pas que le contenu pédagogique est distinct. Ces banques doivent être remplacées par des leçons et exercices réellement différents.
 
 ## Qualité du contenu — point important
