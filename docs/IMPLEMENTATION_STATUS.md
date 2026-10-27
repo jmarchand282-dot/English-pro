@@ -1,6 +1,6 @@
 # English Pro — État du projet et prochaines étapes
 
-Dernière mise à jour : 2026-10-26
+Dernière mise à jour : 2026-10-27
 
 ## État vérifié
 
@@ -11,18 +11,21 @@ Dernière mise à jour : 2026-10-26
 - [x] Plan détaillé des objectifs A1 enregistré dans `docs/A1_CURRICULUM_PLAN.md`.
 - [ ] Relecture pédagogique complète des 500 leçons.
 - [ ] Ajouter plusieurs exercices variés par leçon (le prototype actuel a un quiz principal par leçon).
-- [ ] Vérification approfondie des réponses de quiz, des traductions et de la non-répétition du contenu.
+- [x] Contrôle automatique de l’unicité des titres, questions, exemples et explications A1 ajouté aux tests CI.
+- [ ] Vérification pédagogique approfondie des réponses, traductions, distracteurs et naturel de l’anglais.
 - [x] Conversion des 500 brouillons A1 en données Dart structurées et branchement au moteur de cours.
 - [x] Premier test de positionnement (8 questions) et création initiale du profil.
 - [x] Refonte de l’accueil : bouton COMMENCER, XP, progression et accès aux paramètres.
 - [x] Écrans séparés des niveaux, sous-chapitres et leçons, avec verrouillage séquentiel.
+- [x] Règles de verrouillage corrigées : une conversation de validation est requise avant le sous-chapitre suivant et toutes les conversations d’un niveau avant le niveau suivant.
 - [x] Moteur d’apprentissage : explication avant quiz, correction après erreur, nouvelle tentative et progression séquentielle.
 - [x] Conversation guidée distincte du quiz à la fin de chaque sous-chapitre ; à tester en situation réelle.
 - [x] Profil local avec nom et photo (à confirmer lors d’un test sur téléphone).
 - [x] Mode sombre, rappel quotidien avec choix d’heure, sonnerie du rappel, objectif quotidien et contact.
 - [x] Livre de référence consultable et JoBot local qui recherche dans le cours installé.
 - [x] Lecture vocale, test de reconnaissance de prononciation à titre indicatif et pictogrammes pertinents ; reste à tester hors connexion.
-- [ ] Compilation de l’APK release, installation et tests réels sur Android (compilation GitHub Actions en cours).
+- [x] Pipeline CI : analyse Dart, tests automatisés du programme A1, puis compilation APK (à confirmer sur le dernier commit).
+- [ ] Installation et tests réels sur Android : profil/photo, progression, conversations, rappels et fonctions vocales.
 
 ## Qualité du contenu — point important
 
@@ -32,12 +35,12 @@ Le plan de départ prévoit des centaines de leçons distinctes par niveau. Seul
 
 ## Ordre de travail restant
 
-1. Relire et améliorer les brouillons A1, en priorité les quiz, les explications après erreur et les conversations.
-2. Définir un format de données structuré pour les leçons, leurs réponses, les médias et les critères de validation.
-3. Attendre la fin de la compilation Android et corriger les erreurs éventuelles.
-4. Installer l’APK sur un téléphone et tester l’inscription, la progression, les conversations, les rappels et les fonctions vocales.
-5. Relire et améliorer les 500 leçons A1 avant de les qualifier de définitives.
-6. Rédiger et intégrer 500 leçons distinctes pour chacun des niveaux A2, B1, B2, C1 et C2.
+1. Vérifier le dernier passage CI (analyse, tests de curriculum et compilation) et corriger toute régression.
+2. Relire pédagogiquement les 500 leçons A1 : exactitude grammaticale, traductions, distracteurs et exemples américains naturels.
+3. Ajouter plusieurs exercices réellement distincts par leçon et renforcer les activités correctives.
+4. Écrire et intégrer 500 leçons distinctes pour chacun des niveaux A2, B1, B2, C1 et C2 ; la feuille de route seule ne remplace pas ces contenus.
+5. Installer l’APK sur un téléphone et tester profil/photo, sauvegarde, verrouillage, conversations, rappels, voix et fonctionnement hors ligne.
+6. Ne publier l’APK final qu’après ces travaux et vérifications.
 
 ## Paramètres produit à respecter
 
