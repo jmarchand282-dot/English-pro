@@ -32,7 +32,7 @@ Dernière mise à jour : 2026-10-27
 | Niveau | Leçons intégrées actuellement | Objectif | État |
 |---|---:|---:|---|
 | A1 | 500 | 500 | Brouillons intégrés ; relecture pédagogique encore requise |
-| A2 | 36 | 500 | Incomplet |
+| A2 | 150 | 500 | 150 leçons rédigées dans les unités 1 à 3 ; 7 unités restent à créer |
 | B1 | 30 | 500 | Incomplet |
 | B2 | 30 | 500 | Incomplet |
 | C1 | 30 | 500 | Incomplet |
@@ -42,7 +42,7 @@ Dernière mise à jour : 2026-10-27
 
 **Barrière de livraison ajoutée le 27 octobre 2026 :** les tests CI exigent désormais, pour chacun des six niveaux, exactement 500 leçons, 10 sous-chapitres de 50 et 500 titres, questions, exemples et explications distincts. Le pipeline doit échouer tant que les contenus actuels ne satisfont pas ces critères. Un APK compilé avant réussite de ces contrôles n’est pas une livraison finale.
 
-Les niveaux A2 à C2 ne doivent pas être présentés comme terminés. Leurs petites banques actuelles sont des prototypes, pas les 500 leçons promises par le cahier des charges. En outre, plusieurs entrées actuelles A2–C2 sont générées comme variantes « Learn / Practice / Review » d’une même question; le nombre de lignes ne signifie donc pas que le contenu pédagogique est distinct. Ces banques doivent être remplacées par des leçons et exercices réellement différents.
+A2 compte maintenant 150 leçons rédigées dans trois unités distinctes (passé, projets futurs, comparaisons). Les sept autres unités A2 restent à créer. Les niveaux A2 à C2 ne doivent pas être présentés comme terminés. Leurs petites banques actuelles sont des prototypes, pas les 500 leçons promises par le cahier des charges. En outre, plusieurs entrées actuelles A2–C2 sont générées comme variantes « Learn / Practice / Review » d’une même question; le nombre de lignes ne signifie donc pas que le contenu pédagogique est distinct. Ces banques doivent être remplacées par des leçons et exercices réellement différents.
 
 ## Qualité du contenu — point important
 
