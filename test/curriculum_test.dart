@@ -55,6 +55,17 @@ void main() {
         expect(levelLessons.map((lesson) => lesson.question).toSet(), hasLength(500), reason: '$level quiz questions must be distinct');
         expect(levelLessons.map((lesson) => lesson.example).toSet(), hasLength(500), reason: '$level examples must be distinct');
         expect(levelLessons.map((lesson) => lesson.explanation).toSet(), hasLength(500), reason: '$level explanations must be distinct');
+        for (final lesson in levelLessons) {
+          expect(lesson.title.trim(), isNotEmpty, reason: lesson.id);
+          expect(lesson.explanation.trim(), isNotEmpty, reason: lesson.id);
+          expect(lesson.example.trim(), isNotEmpty, reason: lesson.id);
+          expect(lesson.french.trim(), isNotEmpty, reason: lesson.id);
+          expect(lesson.question.trim(), isNotEmpty, reason: lesson.id);
+          expect(lesson.correction.trim(), isNotEmpty, reason: lesson.id);
+          expect(lesson.options, hasLength(3), reason: lesson.id);
+          expect(lesson.options.toSet(), hasLength(3), reason: 'Duplicate answer choices in ${lesson.id}');
+          expect(lesson.answer, inInclusiveRange(0, 2), reason: lesson.id);
+        }
         final units = <int, int>{};
         for (final lesson in levelLessons) {
           units.update(lesson.unit, (count) => count + 1, ifAbsent: () => 1);
