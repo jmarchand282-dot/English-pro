@@ -51,6 +51,10 @@ void main() {
         expect(levelLessons, hasLength(500),
             reason: '$level is not release-ready until all 500 lessons are integrated');
         expect(levelLessons.map((lesson) => lesson.id).toSet(), hasLength(500));
+        expect(levelLessons.map((lesson) => lesson.title).toSet(), hasLength(500), reason: '$level titles must be distinct');
+        expect(levelLessons.map((lesson) => lesson.question).toSet(), hasLength(500), reason: '$level quiz questions must be distinct');
+        expect(levelLessons.map((lesson) => lesson.example).toSet(), hasLength(500), reason: '$level examples must be distinct');
+        expect(levelLessons.map((lesson) => lesson.explanation).toSet(), hasLength(500), reason: '$level explanations must be distinct');
         final units = <int, int>{};
         for (final lesson in levelLessons) {
           units.update(lesson.unit, (count) => count + 1, ifAbsent: () => 1);
