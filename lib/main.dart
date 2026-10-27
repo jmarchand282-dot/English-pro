@@ -508,7 +508,7 @@ class _LessonPageState extends State<LessonPage>{
  }
  int? pronunciationPercent(String target,String heard){
   final expected=target.toLowerCase().replaceAll(RegExp(r'[^a-z0-9 ]'),' ').split(RegExp(r'\s+')).where((w)=>w.isNotEmpty).toSet();
-  final spoken=heard.toLowerCase().replaceAll(RegExp(r'[^a-z0-9 ]'),' ').split(RegExp(r'\\s+')).where((w)=>w.isNotEmpty).toSet();
+  final spoken=heard.toLowerCase().replaceAll(RegExp(r'[^a-z0-9 ]'),' ').split(RegExp(r'\s+')).where((w)=>w.isNotEmpty).toSet();
   if(expected.isEmpty||spoken.isEmpty)return null;
   return ((expected.where(spoken.contains).length/expected.length)*100).round();
  }
