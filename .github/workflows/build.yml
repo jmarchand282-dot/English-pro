@@ -85,14 +85,20 @@ jobs:
         working-directory: /tmp/english_pro
         run: flutter analyze --no-fatal-infos
       - name: Test curriculum integrity
+        id: curriculum_tests
         working-directory: /tmp/english_pro
         run: flutter test
-      - name: Build Android APK
+      # Keep generating a clearly labeled testing APK when curriculum tests fail,
+      # provided Dart analysis and dependency setup succeeded. The job still fails
+      # overall, preserving the release gate.
+      - name: Build Android testing APK
+        if: success() || steps.curriculum_tests.outcome == 'failure'
         working-directory: /tmp/english_pro
         run: flutter build apk --release
-      - name: Upload APK
+      - name: Upload Android testing APK
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: English-Pro-Android-APK
+          name: English-Pro-Android-Testing-APK
           path: /tmp/english_pro/build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
