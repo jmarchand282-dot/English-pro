@@ -139,3 +139,51 @@ List<StudyLesson> buildCurriculum() {
  }
  return result;
 }
+
+/// Shared progression rules used by the app and unit tests.
+bool isLevelUnlockedInCurriculum({
+ required String level,
+ required List<StudyLesson> lessons,
+ required Set<String> completedLessonIds,
+ required Set<String> completedConversationKeys,
+}) {
+ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+ final levelIndex = levels.indexOf(level);
+ if (levelIndex < 0) return false;
+ if (levelIndex == 0) return true;
+ final previousLevel = levels[levelIndex - 1];
+ final previousLessons = lessons.where((lesson) => lesson.level == previousLevel).toList();
+ if (previousLessons.isEmpty || previousLessons.any((lesson) => !completedLessonIds.contains(lesson.id))) {
+  return false;
+ }
+ final previousUnits = previousLessons.map((lesson) => lesson.unit).toSet();
+ return previousUnits.every((unit) => completedConversationKeys.contains('$previousLevel-U$unit'));
+}
+
+bool isLessonUnlockedInCurriculum({
+ required StudyLesson lesson,
+ required List<StudyLesson> lessons,
+ required Set<String> completedLessonIds,
+ required Set<String> completedConversationKeys,
+}) {
+ final index = lessons.indexWhere((item) => item.id == lesson.id);
+ if (index < 0) return false;
+ if (completedLessonIds.contains(lesson.id)) return true;
+ if (index == 0) return true;
+ final previous = lessons[index - 1];
+ if (!completedLessonIds.contains(previous.id)) return false;
+ if (previous.level != lesson.level) {
+  return isLevelUnlockedInCurriculum(
+   level: lesson.level,
+   lessons: lessons,
+   completedLessonIds: completedLessonIds,
+   completedConversationKeys: completedConversationKeys,
+  );
+ }
+ if (previous.unit != lesson.unit) {
+  final previousUnitLessons = lessons.where((item) => item.level == previous.level && item.unit == previous.unit);
+  if (previousUnitLessons.any((item) => !completedLessonIds.contains(item.id))) return false;
+  if (!completedConversationKeys.contains('${previous.level}-U${previous.unit}')) return false;
+ }
+ return true;
+}
