@@ -27,6 +27,19 @@ Dernière mise à jour : 2026-10-27
 - [x] Pipeline CI : analyse Dart, tests automatisés du programme A1, puis compilation APK (à confirmer sur le dernier commit).
 - [ ] Installation et tests réels sur Android : profil/photo, progression, conversations, rappels et fonctions vocales.
 
+## Comptage réel des leçons actuellement intégrées
+
+| Niveau | Leçons intégrées actuellement | Objectif | État |
+|---|---:|---:|---|
+| A1 | 500 | 500 | Brouillons intégrés ; relecture pédagogique encore requise |
+| A2 | 36 | 500 | Incomplet |
+| B1 | 30 | 500 | Incomplet |
+| B2 | 30 | 500 | Incomplet |
+| C1 | 30 | 500 | Incomplet |
+| C2 | 30 | 500 | Incomplet |
+
+Les niveaux A2 à C2 ne doivent pas être présentés comme terminés. Leurs petites banques actuelles sont des prototypes, pas les 500 leçons promises par le cahier des charges.
+
 ## Qualité du contenu — point important
 
 Les 500 leçons existent maintenant sous forme de **premiers brouillons pédagogiques**. Le décompte a été vérifié, mais cela ne signifie pas que chaque leçon a déjà été relue par un enseignant ou testée dans l’application. En particulier, les activités d’intégration et certaines leçons de communication doivent être enrichies et contrôlées avant de les considérer comme définitives.
