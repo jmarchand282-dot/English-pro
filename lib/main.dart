@@ -77,7 +77,7 @@ class _AppHomeState extends State<AppHome> {
   final totalA1=total('A1');
   return Scaffold(
    appBar:AppBar(
-    title:const Row(children:[Text('🇺🇸',style:TextStyle(fontSize:22)),SizedBox(width:8),Text('English Pro',style:TextStyle(fontWeight:FontWeight.bold))]),
+    title:const Row(children:[EnglishProBrandMark(size:34),SizedBox(width:9),Text('English Pro',style:TextStyle(fontWeight:FontWeight.bold))]),
     actions:[
      IconButton(onPressed:profile,icon:avatar(photo,name,30),tooltip:'Profil'),
      IconButton(onPressed:settings,icon:const Icon(Icons.settings_outlined),tooltip:'Paramètres'),
@@ -85,6 +85,8 @@ class _AppHomeState extends State<AppHome> {
    ),
    body:ListView(padding:const EdgeInsets.fromLTRB(18,18,18,24),children:[
     Container(padding:const EdgeInsets.all(22),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(26)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+     const Row(children:[EnglishProBrandMark(size:46),SizedBox(width:12),Expanded(child:Text('ENGLISH PRO • LEARN EVERY DAY',style:TextStyle(color:gold,fontSize:11,fontWeight:FontWeight.w900,letterSpacing:1.0)))]),
+     const SizedBox(height:16),
      Text('BONJOUR, ${name.toUpperCase()}',style:const TextStyle(color:gold,fontSize:11,fontWeight:FontWeight.bold,letterSpacing:1.2)),
      const SizedBox(height:12),
      const Text('Hello! Welcome to English Pro',style:TextStyle(color:Colors.white,fontSize:24,fontWeight:FontWeight.bold,height:1.2)),
@@ -703,3 +705,43 @@ class SettingsPage extends StatelessWidget{
  ]));
 }
 Widget avatar(String? data,String name,double size){Widget child;if(data!=null){try{child=Image.memory(base64Decode(data),width:size,height:size,fit:BoxFit.cover);}catch(_){child=Text(name.isEmpty?'E':name[0].toUpperCase());}}else{child=Text(name.isEmpty?'E':name[0].toUpperCase());}return CircleAvatar(radius:size/2,backgroundColor:gold,child:ClipOval(child:SizedBox(width:size,height:size,child:Center(child:child))));}
+
+
+/// Reusable vector-style brand mark; no network image is required.
+class EnglishProBrandMark extends StatelessWidget {
+  final double size;
+  const EnglishProBrandMark({super.key, this.size = 42});
+  @override
+  Widget build(BuildContext context) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFF6366F1), Color(0xFF312E81)],
+      ),
+      borderRadius: BorderRadius.circular(size * 0.28),
+      border: Border.all(color: gold.withValues(alpha: 0.95), width: 1.5),
+      boxShadow: [BoxShadow(color: blue.withValues(alpha: 0.22), blurRadius: 8, offset: const Offset(0, 3))],
+    ),
+    alignment: Alignment.center,
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+        Text('E', style: TextStyle(color: Colors.white, fontSize: size * 0.56, fontWeight: FontWeight.w900, height: 1)),
+        Positioned(
+          right: size * 0.10,
+          bottom: size * 0.06,
+          child: Container(
+            width: size * 0.34,
+            height: size * 0.34,
+            decoration: BoxDecoration(color: gold, borderRadius: BorderRadius.circular(size * 0.10)),
+            alignment: Alignment.center,
+            child: Text('P', style: TextStyle(color: navy, fontSize: size * 0.22, fontWeight: FontWeight.w900, height: 1)),
+          ),
+        ),
+      ],
+    ),
+  );
+}
