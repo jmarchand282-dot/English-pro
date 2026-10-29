@@ -792,7 +792,7 @@ class SettingsPage extends StatelessWidget{
 Widget avatar(String? data,String name,double size){Widget child;if(data!=null){try{child=Image.memory(base64Decode(data),width:size,height:size,fit:BoxFit.cover);}catch(_){child=Text(name.isEmpty?'E':name[0].toUpperCase());}}else{child=Text(name.isEmpty?'E':name[0].toUpperCase());}return CircleAvatar(radius:size/2,backgroundColor:gold,child:ClipOval(child:SizedBox(width:size,height:size,child:Center(child:child))));}
 
 
-/// Reusable vector-style brand mark; no network image is required.
+/// English Pro identity: the American flag is the primary visual symbol.
 class EnglishProBrandMark extends StatelessWidget {
   final double size;
   const EnglishProBrandMark({super.key, this.size = 42});
@@ -801,32 +801,22 @@ class EnglishProBrandMark extends StatelessWidget {
     width: size,
     height: size,
     decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFF6366F1), Color(0xFF312E81)],
-      ),
-      borderRadius: BorderRadius.circular(size * 0.28),
-      border: Border.all(color: gold.withValues(alpha: 0.95), width: 1.5),
-      boxShadow: [BoxShadow(color: blue.withValues(alpha: 0.22), blurRadius: 8, offset: const Offset(0, 3))],
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(size * 0.22),
+      border: Border.all(color: gold, width: size * 0.035),
+      boxShadow: [BoxShadow(color: blue.withValues(alpha: 0.18), blurRadius: 6, offset: const Offset(0, 2))],
     ),
     alignment: Alignment.center,
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-        Text('E', style: TextStyle(color: Colors.white, fontSize: size * 0.56, fontWeight: FontWeight.w900, height: 1)),
-        Positioned(
-          right: size * 0.10,
-          bottom: size * 0.06,
-          child: Container(
-            width: size * 0.34,
-            height: size * 0.34,
-            decoration: BoxDecoration(color: gold, borderRadius: BorderRadius.circular(size * 0.10)),
-            alignment: Alignment.center,
-            child: Text('P', style: TextStyle(color: navy, fontSize: size * 0.22, fontWeight: FontWeight.w900, height: 1)),
-          ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(size * 0.17),
+      child: SizedBox(
+        width: size * 0.88,
+        height: size * 0.68,
+        child: FittedBox(
+          fit: BoxFit.contain,
+          child: Text('🇺🇸', style: TextStyle(fontSize: size * 0.72, height: 1)),
         ),
-      ],
+      ),
     ),
   );
 }
