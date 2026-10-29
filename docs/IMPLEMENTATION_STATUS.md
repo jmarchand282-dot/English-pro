@@ -44,6 +44,17 @@ Dernière mise à jour : 2026-10-27
 
 A2 compte maintenant 250 leçons réparties dans cinq unités : passé, projets futurs, comparaisons, présent perfect et communication quotidienne, puis plans et interactions futures. Les cinq autres unités A2 restent à créer. Les niveaux A2 à C2 ne doivent pas être présentés comme terminés. Leurs petites banques actuelles sont des prototypes, pas les 500 leçons promises par le cahier des charges. En outre, plusieurs entrées actuelles A2–C2 sont générées comme variantes « Learn / Practice / Review » d’une même question; le nombre de lignes ne signifie donc pas que le contenu pédagogique est distinct. Ces banques doivent être remplacées par des leçons et exercices réellement différents.
 
+## Phase visuelle et multimédia — travaux en cours
+
+- [x] Feuille de route visuelle et multimédia créée dans `docs/VISUAL_MEDIA_ROADMAP.md`.
+- [x] Marque vectorielle English Pro ajoutée à l’en-tête et à l’accueil ; elle ne dépend pas d’une image distante.
+- [x] Accès « Images & mots » et « Vidéos » ajouté à l’accueil.
+- [x] Première grille de 12 cartes de vocabulaire illustrées avec prononciation TTS ; cartes utilisables hors connexion.
+- [x] Première rubrique vidéo avec recherches YouTube externes et avertissement clair sur la connexion nécessaire.
+- [ ] Vérifier l’analyse Dart, les tests et la compilation APK sur le commit multimédia.
+- [ ] Tester l’interface sur un téléphone Android, notamment la prononciation et l’ouverture des liens vidéo.
+- [ ] Remplacer progressivement les pictogrammes par des illustrations pédagogiques originales optimisées, puis vérifier leur poids et leur affichage hors connexion.
+
 ## Qualité du contenu — point important
 
 Les 500 leçons existent maintenant sous forme de **premiers brouillons pédagogiques**. Le décompte a été vérifié, mais cela ne signifie pas que chaque leçon a déjà été relue par un enseignant ou testée dans l’application. En particulier, les activités d’intégration et certaines leçons de communication doivent être enrichies et contrôlées avant de les considérer comme définitives.
