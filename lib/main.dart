@@ -185,7 +185,9 @@ class _OnboardingPageState extends State<OnboardingPage>{
   return Scaffold(
    body:SafeArea(child:ListView(padding:const EdgeInsets.all(22),children:[
     const SizedBox(height:12),
-    const Center(child:Text('🇺🇸',style:TextStyle(fontSize:48))),
+    const Center(child:EnglishProBrandMark(size:72)),
+    const SizedBox(height:8),
+    const Center(child:Text('ENGLISH PRO',style:TextStyle(color:navy,fontSize:15,fontWeight:FontWeight.w900,letterSpacing:2))),
     const SizedBox(height:8),
     Center(child:SizedBox(height:54,child:AnimatedSwitcher(duration:const Duration(milliseconds:450),transitionBuilder:(child,animation)=>FadeTransition(opacity:animation,child:SlideTransition(position:Tween<Offset>(begin:const Offset(0,.15),end:Offset.zero).animate(animation),child:child)),child:Text(_welcomePhrases[welcomePhrase],key:ValueKey(welcomePhrase),textAlign:TextAlign.center,style:const TextStyle(color:blue,fontSize:19,fontWeight:FontWeight.w900))))),
     const SizedBox(height:6),
