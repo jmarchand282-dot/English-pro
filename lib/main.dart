@@ -122,12 +122,32 @@ class _AppHomeState extends State<AppHome> {
      ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value:totalA1==0?0:completedA1/totalA1,minHeight:6,color:Colors.green,backgroundColor:const Color(0xFFE7E8F2))),
     ])),
     const SizedBox(height:18),
+    const Text('DÉCOUVRIR',style:TextStyle(fontSize:13,fontWeight:FontWeight.w900,letterSpacing:1.2,color:navy)),
+    const SizedBox(height:10),
+    Row(children:[
+     Expanded(child:_discoveryCard(context,icon:Icons.photo_library_outlined,title:'Images & mots',subtitle:'Vocabulaire illustré',color:blue,onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const MultimediaHubPage())))),
+     const SizedBox(width:12),
+     Expanded(child:_discoveryCard(context,icon:Icons.play_circle_outline,title:'Vidéos',subtitle:'Écoute et dialogues',color:const Color(0xFF7C3AED),onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>const MultimediaHubPage(initialTab:1))))),
+    ]),
+    const SizedBox(height:18),
     if(upcoming!=null) Text('Prochaine étape : ${upcoming.title}',style:const TextStyle(color:Colors.black54,fontSize:12)),
     const SizedBox(height:18),
     const Center(child:Text('CRÉÉ PAR JOSEPH MARCHAND • DÉVELOPPEUR',textAlign:TextAlign.center,style:TextStyle(color:Colors.black45,fontSize:11,fontWeight:FontWeight.w600))),
    ])
   );
  }
+ Widget _discoveryCard(BuildContext context,{required IconData icon,required String title,required String subtitle,required Color color,required VoidCallback onTap})=>Material(
+  color:Colors.white,borderRadius:BorderRadius.circular(18),
+  child:InkWell(onTap:onTap,borderRadius:BorderRadius.circular(18),child:Container(
+   padding:const EdgeInsets.all(15),
+   decoration:BoxDecoration(borderRadius:BorderRadius.circular(18),border:Border.all(color:const Color(0xFFE7E8F2))),
+   child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+    Container(width:44,height:44,decoration:BoxDecoration(color:color.withValues(alpha:.12),borderRadius:BorderRadius.circular(14)),child:Icon(icon,color:color,size:27)),
+    const SizedBox(height:12),Text(title,style:const TextStyle(color:navy,fontWeight:FontWeight.w800,fontSize:15)),
+    const SizedBox(height:4),Text(subtitle,style:const TextStyle(color:Colors.black54,fontSize:11)),
+   ]),
+  )),
+ );
  Widget _homeStat(IconData icon,String value,String label)=>Container(padding:const EdgeInsets.symmetric(vertical:16,horizontal:10),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(17),border:Border.all(color:const Color(0xFFE7E8F2))),child:Row(children:[Container(width:42,height:42,decoration:BoxDecoration(color:gold.withValues(alpha:.2),borderRadius:BorderRadius.circular(13)),child:Icon(icon,color:blue)),const SizedBox(width:10),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(value,style:const TextStyle(color:navy,fontSize:20,fontWeight:FontWeight.bold)),Text(label,style:const TextStyle(color:Colors.black54,fontSize:11))]))]));
  Widget stat(IconData i,String v,String label)=>Expanded(child:Container(padding:const EdgeInsets.symmetric(vertical:10),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.12),borderRadius:BorderRadius.circular(12)),child:Column(children:[Icon(i,color:gold),Text(v,style:const TextStyle(color:Colors.white,fontWeight:FontWeight.bold,fontSize:16)),Text(label,style:const TextStyle(color:Colors.white70,fontSize:9))])));
 }
@@ -594,6 +614,69 @@ class _LessonPageState extends State<LessonPage>{
  }
 }
 
+
+
+class MultimediaHubPage extends StatefulWidget {
+ final int initialTab;
+ const MultimediaHubPage({super.key,this.initialTab=0});
+ @override State<MultimediaHubPage> createState()=>_MultimediaHubPageState();
+}
+class _MultimediaHubPageState extends State<MultimediaHubPage> with SingleTickerProviderStateMixin {
+ late final TabController tabs;
+ final FlutterTts tts=FlutterTts();
+ final List<Map<String,String>> words=[
+  {'emoji':'📚','en':'Book','fr':'Livre','pron':'book'},{'emoji':'✏️','en':'Pencil','fr':'Crayon','pron':'pencil'},
+  {'emoji':'🎒','en':'School bag','fr':'Sac d’école','pron':'school bag'},{'emoji':'🍎','en':'Apple','fr':'Pomme','pron':'apple'},
+  {'emoji':'💧','en':'Water','fr':'Eau','pron':'water'},{'emoji':'🍞','en':'Bread','fr':'Pain','pron':'bread'},
+  {'emoji':'👁️','en':'Eye','fr':'Œil','pron':'eye'},{'emoji':'👂','en':'Ear','fr':'Oreille','pron':'ear'},
+  {'emoji':'👄','en':'Mouth','fr':'Bouche','pron':'mouth'},{'emoji':'🏠','en':'House','fr':'Maison','pron':'house'},
+  {'emoji':'🚍','en':'Bus','fr':'Bus','pron':'bus'},{'emoji':'💻','en':'Computer','fr':'Ordinateur','pron':'computer'},
+ ];
+ final List<Map<String,String>> videos=[
+  {'title':'Prononciation américaine','subtitle':'Sons, alphabet et mots fréquents','query':'American English pronunciation for beginners'},
+  {'title':'Dialogues de la vie quotidienne','subtitle':'Saluer, se présenter et demander de l’aide','query':'English conversation for beginners with subtitles'},
+  {'title':'Anglais à l’école','subtitle':'Phrases utiles en classe','query':'English classroom phrases for students beginner'},
+  {'title':'Compréhension orale lente','subtitle':'Écouter des phrases simples','query':'slow English listening practice beginner subtitles'},
+ ];
+ @override void initState(){super.initState();tabs=TabController(length:2,vsync:this,initialIndex:widget.initialTab);}
+ @override void dispose(){tabs.dispose();tts.stop();super.dispose();}
+ Future<void> speak(String value) async {try{await tts.setLanguage('en-US');await tts.setSpeechRate(0.38);await tts.speak(value);}catch(_){}}
+ Future<void> openVideo(String query) async {
+  final uri=Uri.https('www.youtube.com','/results',{'search_query':query});
+  try {if(!await launchUrl(uri,mode:LaunchMode.externalApplication)&&mounted){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Impossible d’ouvrir les vidéos. Vérifie ta connexion.')));}}catch(_){if(mounted)ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Vérifie ta connexion Internet puis réessaie.')));}
+ }
+ @override Widget build(BuildContext context)=>Scaffold(
+  appBar:AppBar(title:const Text('Médias English Pro'),bottom:TabBar(controller:tabs,tabs:const [Tab(icon:Icon(Icons.photo_library_outlined),text:'Images & mots'),Tab(icon:Icon(Icons.play_circle_outline),text:'Vidéos')])),
+  body:TabBarView(controller:tabs,children:[
+   ListView(padding:const EdgeInsets.all(16),children:[
+    Container(padding:const EdgeInsets.all(18),decoration:BoxDecoration(gradient:const LinearGradient(colors:[navy,blue]),borderRadius:BorderRadius.circular(20)),child:const Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
+     Row(children:[EnglishProBrandMark(size:42),SizedBox(width:12),Expanded(child:Text('SEE IT. SAY IT. LEARN IT.',style:TextStyle(color:gold,fontWeight:FontWeight.w900,letterSpacing:1)))]),
+     SizedBox(height:10),Text('Regarde l’illustration, mémorise le mot anglais et écoute sa prononciation.',style:TextStyle(color:Colors.white,height:1.4)),
+     SizedBox(height:8),Text('Ces cartes sont disponibles hors connexion.',style:TextStyle(color:Colors.white70,fontSize:12)),
+    ])),
+    const SizedBox(height:16),
+    GridView.builder(shrinkWrap:true,physics:const NeverScrollableScrollPhysics(),itemCount:words.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:2,mainAxisSpacing:12,crossAxisSpacing:12,childAspectRatio:1.15),itemBuilder:(context,i){
+     final w=words[i];return Card(color:Theme.of(context).cardColor,clipBehavior:Clip.antiAlias,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(18),side:const BorderSide(color:Color(0xFFE7E8F2))),child:Padding(padding:const EdgeInsets.all(12),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[
+      Text(w['emoji']!,style:const TextStyle(fontSize:35)),const SizedBox(height:6),Text(w['en']!,style:const TextStyle(fontWeight:FontWeight.w900,fontSize:16)),
+      Text(w['fr']!,style:TextStyle(color:Theme.of(context).colorScheme.onSurfaceVariant,fontSize:12)),
+      IconButton(onPressed:()=>speak(w['pron']!),icon:const Icon(Icons.volume_up_rounded,color:blue),tooltip:'Écouter la prononciation'),
+     ])));
+    }),
+   ]),
+   ListView(padding:const EdgeInsets.all(16),children:[
+    Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:const Color(0xFFEDE9FE),borderRadius:BorderRadius.circular(18)),child:const Row(crossAxisAlignment:CrossAxisAlignment.start,children:[
+     Icon(Icons.wifi,color:Color(0xFF6D28D9),size:28),SizedBox(width:12),Expanded(child:Text('Les vidéos s’ouvrent sur YouTube et nécessitent une connexion Internet. Choisis de préférence une vidéo avec sous-titres.',style:TextStyle(color:Color(0xFF312E81),height:1.4))),
+    ])),
+    const SizedBox(height:14),
+    ...videos.map((v)=>Card(margin:const EdgeInsets.only(bottom:10),child:ListTile(
+     leading:Container(width:48,height:48,decoration:BoxDecoration(color:const Color(0xFFEDE9FE),borderRadius:BorderRadius.circular(14)),child:const Icon(Icons.play_arrow_rounded,color:Color(0xFF6D28D9),size:30)),
+     title:Text(v['title']!,style:const TextStyle(fontWeight:FontWeight.bold)),subtitle:Padding(padding:const EdgeInsets.only(top:4),child:Text(v['subtitle']!)),
+     trailing:const Icon(Icons.open_in_new),onTap:()=>openVideo(v['query']!),
+    ))),
+   ]),
+  ]),
+ );
+}
 
 class ReferenceBookPage extends StatefulWidget{
  final List<StudyLesson> lessons;
