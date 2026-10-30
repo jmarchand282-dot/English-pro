@@ -798,19 +798,47 @@ class _OfflineChatPageState extends State<OfflineChatPage>{
   {'role':'bot','text':'Salut ! Je suis JoBot, ton aide pédagogique hors connexion. Pose une question sur une leçon, un verbe ou une expression du cours.'}
  ];
  @override void dispose(){controller.dispose();scrollController.dispose();super.dispose();}
+ String _normalise(String value){
+  return value.toLowerCase()
+   .replaceAll('à','a').replaceAll('â','a').replaceAll('ä','a')
+   .replaceAll('é','e').replaceAll('è','e').replaceAll('ê','e').replaceAll('ë','e')
+   .replaceAll('î','i').replaceAll('ï','i').replaceAll('ô','o')
+   .replaceAll('ù','u').replaceAll('û','u').replaceAll('ü','u')
+   .replaceAll('ç','c').replaceAll(RegExp(r'[^a-z0-9 ]'),' ')
+   .replaceAll(RegExp(r'\s+'),' ').trim();
+ }
  String answer(String question){
-  final q=question.toLowerCase().replaceAll(RegExp(r'[^a-zàâçéèêëîïôûùüÿñæœ0-9 ]'),' ');
-  final terms=q.split(RegExp(r'\s+')).where((w)=>w.length>2).toSet();
-  if(terms.isEmpty)return 'Écris une question ou un mot, par exemple « eat », « to be », « present simple » ou « comment dire merci ».';
+  final q=_normalise(question);
+  const ignored={'the','and','for','you','are','what','how','does','with','this','that','les','des','une','est','que','quoi','comment','dans','pour','avec','sur','mon','ma','mes','ton','ta','tes','cest','etre','avoir'};
+  final terms=q.split(' ').where((w)=>w.length>2&&!ignored.contains(w)).toSet();
+  if(terms.isEmpty)return 'Écris un mot ou une question plus précise. Exemples : « to be », « past simple », « eat », « comment donner un conseil ? ».';
+  const related={
+   'manger':'eat','boire':'drink','courir':'run','marcher':'walk','sauter':'jump',
+   'lire':'read','ecrire':'write','ecole':'school','maison':'house','famille':'family',
+   'passe':'past','futur':'future','present':'present','conseil':'should',
+   'bonjour':'greeting','salut':'greeting','merci':'thank','heure':'time',
+   'voiture':'car','eau':'water','livre':'book','ami':'friend','amie':'friend',
+  };
+  final expanded=<String>{...terms};
+  for(final term in terms){final mapped=related[term];if(mapped!=null)expanded.add(mapped);}
   final scored=widget.lessons.map((l){
-   final text='${l.title} ${l.explanation} ${l.example} ${l.french}'.toLowerCase();
+   final title=_normalise(l.title);
+   final text=_normalise('\${l.title} \${l.subtitle} \${l.explanation} \${l.example} \${l.french} \${l.question} \${l.correction}');
    var score=0;
-   for(final term in terms){if(l.title.toLowerCase().contains(term)){score+=4;}else if(text.contains(term)){score++;}}
+   for(final term in expanded){
+    if(title.split(' ').contains(term))score+=6;
+    else if(title.contains(term))score+=4;
+    if(_normalise(l.question).contains(term))score+=3;
+    if(_normalise(l.example).contains(term))score+=2;
+    if(text.contains(term))score++;
+   }
    return (lesson:l,score:score);
   }).where((x)=>x.score>0).toList()..sort((a,b)=>b.score.compareTo(a.score));
-  if(scored.isEmpty)return 'Je n’ai pas encore trouvé une réponse précise dans le cours installé. Essaie un mot-clé plus court, ou consulte le Livre de référence. JoBot utilise une base locale : il ne connaît pas encore toutes les questions possibles.';
+  if(scored.isEmpty)return 'Je n’ai pas trouvé cette notion dans le cours installé. Essaie un mot-clé anglais ou français plus simple, ou consulte le Livre de référence. Je fonctionne hors connexion avec les leçons enregistrées : je préfère reconnaître mes limites plutôt que d’inventer une règle.';
   final best=scored.take(2).toList();
-  return best.map((x)=>'Leçon : ${x.lesson.title}\nExplication : ${x.lesson.explanation}\nExemple : ${x.lesson.example}\nEn français : ${x.lesson.french}\nÀ retenir : ${x.lesson.correction}').join('\n\n---\n\n');
+  final french=RegExp(r'\b(comment|pourquoi|explique|quelle|quel|est|sont|donne|traduis|francais|anglais)\b').hasMatch(q);
+  final intro=french?'Voici ce que j’ai trouvé dans ton cours :':'Here is what I found in your course:';
+  return '\$intro\n\n'+best.map((x)=>'📘 \${x.lesson.level} — \${x.lesson.title}\n\n\${french?'Explication':'Explanation'} : \${x.lesson.explanation}\n\n\${french?'Exemple':'Example'} : \${x.lesson.example}\n\${french?'En français':'French'} : \${x.lesson.french}\n\n\${french?'À retenir':'Remember'} : \${x.lesson.correction}').join('\n\n────────\n\n');
  }
  void send(){
   final q=controller.text.trim();if(q.isEmpty)return;
