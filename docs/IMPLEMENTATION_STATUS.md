@@ -1,6 +1,6 @@
 # English Pro — État du projet et prochaines étapes
 
-Dernière mise à jour : 2026-10-27
+Dernière mise à jour : 2026-10-30
 
 ## État vérifié
 
@@ -17,12 +17,14 @@ Dernière mise à jour : 2026-10-27
 - [x] Premier test de positionnement (8 questions) et création initiale du profil.
 - [x] Refonte de l’accueil : bouton COMMENCER, XP, progression et accès aux paramètres.
 - [x] Écrans séparés des niveaux, sous-chapitres et leçons, avec verrouillage séquentiel.
+- [x] Après la validation réussie d'un sous-chapitre, fermeture automatique de son écran et ouverture du sous-chapitre suivant ; analyse Dart passée sur le commit `dc4a18d`.
 - [x] Règles de verrouillage corrigées : une conversation de validation est requise avant le sous-chapitre suivant et toutes les conversations d’un niveau avant le niveau suivant.
 - [x] Moteur d’apprentissage : explication avant quiz, correction après erreur, nouvelle tentative et progression séquentielle.
 - [x] Conversation guidée distincte du quiz à la fin de chaque sous-chapitre ; à tester en situation réelle.
 - [x] Profil local avec nom et photo (à confirmer lors d’un test sur téléphone).
 - [x] Mode sombre, rappel quotidien avec choix d’heure, sonnerie du rappel, objectif quotidien et contact.
 - [x] Livre de référence consultable et JoBot local qui recherche dans le cours installé.
+- [x] Correction d'un défaut de recherche JoBot : les champs de leçon sont désormais réellement analysés au lieu de chaînes de substitution littérales ; synonymes français supplémentaires ajoutés (commit `22f574d`).
 - [x] Lecture vocale, test de reconnaissance de prononciation à titre indicatif et pictogrammes pertinents ; reste à tester hors connexion.
 - [x] Pipeline CI : analyse Dart, tests automatisés du programme A1, puis compilation APK (à confirmer sur le dernier commit).
 - [ ] Installation et tests réels sur Android : profil/photo, progression, conversations, rappels et fonctions vocales.
@@ -52,6 +54,7 @@ A2 compte maintenant 250 leçons réparties dans cinq unités : passé, projets 
 - [x] Première grille de 12 cartes de vocabulaire illustrées avec prononciation TTS ; cartes utilisables hors connexion.
 - [x] Première rubrique vidéo avec recherches YouTube externes et avertissement clair sur la connexion nécessaire.
 - [ ] Vérifier l’analyse Dart, les tests et la compilation APK sur le commit multimédia.
+- [x] Analyse Dart passée et APK de test généré sur le commit `dc4a18d` ; les tests curriculum restent en échec car A2–C2 sont incomplets. Le nouvel essai après correction JoBot est en cours.
 - [ ] Tester l’interface sur un téléphone Android, notamment la prononciation et l’ouverture des liens vidéo.
 - [ ] Remplacer progressivement les pictogrammes par des illustrations pédagogiques originales optimisées, puis vérifier leur poids et leur affichage hors connexion.
 
@@ -63,7 +66,7 @@ Le plan de départ prévoit des centaines de leçons distinctes par niveau. Seul
 
 ## Ordre de travail restant
 
-1. Vérifier le dernier passage CI (analyse, tests de curriculum et compilation) et corriger toute régression.
+1. Terminer la vérification CI du commit `22f574d` (analyse, tests et compilation) et corriger toute régression.
 2. Relire pédagogiquement les 500 leçons A1 : exactitude grammaticale, traductions, distracteurs et exemples américains naturels.
 3. Ajouter plusieurs exercices réellement distincts par leçon et renforcer les activités correctives.
 4. Écrire et intégrer 500 leçons distinctes pour chacun des niveaux A2, B1, B2, C1 et C2 ; la feuille de route seule ne remplace pas ces contenus.
