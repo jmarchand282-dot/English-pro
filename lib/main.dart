@@ -50,7 +50,7 @@ class EnglishProApp extends StatelessWidget {
 class AppHome extends StatefulWidget { const AppHome({super.key}); @override State<AppHome> createState()=>_AppHomeState(); }
 class _AppHomeState extends State<AppHome> {
  late SharedPreferences prefs; late List<StudyLesson> lessons;
- Set<String> done={},conversationsDone={}; int xp=0,goal=15,streak=0; String name='Learner',lastDate='',placementLevel='A1'; String? photo; bool loading=true,needsOnboarding=true,darkMode=false,remindersEnabled=false,reminderSound=true; int reminderHour=18,reminderMinute=0;
+ Set<String> done={},conversationsDone={}; int xp=0,goal=15,streak=0; String name='Learner',lastDate='',placementLevel='A1'; String? photo; bool loading=true,needsOnboarding=true,showWelcome=true,darkMode=false,remindersEnabled=false,reminderSound=true; int reminderHour=18,reminderMinute=0;
  @override void initState(){super.initState();lessons=buildCurriculum();init();}
  Future<void> init() async {prefs=await SharedPreferences.getInstance();done=(prefs.getStringList('completed_v2')??[]).toSet();xp=prefs.getInt('xp_v2')??0;goal=prefs.getInt('daily_goal')??15;streak=prefs.getInt('streak')??0;name=prefs.getString('learner_name')??'Learner';lastDate=prefs.getString('last_study_date')??'';photo=prefs.getString('photo_data');placementLevel=prefs.getString('placement_level')??'A1';darkMode=prefs.getBool('dark_mode')??false;appThemeMode.value=darkMode?ThemeMode.dark:ThemeMode.light;remindersEnabled=prefs.getBool('reminders_enabled')??false;reminderSound=prefs.getBool('reminder_sound')??true;reminderHour=prefs.getInt('reminder_hour')??18;reminderMinute=prefs.getInt('reminder_minute')??0;if(remindersEnabled){try{await scheduleDailyReminder(hour:reminderHour,minute:reminderMinute,sound:reminderSound);}catch(_){}}needsOnboarding=!(prefs.getBool('profile_setup_complete')??false);if(mounted)setState(()=>loading=false);}
  Future<void> save() async {await prefs.setStringList('completed_v2',done.toList());await prefs.setInt('xp_v2',xp);await prefs.setInt('daily_goal',goal);await prefs.setInt('streak',streak);await prefs.setString('learner_name',name);await prefs.setString('last_study_date',lastDate);await prefs.setBool('dark_mode',darkMode);await prefs.setBool('reminders_enabled',remindersEnabled);await prefs.setBool('reminder_sound',reminderSound);await prefs.setInt('reminder_hour',reminderHour);await prefs.setInt('reminder_minute',reminderMinute);if(photo!=null)await prefs.setString('photo_data',photo!);}
@@ -71,6 +71,18 @@ class _AppHomeState extends State<AppHome> {
  @override
  Widget build(BuildContext context) {
   if(loading) return const Scaffold(body:Center(child:CircularProgressIndicator()));
+  if(needsOnboarding && showWelcome) return WelcomeSplash(onContinue:(){if(mounted)setState(()=>showWelcome=false);});
+  if(needsOnboarding) return OnboardingPage(
+   initialName:name, photo:photo, onPickPhoto:pickPhoto,
+   onComplete:(learnerName,score) async {
+    name=learnerName.trim().isEmpty?'Learner':learnerName.trim();
+    placementLevel=score<=2?'A1':score<=3?'A2':score<=4?'B1':score<=5?'B2':score<=6?'C1':'C2';
+    await prefs.setString('learner_name',name);
+    await prefs.setString('placement_level',placementLevel);
+    await prefs.setBool('profile_setup_complete',true);
+    if(mounted)setState(()=>needsOnboarding=false);
+   },
+  );
   final level=currentLevel;
   final upcoming=next;
   final completedA1=count('A1');
@@ -153,6 +165,39 @@ class _AppHomeState extends State<AppHome> {
 }
 
 
+
+class WelcomeSplash extends StatefulWidget {
+ final VoidCallback onContinue;
+ const WelcomeSplash({super.key,required this.onContinue});
+ @override State<WelcomeSplash> createState()=>_WelcomeSplashState();
+}
+class _WelcomeSplashState extends State<WelcomeSplash> with SingleTickerProviderStateMixin {
+ late final AnimationController _pulse=AnimationController(vsync:this,duration:const Duration(milliseconds:1100),lowerBound:.94,upperBound:1)..repeat(reverse:true);
+ int phrase=0; Timer? timer;
+ static const phrases=['HELLO! WELCOME TO ENGLISH PRO','LET’S LEARN ENGLISH TOGETHER!','LEARN. PRACTICE. SUCCEED!'];
+ static const translations=['Bienvenue dans English Pro.','Apprenons l’anglais ensemble.','Apprends. Pratique. Réussis.'];
+ @override void initState(){super.initState();timer=Timer.periodic(const Duration(seconds:2),(_){if(mounted)setState(()=>phrase=(phrase+1)%phrases.length);});}
+ @override void dispose(){timer?.cancel();_pulse.dispose();super.dispose();}
+ @override Widget build(BuildContext context)=>Scaffold(
+  backgroundColor:navy,
+  body:SafeArea(child:Center(child:Padding(padding:const EdgeInsets.all(28),child:Column(
+   mainAxisAlignment:MainAxisAlignment.center,
+   children:[
+    ScaleTransition(scale:_pulse,child:Container(width:178,height:178,decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(42),border:Border.all(color:gold,width:5),boxShadow:[BoxShadow(color:blue.withValues(alpha:.45),blurRadius:35,spreadRadius:4)]),child:const Center(child:EnglishProBrandMark(size:140)))),
+    const SizedBox(height:34),
+    const Text('ENGLISH PRO',style:TextStyle(color:gold,fontSize:27,fontWeight:FontWeight.w900,letterSpacing:3)),
+    const SizedBox(height:22),
+    AnimatedSwitcher(duration:const Duration(milliseconds:450),child:Text(phrases[phrase],key:ValueKey(phrase),textAlign:TextAlign.center,style:const TextStyle(color:Colors.white,fontSize:22,fontWeight:FontWeight.w900,height:1.3))),
+    const SizedBox(height:10),
+    AnimatedSwitcher(duration:const Duration(milliseconds:350),child:Text(translations[phrase],key:ValueKey('tr$phrase'),textAlign:TextAlign.center,style:const TextStyle(color:Colors.white70,fontSize:15))),
+    const SizedBox(height:38),
+    SizedBox(width:220,height:54,child:FilledButton(onPressed:widget.onContinue,style:FilledButton.styleFrom(backgroundColor:gold,foregroundColor:navy,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(18))),child:const Text('COMMENCER  →',style:TextStyle(fontWeight:FontWeight.w900,fontSize:16)))),
+    const SizedBox(height:18),
+    const Text('LEARN ENGLISH • BUILD YOUR FUTURE',style:TextStyle(color:Colors.white54,fontSize:10,letterSpacing:1.5,fontWeight:FontWeight.bold)),
+   ],
+  )))),
+ );
+}
 
 class _PlacementQuestion {
  final String question,explanation; final List<String> options; final int answer;
