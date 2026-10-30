@@ -330,6 +330,25 @@ class SubchapterPage extends StatefulWidget {
  @override State<SubchapterPage> createState()=>_SubchapterPageState();
 }
 class _SubchapterPageState extends State<SubchapterPage>{
+ Future<void> _openUnit(int unit,String title,List<StudyLesson> list) async {
+  final wasValidated=widget.conversationsDone.contains('${widget.level}-U$unit');
+  await Navigator.push(context,MaterialPageRoute(builder:(_)=>UnitLessonsPage(level:widget.level,unit:unit,title:title,lessons:list,done:widget.done,conversationsDone:widget.conversationsDone,lessonUnlocked:widget.lessonUnlocked,onOpenLesson:widget.onOpenLesson,onConversationComplete:widget.onConversationComplete)));
+  if(!mounted)return;
+  setState((){});
+  final newlyValidated=!wasValidated&&widget.conversationsDone.contains('${widget.level}-U$unit');
+  if(!newlyValidated)return;
+  final levelLessons=widget.lessons.where((l)=>l.level==widget.level).toList();
+  final nextUnits=levelLessons.map((l)=>l.unit).toSet().where((u)=>u>unit).toList()..sort();
+  if(nextUnits.isEmpty)return;
+  final nextUnit=nextUnits.first;
+  final nextList=levelLessons.where((l)=>l.unit==nextUnit).toList();
+  if(nextList.isEmpty)return;
+  final nextTitle=widget.level=='A1'?(a1UnitTitles[nextUnit]??'Sous-chapitre $nextUnit'):'Sous-chapitre $nextUnit • ${nextList.first.title}';
+  WidgetsBinding.instance.addPostFrameCallback((_){
+   if(!mounted)return;
+   Navigator.push(context,MaterialPageRoute(builder:(_)=>UnitLessonsPage(level:widget.level,unit:nextUnit,title:nextTitle,lessons:nextList,done:widget.done,conversationsDone:widget.conversationsDone,lessonUnlocked:widget.lessonUnlocked,onOpenLesson:widget.onOpenLesson,onConversationComplete:widget.onConversationComplete)));
+  });
+ }
  @override Widget build(BuildContext context){
   final levelLessons=widget.lessons.where((l)=>l.level==widget.level).toList();
   final units=levelLessons.map((l)=>l.unit).toSet().toList()..sort();
@@ -353,7 +372,7 @@ class _SubchapterPageState extends State<SubchapterPage>{
      title:Text(title,style:const TextStyle(fontWeight:FontWeight.bold,color:navy)),
      subtitle:Text('$doneCount / ${list.length} leçons • ${conversationValidated?'conversation validée':'conversation à valider'}'),
      trailing:Icon(unlocked?Icons.chevron_right:Icons.lock,color:unlocked?blue:Colors.grey),
-     onTap:!unlocked?(){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine le sous-chapitre précédent pour débloquer celui-ci.')));}:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>UnitLessonsPage(level:widget.level,unit:unit,title:title,lessons:list,done:widget.done,conversationsDone:widget.conversationsDone,lessonUnlocked:widget.lessonUnlocked,onOpenLesson:widget.onOpenLesson,onConversationComplete:widget.onConversationComplete))).then((_){if(mounted)setState((){});}),
+     onTap:!unlocked?(){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine le sous-chapitre précédent pour débloquer celui-ci.')));}:()=>_openUnit(unit,title,list),
     ));
    })
   ]));
@@ -394,7 +413,7 @@ class _UnitLessonsPageState extends State<UnitLessonsPage>{
     trailing:Icon(conversationValidated?Icons.check_circle:allLessonsDone?Icons.chevron_right:Icons.lock,color:conversationValidated?Colors.green:allLessonsDone?blue:Colors.grey),
     onTap:!allLessonsDone?(){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Termine les leçons de ce sous-chapitre avant la conversation.')));}:()async{
      await Navigator.push(context,MaterialPageRoute(builder:(_)=>ConversationValidationPage(level:widget.level,unit:widget.unit,title:widget.title,onComplete:()=>widget.onConversationComplete(widget.level,widget.unit))));
-     if(mounted)setState((){});
+     if(mounted){setState((){});if(widget.conversationsDone.contains(conversationKey))Navigator.pop(context);}
     },
    )),
   ]));
