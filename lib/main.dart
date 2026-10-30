@@ -833,16 +833,21 @@ class _OfflineChatPageState extends State<OfflineChatPage>{
   if(terms.isEmpty)return 'Écris un mot ou une question plus précise. Exemples : « to be », « past simple », « eat », « comment donner un conseil ? ».';
   const related={
    'manger':'eat','boire':'drink','courir':'run','marcher':'walk','sauter':'jump',
+   'nager':'swim','danser':'dance','chanter':'sing','dormir':'sleep','parler':'speak',
    'lire':'read','ecrire':'write','ecole':'school','maison':'house','famille':'family',
    'passe':'past','futur':'future','present':'present','conseil':'should',
    'bonjour':'greeting','salut':'greeting','merci':'thank','heure':'time',
    'voiture':'car','eau':'water','livre':'book','ami':'friend','amie':'friend',
+   'acheter':'buy','aller':'go','venir':'come','faire':'do','avoir':'have','etre':'be',
+   'question':'question','questions':'question','negation':'negative','interrogation':'question',
+   'adjectif':'adjective','adverbe':'adverb','pronom':'pronoun','preposition':'preposition',
+   'prononciation':'pronunciation','verbe':'verb','verbes':'verb','grammaire':'grammar',
   };
   final expanded=<String>{...terms};
   for(final term in terms){final mapped=related[term];if(mapped!=null)expanded.add(mapped);}
   final scored=widget.lessons.map((l){
    final title=_normalise(l.title);
-   final text=_normalise('\${l.title} \${l.subtitle} \${l.explanation} \${l.example} \${l.french} \${l.question} \${l.correction}');
+   final text=_normalise('${l.title} ${l.subtitle} ${l.explanation} ${l.example} ${l.french} ${l.question} ${l.correction}');
    var score=0;
    for(final term in expanded){
     if(title.split(' ').contains(term))score+=6;
@@ -853,7 +858,7 @@ class _OfflineChatPageState extends State<OfflineChatPage>{
    }
    return (lesson:l,score:score);
   }).where((x)=>x.score>0).toList()..sort((a,b)=>b.score.compareTo(a.score));
-  if(scored.isEmpty)return 'Je n’ai pas trouvé cette notion dans le cours installé. Essaie un mot-clé anglais ou français plus simple, ou consulte le Livre de référence. Je fonctionne hors connexion avec les leçons enregistrées : je préfère reconnaître mes limites plutôt que d’inventer une règle.';
+  if(scored.isEmpty)return 'Je n’ai pas trouvé cette notion dans les leçons installées. Essaie un mot-clé plus simple en anglais ou en français, par exemple : « past simple », « manger », « prononciation » ou « to be ». Je fonctionne hors connexion et je préfère reconnaître mes limites plutôt que d’inventer une règle.';
   final best=scored.take(2).toList();
   final french=RegExp(r'\b(comment|pourquoi|explique|quelle|quel|est|sont|donne|traduis|francais|anglais)\b').hasMatch(q);
   final intro=french?'Voici ce que j’ai trouvé dans ton cours :':'Here is what I found in your course:';
