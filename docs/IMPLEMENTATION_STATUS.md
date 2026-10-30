@@ -78,3 +78,19 @@ Le plan de départ prévoit des centaines de leçons distinctes par niveau. Seul
 - 10 sous-chapitres par niveau, 50 leçons par sous-chapitre comme objectif de contenu.
 - Contact WhatsApp dans les paramètres : +243 843478142.
 - Mention de création : « CRÉÉ PAR JOSEPH MARCHAND — DÉVELOPPEUR ».
+
+
+## Nouvelle demande — vraies images et JoBot enrichi
+
+Demande validée pour la prochaine phase :
+- [ ] Conserver les pictogrammes/émojis actuels comme secours, mais ajouter une bibliothèque de vraies images pédagogiques locales.
+- [ ] Couvrir personnes, corps, objets, lieux, animaux, métiers, émotions, sports et mouvements/actions.
+- [ ] Afficher des images pertinentes dans les cartes de vocabulaire.
+- [ ] Ajouter des illustrations directement dans les leçons A1 et A2 en priorité, puis dans les autres niveaux, avec légende bilingue et texte alternatif.
+- [ ] Ajouter un champ d'image facultatif aux données des leçons et un repli sûr vers les pictogrammes.
+- [ ] Enrichir JoBot pour rechercher dans les leçons, exemples, vocabulaire, verbes et livre de référence.
+- [ ] Permettre à JoBot d'afficher les images pédagogiques locales pertinentes.
+- [ ] Définir clairement les limites du mode hors ligne ; étudier une IA en ligne facultative et sécurisée sans clé API dans l'APK.
+- [ ] Vérifier les ressources locales, le mode avion, le poids de l'APK, les tests et l'installation Android.
+
+État au début de cette demande : la galerie contient 12 cartes utilisant des émojis ; les leçons montrent un pictogramme contextuel ; JoBot effectue une recherche textuelle locale dans le contenu de cours et indique lorsqu'il ne trouve pas de réponse. Aucune bibliothèque de photographies/illustrations pédagogiques locales n'est encore intégrée.
