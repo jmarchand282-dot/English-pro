@@ -838,7 +838,18 @@ class _OfflineChatPageState extends State<OfflineChatPage>{
   final best=scored.take(2).toList();
   final french=RegExp(r'\b(comment|pourquoi|explique|quelle|quel|est|sont|donne|traduis|francais|anglais)\b').hasMatch(q);
   final intro=french?'Voici ce que j’ai trouvé dans ton cours :':'Here is what I found in your course:';
-  return '\$intro\n\n'+best.map((x)=>'📘 \${x.lesson.level} — \${x.lesson.title}\n\n\${french?'Explication':'Explanation'} : \${x.lesson.explanation}\n\n\${french?'Exemple':'Example'} : \${x.lesson.example}\n\${french?'En français':'French'} : \${x.lesson.french}\n\n\${french?'À retenir':'Remember'} : \${x.lesson.correction}').join('\n\n────────\n\n');
+  final explanationLabel=french?'Explication':'Explanation';
+  final exampleLabel=french?'Exemple':'Example';
+  final frenchLabel=french?'En français':'French';
+  final rememberLabel=french?'À retenir':'Remember';
+  final details=best.map((x){
+   return '📘 ${x.lesson.level} — ${x.lesson.title}\n\n'
+    '$explanationLabel : ${x.lesson.explanation}\n\n'
+    '$exampleLabel : ${x.lesson.example}\n'
+    '$frenchLabel : ${x.lesson.french}\n\n'
+    '$rememberLabel : ${x.lesson.correction}';
+  }).join('\n\n────────\n\n');
+  return '$intro\n\n$details';
  }
  void send(){
   final q=controller.text.trim();if(q.isEmpty)return;
