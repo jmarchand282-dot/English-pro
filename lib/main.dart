@@ -92,6 +92,7 @@ class _AppHomeState extends State<AppHome> {
     title:const Row(children:[EnglishProBrandMark(size:34),SizedBox(width:9),Text('English Pro',style:TextStyle(fontWeight:FontWeight.bold))]),
     actions:[
      IconButton(onPressed:profile,icon:avatar(photo,name,30),tooltip:'Profil'),
+     Padding(padding:const EdgeInsets.symmetric(horizontal:2),child:JoBotHeaderButton(onTap:()=>Navigator.push(context,MaterialPageRoute(builder:(_)=>OfflineChatPage(lessons:lessons))))),
      IconButton(onPressed:settings,icon:const Icon(Icons.settings_outlined),tooltip:'Paramètres'),
     ],
    ),
@@ -927,4 +928,22 @@ class EnglishProBrandMark extends StatelessWidget {
       ),
     ),
   );
+}
+
+
+class JoBotHeaderButton extends StatefulWidget {
+ final VoidCallback onTap;
+ const JoBotHeaderButton({super.key,required this.onTap});
+ @override State<JoBotHeaderButton> createState()=>_JoBotHeaderButtonState();
+}
+class _JoBotHeaderButtonState extends State<JoBotHeaderButton> with SingleTickerProviderStateMixin {
+ late final AnimationController _controller=AnimationController(vsync:this,duration:const Duration(milliseconds:1500))..repeat(reverse:true);
+ @override void dispose(){_controller.dispose();super.dispose();}
+ @override Widget build(BuildContext context)=>AnimatedBuilder(animation:_controller,builder:(context,child){
+  final t=_controller.value;
+  return Transform.translate(offset:Offset(0,-2.2*t),child:Transform.scale(scale:1+0.045*t,child:child));
+ },child:Stack(clipBehavior:Clip.none,alignment:Alignment.center,children:[
+  Container(width:39,height:39,decoration:BoxDecoration(shape:BoxShape.circle,boxShadow:[BoxShadow(color:blue.withValues(alpha:.18),blurRadius:5,spreadRadius:1)]),child:Material(color:Colors.transparent,shape:const CircleBorder(),child:InkWell(onTap:widget.onTap,customBorder:const CircleBorder(),child:Padding(padding:const EdgeInsets.all(2),child:ClipOval(child:Image.asset('assets/images/jobot_face.jpg',width:35,height:35,fit:BoxFit.cover))))),
+  Positioned(right:-1,bottom:-1,child:Container(width:11,height:11,decoration:BoxDecoration(color:const Color(0xFF22C55E),shape:BoxShape.circle,border:Border.all(color:navy,width:1.5))))
+ ]));
 }
