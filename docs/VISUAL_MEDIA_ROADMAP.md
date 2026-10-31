@@ -63,3 +63,16 @@ Conserver les pictogrammes et émojis déjà présents comme repères légers et
 - Publication sur le Play Store.
 - Dépendance obligatoire à un serveur payant.
 - Promesse d'un chatbot hors ligne capable de répondre à toutes les questions du monde.
+
+## Exigence visuelle renforcée — niveaux B1 à C2
+
+Les leçons B1, B2, C1 et C2 doivent intégrer des supports visuels pédagogiques directement dans le contenu, en particulier juste après ou à côté de l'explication concernée, avant les exemples et les exercices lorsque cela facilite la compréhension.
+
+- Ajouter une petite illustration ou une photo pertinente dans les leçons qui enseignent un objet, un animal, un lieu, une profession, une émotion, une action, un mouvement, un phénomène ou une situation concrète.
+- Afficher sous chaque visuel le mot ou l'expression en anglais, sa traduction française et, si utile, une phrase d'exemple bilingue.
+- Utiliser les émojis comme repères complémentaires pour rendre le contenu vivant, jamais comme substituts systématiques aux vraies images.
+- Pour les verbes d'action, choisir des images qui montrent clairement le mouvement (run, jump, swim, carry, throw, climb, dance, etc.). Ajouter de petites animations sobres (apparition en fondu, léger zoom ou mouvement illustratif) lorsque cela améliore la compréhension ; éviter les animations distrayantes et préserver les performances Android.
+- Les illustrations doivent correspondre précisément à la notion enseignée, pas être ajoutées au hasard pour décorer.
+- Les images et animations pédagogiques essentielles doivent être locales et fonctionner hors connexion. Prévoir une solution de secours avec pictogramme/émoji si une ressource manque.
+- Garder une mise en page compacte et lisible : illustration de taille modérée, explication en dessous ou à côté, légende bilingue et texte alternatif.
+- Appliquer cette règle aux quatre niveaux avancés B1, B2, C1 et C2, en privilégiant les leçons où le visuel apporte une vraie valeur pédagogique. Les notions abstraites (argumentation, grammaire avancée, registre, rhétorique) peuvent utiliser des schémas simples, des icônes ou des mini-scénarios plutôt qu'une photo artificielle.
