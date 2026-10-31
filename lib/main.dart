@@ -545,6 +545,25 @@ class _ConversationValidationPageState extends State<ConversationValidationPage>
  }
 }
 
+String lessonDiagram(StudyLesson lesson){
+ final text='${lesson.title} ${lesson.explanation}'.toLowerCase();
+ if(text.contains('first conditional')||text.contains('conditionnel type 1'))return 'IF + PRESENT  →  WILL + VERB\nIf it rains → we will stay home';
+ if(text.contains('second conditional')||text.contains('conditionnel type 2'))return 'IF + PAST  →  WOULD + VERB\nIf I had time → I would help';
+ if(text.contains('passive'))return 'SUBJECT + BE + PAST PARTICIPLE\nThe letter was written';
+ if(text.contains('reported speech')||text.contains('discours indirect'))return 'DIRECT  →  REPORTED\n“I am tired” → She said she was tired';
+ if(text.contains('present perfect'))return 'HAVE / HAS + PAST PARTICIPLE\nI have finished';
+ if(text.contains('past simple'))return 'SUBJECT + PAST VERB\nWe visited / She went';
+ if(text.contains('comparative'))return 'A + BE + COMPARATIVE + THAN + B\nThis road is longer than that one';
+ if(text.contains('relative clause'))return 'PERSON → WHO  •  THING → WHICH / THAT';
+ if(text.contains('although')||text.contains('concession')||text.contains('contrast'))return 'IDEA A  ↔  CONTRAST  ↔  IDEA B\nalthough • however • despite';
+ if(text.contains('reported')||text.contains('inversion'))return 'AUXILIARY + SUBJECT + MAIN VERB\nNever have I seen…';
+ if(text.contains('nominalisation'))return 'VERB  →  NOUN\nanalyse → analysis';
+ if(text.contains('collocation'))return 'WORD  +  NATURAL PARTNER\nmake a decision • strong evidence';
+ if(text.contains('argument')||text.contains('opinion'))return 'CLAIM  →  REASON  →  EVIDENCE  →  CONCLUSION';
+ if(text.contains('future')||text.contains('going to'))return 'PLAN: BE GOING TO  •  QUICK DECISION: WILL';
+ return '';
+}
+
 String lessonIllustration(StudyLesson lesson){
  final text='${lesson.title} ${lesson.example}'.toLowerCase();
  if(text.contains('foot')||text.contains('pied'))return '🦶';
@@ -609,7 +628,7 @@ class _LessonPageState extends State<LessonPage>{
    body:SafeArea(child:Column(children:[
     Padding(padding:const EdgeInsets.fromLTRB(18,14,18,8),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
      Text(l.title,style:const TextStyle(color:navy,fontWeight:FontWeight.bold,fontSize:20)),
-     if(lessonIllustration(l).isNotEmpty)Padding(padding:const EdgeInsets.only(top:8,bottom:4),child:Row(children:[Text(lessonIllustration(l),style:const TextStyle(fontSize:32)),const SizedBox(width:9),const Text('Aide visuelle',style:TextStyle(color:Colors.black54,fontSize:12))])),
+     if(lessonIllustration(l).isNotEmpty)Padding(padding:const EdgeInsets.only(top:8,bottom:4),child:TweenAnimationBuilder<double>(tween:Tween(begin:.82,end:1.0),duration:const Duration(milliseconds:900),curve:Curves.easeInOut,builder:(context,value,child)=>Transform.scale(scale:value,child:child),child:Row(children:[Text(lessonIllustration(l),style:const TextStyle(fontSize:32)),const SizedBox(width:9),const Text('Aide visuelle',style:TextStyle(color:Colors.black54,fontSize:12))]))),
      const SizedBox(height:8),
      ClipRRect(borderRadius:BorderRadius.circular(8),child:LinearProgressIndicator(value: finished ? 1 : (checked ? 0.72 : 0.42),minHeight:7,color:blue,backgroundColor:const Color(0xFFE7E8F2))),
      const SizedBox(height:7),
@@ -620,6 +639,7 @@ class _LessonPageState extends State<LessonPage>{
       const Text('APPRENDS D’ABORD',style:TextStyle(color:gold,fontWeight:FontWeight.bold,letterSpacing:1.1)),
       const SizedBox(height:12),
       Text(l.explanation,style:const TextStyle(color:Colors.white,fontSize:17,height:1.45)),
+      if(lessonDiagram(l).isNotEmpty)Padding(padding:const EdgeInsets.only(top:14),child:TweenAnimationBuilder<double>(tween:Tween(begin:0.0,end:1.0),duration:const Duration(milliseconds:650),curve:Curves.easeOutCubic,builder:(context,value,child)=>Opacity(opacity:value,child:Transform.translate(offset:Offset(0,10*(1-value)),child:child)),child:Container(width:double.infinity,padding:const EdgeInsets.all(13),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.14),borderRadius:BorderRadius.circular(14),border:Border.all(color:gold.withValues(alpha:.65))),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('🧩 SCHÉMA À RETENIR',style:TextStyle(color:gold,fontWeight:FontWeight.bold,fontSize:12)),const SizedBox(height:8),Text(lessonDiagram(l),style:const TextStyle(color:Colors.white,fontWeight:FontWeight.w600,height:1.5))])))),
       const SizedBox(height:17),
       Container(width:double.infinity,padding:const EdgeInsets.all(13),decoration:BoxDecoration(color:Colors.white.withValues(alpha:.13),borderRadius:BorderRadius.circular(14)),child:Text(l.example,style:const TextStyle(color:Colors.white,fontSize:16,fontWeight:FontWeight.w600,height:1.5))),
       const SizedBox(height:8),
