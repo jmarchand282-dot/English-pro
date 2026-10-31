@@ -35,6 +35,30 @@ jobs:
           cache: true
       - name: Generate Android platform files
         run: flutter create --platforms=android --org com.englishpro.app --project-name english_pro /tmp/english_pro
+      - name: Apply the new English Pro launcher icon only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          root = Path('/tmp/english_pro')
+          source = Path('assets/icons/english_pro_launcher.xml')
+          target = root / 'android/app/src/main/res/drawable/english_pro_launcher.xml'
+          target.parent.mkdir(parents=True, exist_ok=True)
+          target.write_text(source.read_text())
+          manifest = root / 'android/app/src/main/AndroidManifest.xml'
+          xml = manifest.read_text()
+          application_start = xml.find('<application')
+          application_end = xml.find('>', application_start)
+          if application_start < 0 or application_end < 0:
+              raise SystemExit('Android application tag not found')
+          app_tag = xml[application_start:application_end]
+          if 'android:icon=' in app_tag:
+              app_tag = re.sub(r'android:icon="[^"]+"', 'android:icon="@drawable/english_pro_launcher"', app_tag)
+          else:
+              app_tag += ' android:icon="@drawable/english_pro_launcher"'
+          xml = xml[:application_start] + app_tag + xml[application_end:]
+          manifest.write_text(xml)
+          PY
       - name: Configure Android notification scheduling
         run: |
           python3 - <<'PY'
