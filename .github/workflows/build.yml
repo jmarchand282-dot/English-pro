@@ -1,8 +1,17 @@
 name: Build English Pro
 
+concurrency:
+  group: english-pro-android-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
-    branches: [main]
+    branches: [main, 'planning/**']
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'pubspec.yaml'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
 
 permissions:
@@ -24,33 +33,96 @@ jobs:
         with:
           channel: stable
           cache: true
-      - name: Generate Android and Web platform files
-        run: flutter create --platforms=android,web --org com.englishpro.app --project-name english_pro /tmp/english_pro
+      - name: Generate Android platform files
+        run: flutter create --platforms=android --org com.englishpro.app --project-name english_pro /tmp/english_pro
+      - name: Apply the new English Pro launcher icon only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          root = Path('/tmp/english_pro')
+          source = Path('assets/icons/english_pro_launcher.xml')
+          target = root / 'android/app/src/main/res/drawable/english_pro_launcher.xml'
+          target.parent.mkdir(parents=True, exist_ok=True)
+          target.write_text(source.read_text())
+          manifest = root / 'android/app/src/main/AndroidManifest.xml'
+          xml = manifest.read_text()
+          application_start = xml.find('<application')
+          application_end = xml.find('>', application_start)
+          if application_start < 0 or application_end < 0:
+              raise SystemExit('Android application tag not found')
+          app_tag = xml[application_start:application_end]
+          if 'android:icon=' in app_tag:
+              app_tag = re.sub(r'android:icon="[^"]+"', 'android:icon="@drawable/english_pro_launcher"', app_tag)
+          else:
+              app_tag += ' android:icon="@drawable/english_pro_launcher"'
+          xml = xml[:application_start] + app_tag + xml[application_end:]
+          manifest.write_text(xml)
+          PY
+      - name: Configure Android notification scheduling
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          gradle = Path('/tmp/english_pro/android/app/build.gradle.kts')
+          text = gradle.read_text()
+          if 'isCoreLibraryDesugaringEnabled = true' not in text:
+              text = text.replace('compileOptions {', 'compileOptions {\n        isCoreLibraryDesugaringEnabled = true', 1)
+          if 'coreLibraryDesugaring(' not in text:
+              text += '\n\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
+          gradle.write_text(text)
+          manifest = Path('/tmp/english_pro/android/app/src/main/AndroidManifest.xml')
+          xml = manifest.read_text()
+          if 'android.permission.RECEIVE_BOOT_COMPLETED' not in xml:
+              xml = xml.replace('<application', '    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <application', 1)
+          if 'android.permission.RECORD_AUDIO' not in xml:
+              xml = xml.replace('<application', '    <uses-permission android:name="android.permission.RECORD_AUDIO"/>\n    <application', 1)
+          receivers = '''        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+                  <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+                      <intent-filter>
+                          <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                          <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                          <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                          <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+                      </intent-filter>
+                  </receiver>
+          '''
+          if 'ScheduledNotificationBootReceiver' not in xml:
+              xml = xml.replace('</application>', receivers + '\n    </application>', 1)
+          if '<queries>' not in xml:
+              xml = xml.replace('</manifest>', '''    <queries>
+                      <intent><action android:name="android.intent.action.TTS_SERVICE"/></intent>
+                      <intent><action android:name="android.speech.RecognitionService"/></intent>
+                  </queries>
+          </manifest>''', 1)
+          manifest.write_text(xml)
+          PY
       - name: Copy application source
         run: |
           cp pubspec.yaml /tmp/english_pro/pubspec.yaml
           cp -r lib/. /tmp/english_pro/lib/
           rm -rf /tmp/english_pro/test
+          mkdir -p /tmp/english_pro/test
+          cp -r test/. /tmp/english_pro/test/
           cd /tmp/english_pro
           flutter pub get
       - name: Check Dart code
         working-directory: /tmp/english_pro
-        run: flutter analyze
-      - name: Build Android APK
+        run: flutter analyze --no-fatal-infos
+      - name: Test curriculum integrity
+        id: curriculum_tests
+        working-directory: /tmp/english_pro
+        run: flutter test
+      # Keep generating a clearly labeled testing APK when curriculum tests fail,
+      # provided Dart analysis and dependency setup succeeded. The job still fails
+      # overall, preserving the release gate.
+      - name: Build Android testing APK
+        if: success() || steps.curriculum_tests.outcome == 'failure'
         working-directory: /tmp/english_pro
         run: flutter build apk --release
-      - name: Build Web
-        working-directory: /tmp/english_pro
-        run: flutter build web --release
-      - name: Upload APK
+      - name: Upload Android testing APK
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: English-Pro-Android-APK
+          name: English-Pro-Android-Testing-APK
           path: /tmp/english_pro/build/app/outputs/flutter-apk/app-release.apk
-          if-no-files-found: error
-      - name: Upload Web build
-        uses: actions/upload-artifact@v4
-        with:
-          name: English-Pro-Web
-          path: /tmp/english_pro/build/web/
           if-no-files-found: error

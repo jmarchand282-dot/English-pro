@@ -1,12 +1,19 @@
+import 'a1_course_data.dart';
+import 'a2_course_data.dart';
+import 'a2_unit2_course_data.dart';
+import 'a2_unit3_course_data.dart';
+import 'a2_unit4_course_data.dart';
+import 'a2_unit5_course_data.dart';
+
 class Topic {
  final String title, explanation, example, french, question;
  final List<String> options; final int answer;
  const Topic(this.title,this.explanation,this.example,this.french,this.question,this.options,this.answer);
 }
 class StudyLesson {
- final String id,level,title,subtitle,explanation,example,french,question;
+ final String id,level,title,subtitle,explanation,example,french,question,correction;
  final List<String> options; final int answer,unit,phase;
- const StudyLesson({required this.id,required this.level,required this.title,required this.subtitle,required this.explanation,required this.example,required this.french,required this.question,required this.options,required this.answer,required this.unit,required this.phase});
+ const StudyLesson({required this.id,required this.level,required this.title,required this.subtitle,required this.explanation,required this.example,required this.french,required this.question,required this.correction,required this.options,required this.answer,required this.unit,required this.phase});
 }
 const curriculum = <String,List<Topic>>{
 'A1':[
@@ -91,6 +98,185 @@ const levelNames = {'A1':'Beginner','A2':'Elementary','B1':'Intermediate','B2':'
 const phaseNames = ['Learn the idea','Guided practice','Review challenge'];
 List<StudyLesson> buildCurriculum() {
  final result=<StudyLesson>[];
- for(final entry in curriculum.entries){ var unit=1; for(var i=0;i<entry.value.length;i++){final t=entry.value[i]; for(var p=0;p<3;p++){final suffix=p==0?'':p==1?' — Practice':' — Review'; result.add(StudyLesson(id:'${entry.key}-${i+1}-${p+1}',level:entry.key,title:'${(i+1).toString().padLeft(2,'0')}. ${t.title}$suffix',subtitle:'${phaseNames[p]} • Unit $unit',explanation:t.explanation,example:t.example,french:t.french,question:p==0?t.question:p==1?'Practice: ${t.question}':'Review: ${t.question}',options:t.options,answer:t.answer,unit:unit,phase:p));} unit++;}}
+ // The A1 course is the 500-lesson structured course authored in docs/lessons/.
+ for(final raw in a1CourseData){
+  result.add(StudyLesson(
+   id: raw['id'] as String,
+   level: 'A1',
+   title: raw['title'] as String,
+   subtitle: raw['subtitle'] as String,
+   explanation: raw['explanation'] as String,
+   example: raw['example'] as String,
+   french: raw['french'] as String,
+   question: raw['question'] as String,
+   correction: raw['correction'] as String,
+   options: (raw['options'] as List).cast<String>(),
+   answer: raw['answer'] as int,
+   unit: raw['unit'] as int,
+   phase: 0,
+  ));
+ }
+ // A2 Unit 1 contains 50 individually authored lessons; remaining A2 units are still in progress.
+ for(final raw in a2CourseData){
+  result.add(StudyLesson(
+   id: raw['id'] as String,
+   level: 'A2',
+   title: raw['title'] as String,
+   subtitle: raw['subtitle'] as String,
+   explanation: raw['explanation'] as String,
+   example: raw['example'] as String,
+   french: raw['french'] as String,
+   question: raw['question'] as String,
+   correction: raw['correction'] as String,
+   options: (raw['options'] as List).cast<String>(),
+   answer: raw['answer'] as int,
+   unit: raw['unit'] as int,
+   phase: raw['phase'] as int,
+  ));
+ }
+ // A2 Unit 2 contains 50 authored lessons on future plans and arrangements.
+ for(final raw in a2Unit2CourseData){
+  result.add(StudyLesson(
+   id: raw['id'] as String,
+   level: 'A2',
+   title: raw['title'] as String,
+   subtitle: raw['subtitle'] as String,
+   explanation: raw['explanation'] as String,
+   example: raw['example'] as String,
+   french: raw['french'] as String,
+   question: raw['question'] as String,
+   correction: raw['correction'] as String,
+   options: (raw['options'] as List).cast<String>(),
+   answer: raw['answer'] as int,
+   unit: raw['unit'] as int,
+   phase: raw['phase'] as int,
+  ));
+ }
+ // A2 Unit 3 contains 50 authored lessons on comparisons and descriptions.
+ for(final raw in a2Unit3CourseData){
+  result.add(StudyLesson(
+   id: raw['id'] as String,
+   level: 'A2',
+   title: raw['title'] as String,
+   subtitle: raw['subtitle'] as String,
+   explanation: raw['explanation'] as String,
+   example: raw['example'] as String,
+   french: raw['french'] as String,
+   question: raw['question'] as String,
+   correction: raw['correction'] as String,
+   options: (raw['options'] as List).cast<String>(),
+   answer: raw['answer'] as int,
+   unit: raw['unit'] as int,
+   phase: raw['phase'] as int,
+  ));
+ }
+ for(final raw in a2Unit4CourseData){
+  result.add(StudyLesson(
+   id: raw['id'] as String,
+   level: 'A2',
+   title: raw['title'] as String,
+   subtitle: raw['subtitle'] as String,
+   explanation: raw['explanation'] as String,
+   example: raw['example'] as String,
+   french: raw['french'] as String,
+   question: raw['question'] as String,
+   correction: raw['correction'] as String,
+   options: (raw['options'] as List).cast<String>(),
+   answer: raw['answer'] as int,
+   unit: raw['unit'] as int,
+   phase: raw['phase'] as int,
+  ));
+ }
+ for(final raw in a2Unit5CourseData){
+  result.add(StudyLesson(
+   id: raw['id'] as String,
+   level: 'A2',
+   title: raw['title'] as String,
+   subtitle: raw['subtitle'] as String,
+   explanation: raw['explanation'] as String,
+   example: raw['example'] as String,
+   french: raw['french'] as String,
+   question: raw['question'] as String,
+   correction: raw['correction'] as String,
+   options: (raw['options'] as List).cast<String>(),
+   answer: raw['answer'] as int,
+   unit: raw['unit'] as int,
+   phase: raw['phase'] as int,
+  ));
+ }
+ // Remaining A2 prototype topics and B1-C2 banks are temporary and not release-ready.
+ for(final entry in curriculum.entries.where((e)=>e.key!='A1' && e.key!='A2')){
+  var unit=1;
+  for(var i=0;i<entry.value.length;i++){
+   final t=entry.value[i];
+   for(var p=0;p<3;p++){
+    final suffix=p==0?'':p==1?' — Practice':' — Review';
+    result.add(StudyLesson(
+     id:'${entry.key}-${i+1}-${p+1}',
+     level:entry.key,
+     title:'${(i+1).toString().padLeft(2,'0')}. ${t.title}$suffix',
+     subtitle:'${phaseNames[p]} • Unit $unit',
+     explanation:t.explanation,
+     example:t.example,
+     french:t.french,
+     question:p==0?t.question:p==1?'Practice: ${t.question}':'Review: ${t.question}',
+     correction:t.explanation,
+     options:t.options,
+     answer:t.answer,
+     unit:unit,
+     phase:p,
+    ));
+   }
+   unit++;
+  }
+ }
  return result;
+}
+
+/// Shared progression rules used by the app and unit tests.
+bool isLevelUnlockedInCurriculum({
+ required String level,
+ required List<StudyLesson> lessons,
+ required Set<String> completedLessonIds,
+ required Set<String> completedConversationKeys,
+}) {
+ const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+ final levelIndex = levels.indexOf(level);
+ if (levelIndex < 0) return false;
+ if (levelIndex == 0) return true;
+ final previousLevel = levels[levelIndex - 1];
+ final previousLessons = lessons.where((lesson) => lesson.level == previousLevel).toList();
+ if (previousLessons.isEmpty || previousLessons.any((lesson) => !completedLessonIds.contains(lesson.id))) {
+  return false;
+ }
+ final previousUnits = previousLessons.map((lesson) => lesson.unit).toSet();
+ return previousUnits.every((unit) => completedConversationKeys.contains('$previousLevel-U$unit'));
+}
+
+bool isLessonUnlockedInCurriculum({
+ required StudyLesson lesson,
+ required List<StudyLesson> lessons,
+ required Set<String> completedLessonIds,
+ required Set<String> completedConversationKeys,
+}) {
+ final index = lessons.indexWhere((item) => item.id == lesson.id);
+ if (index < 0) return false;
+ if (completedLessonIds.contains(lesson.id)) return true;
+ if (index == 0) return true;
+ final previous = lessons[index - 1];
+ if (!completedLessonIds.contains(previous.id)) return false;
+ if (previous.level != lesson.level) {
+  return isLevelUnlockedInCurriculum(
+   level: lesson.level,
+   lessons: lessons,
+   completedLessonIds: completedLessonIds,
+   completedConversationKeys: completedConversationKeys,
+  );
+ }
+ if (previous.unit != lesson.unit) {
+  final previousUnitLessons = lessons.where((item) => item.level == previous.level && item.unit == previous.unit);
+  if (previousUnitLessons.any((item) => !completedLessonIds.contains(item.id))) return false;
+  if (!completedConversationKeys.contains('${previous.level}-U${previous.unit}')) return false;
+ }
+ return true;
 }
