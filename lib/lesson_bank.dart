@@ -4,6 +4,7 @@ import 'a2_unit2_course_data.dart';
 import 'a2_unit3_course_data.dart';
 import 'a2_unit4_course_data.dart';
 import 'a2_unit5_course_data.dart';
+import 'a2_unit6_course_data.dart';
 
 class Topic {
  final String title, explanation, example, french, question;
@@ -188,6 +189,23 @@ List<StudyLesson> buildCurriculum() {
   ));
  }
  for(final raw in a2Unit5CourseData){
+  result.add(StudyLesson(
+   id: raw['id'] as String,
+   level: 'A2',
+   title: raw['title'] as String,
+   subtitle: raw['subtitle'] as String,
+   explanation: raw['explanation'] as String,
+   example: raw['example'] as String,
+   french: raw['french'] as String,
+   question: raw['question'] as String,
+   correction: raw['correction'] as String,
+   options: (raw['options'] as List).cast<String>(),
+   answer: raw['answer'] as int,
+   unit: raw['unit'] as int,
+   phase: raw['phase'] as int,
+  ));
+ }
+ for(final raw in a2Unit6CourseData){
   result.add(StudyLesson(
    id: raw['id'] as String,
    level: 'A2',
