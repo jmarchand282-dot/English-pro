@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#151936">
+  <meta name="description" content="English Pro : apprends l’anglais étape par étape, avec des leçons, des explications et des exercices. Disponible en ligne et sur Android.">
+  <title>English Pro — Learn today, speak tomorrow</title>
+  <style>
+    :root{color-scheme:light;--navy:#151936;--blue:#4f46e5;--gold:#ffc857;--ink:#202442;--muted:#68708b;--paper:#f6f7fc}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--paper);color:var(--ink)}
+    .wrap{width:min(1080px,92%);margin:auto}.top{padding:22px 0;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:12px;color:var(--navy);font-weight:900;font-size:1.2rem}.flag{display:grid;place-items:center;width:44px;height:44px;background:#fff;border:2px solid var(--gold);border-radius:13px;font-size:26px}
+    .lang{border:1px solid #dce0ef;background:white;border-radius:12px;padding:9px 12px;font-weight:700;color:var(--navy)}
+    .hero{margin:26px auto 22px;padding:clamp(28px,6vw,64px);border-radius:30px;background:linear-gradient(130deg,#151936,#3932a7 72%,#4f46e5);color:white;box-shadow:0 18px 55px #25245b25}
+    .eyebrow{color:var(--gold);font-weight:900;letter-spacing:2px;font-size:.78rem}.hero h1{font-size:clamp(2.2rem,6vw,4.3rem);line-height:1.06;max-width:760px;margin:18px 0}.hero p{max-width:650px;color:#e5e7ff;font-size:1.08rem;line-height:1.7}
+    .actions{display:flex;flex-wrap:wrap;gap:13px;margin-top:28px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;border-radius:15px;text-decoration:none;font-weight:900;transition:transform .15s}.btn:hover{transform:translateY(-2px)}.primary{background:var(--gold);color:var(--navy)}.secondary{border:1px solid #ffffff70;color:white;background:#ffffff12}
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0}.feature{background:white;border:1px solid #e5e7f1;border-radius:20px;padding:22px}.feature b{display:block;color:var(--navy);margin:10px 0}.feature p{color:var(--muted);line-height:1.6;margin:0;font-size:.95rem}.ico{font-size:1.7rem}
+    .callout{padding:24px;border-radius:20px;background:#fff;border:1px solid #e5e7f1;line-height:1.7}.callout a{color:var(--blue);font-weight:800}
+    footer{padding:28px 0 40px;text-align:center;color:var(--muted);font-size:.88rem}
+    @media(max-width:700px){.features{grid-template-columns:1fr}.hero{margin-top:10px}.top{padding:15px 0}.actions .btn{width:100%}}
+  </style>
+</head>
+<body>
+  <header class="wrap top">
+    <div class="brand"><span class="flag">🇺🇸</span><span>ENGLISH PRO</span></div>
+    <button class="lang" id="lang" type="button" aria-label="Change language">FR / EN</button>
+  </header>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow" id="eyebrow">APPRENDRE • PROGRESSER • PARLER</div>
+      <h1 id="headline">L’anglais, étape par étape.</h1>
+      <p id="intro">Apprends à ton rythme avec English Pro : des leçons structurées, des explications simples et des exercices pour développer tes compétences.</p>
+      <div class="actions">
+        <a class="btn primary" id="online" href="./app/">▶ Apprendre en ligne</a>
+        <a class="btn secondary" id="download" href="https://github.com/jmarchand282-dot/English-pro/releases/latest" target="_blank" rel="noopener">↓ Télécharger l’application Android</a>
+      </div>
+    </section>
+    <section class="features" aria-label="Features">
+      <article class="feature"><div class="ico">📚</div><b id="f1t">Un parcours progressif</b><p id="f1p">Avance niveau après niveau, avec des leçons organisées et des explications avant les exercices.</p></article>
+      <article class="feature"><div class="ico">📱</div><b id="f2t">Sur le web et Android</b><p id="f2p">Commence directement dans ton navigateur ou installe l’application sur ton téléphone Android.</p></article>
+      <article class="feature"><div class="ico">🌍</div><b id="f3t">Pensé pour apprendre</b><p id="f3p">Une expérience accessible, avec une approche bilingue et une progression enregistrée sur ton appareil.</p></article>
+    </section>
+    <section class="callout">
+      <strong id="noteTitle">À propos de la version disponible</strong><br>
+      <span id="note">Le contenu et les fonctionnalités évoluent au fil des versions. Le bouton Android ouvre les publications officielles du projet ; vérifie les notes de version avant d’installer un fichier APK.</span>
+      <br><a href="https://github.com/jmarchand282-dot/English-pro" target="_blank" rel="noopener" id="repo">Voir le projet sur GitHub</a>
+    </section>
+  </main>
+  <footer class="wrap">© <span id="year"></span> English Pro · <span id="tagline">Learn today, speak tomorrow.</span></footer>
+  <script>
+    const copy={fr:{eyebrow:"APPRENDRE • PROGRESSER • PARLER",headline:"L’anglais, étape par étape.",intro:"Apprends à ton rythme avec English Pro : des leçons structurées, des explications simples et des exercices pour développer tes compétences.",online:"▶ Apprendre en ligne",download:"↓ Télécharger l’application Android",f1t:"Un parcours progressif",f1p:"Avance niveau après niveau, avec des leçons organisées et des explications avant les exercices.",f2t:"Sur le web et Android",f2p:"Commence directement dans ton navigateur ou installe l’application sur ton téléphone Android.",f3t:"Pensé pour apprendre",f3p:"Une expérience accessible, avec une approche bilingue et une progression enregistrée sur ton appareil.",noteTitle:"À propos de la version disponible",note:"Le contenu et les fonctionnalités évoluent au fil des versions. Le bouton Android ouvre les publications officielles du projet ; vérifie les notes de version avant d’installer un fichier APK.",repo:"Voir le projet sur GitHub"},en:{eyebrow:"LEARN • IMPROVE • SPEAK",headline:"English, one step at a time.",intro:"Learn at your own pace with English Pro: structured lessons, clear explanations and exercises to build your skills.",online:"▶ Learn online",download:"↓ Download the Android app",f1t:"A progressive learning path",f1p:"Move forward level by level, with organized lessons and explanations before exercises.",f2t:"On web and Android",f2p:"Start in your browser or install the app on your Android phone.",f3t:"Designed for learning",f3p:"An accessible bilingual experience, with progress saved on your device.",noteTitle:"About the available version",note:"Content and features evolve with each release. The Android button opens the project’s official releases; check the release notes before installing an APK file.",repo:"View the project on GitHub"}};
+    let language="fr";document.getElementById("year").textContent=new Date().getFullYear();
+    document.getElementById("lang").addEventListener("click",()=>{language=language==="fr"?"en":"fr";const c=copy[language];for(const id of Object.keys(c)){document.getElementById(id).textContent=c[id]}document.documentElement.lang=language;});
+  </script>
+</body>
+</html>
