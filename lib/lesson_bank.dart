@@ -7,6 +7,11 @@ import 'a2_unit5_course_data.dart';
 import 'a2_unit6_course_data.dart';
 import 'a2_unit7_course_data.dart';
 import 'a2_unit8_course_data.dart';
+import 'b1_unit1_course_data.dart';
+import 'b1_unit2_course_data.dart';
+import 'b1_unit3_course_data.dart';
+import 'b1_unit4_course_data.dart';
+import 'b1_unit5_course_data.dart';
 
 class Topic {
  final String title, explanation, example, french, question;
@@ -247,6 +252,26 @@ List<StudyLesson> buildCurriculum() {
    answer: raw['answer'] as int, unit: raw['unit'] as int,
    phase: raw['phase'] as int,
   ));
+ }
+
+ // B1 Units 1–5: integrate the authored unit files in their intended sequence.
+ final b1Units = <List<Map<String,dynamic>>>[
+  b1Unit1CourseData, b1Unit2CourseData, b1Unit3CourseData,
+  b1Unit4CourseData, b1Unit5CourseData,
+ ];
+ for (final unitData in b1Units) {
+  for (final raw in unitData) {
+   result.add(StudyLesson(
+    id: raw['id'] as String, level: 'B1',
+    title: raw['title'] as String, subtitle: raw['subtitle'] as String,
+    explanation: raw['explanation'] as String, example: raw['example'] as String,
+    french: raw['french'] as String, question: raw['question'] as String,
+    correction: raw['correction'] as String,
+    options: (raw['options'] as List).cast<String>(),
+    answer: raw['answer'] as int, unit: raw['unit'] as int,
+    phase: raw['phase'] as int,
+   ));
+  }
  }
  // Remaining A2 prototype topics and B1-C2 banks are temporary and not release-ready.
  for(final entry in curriculum.entries.where((e)=>e.key!='A1' && e.key!='A2')){
