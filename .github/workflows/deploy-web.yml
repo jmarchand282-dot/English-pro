@@ -1,0 +1,68 @@
+name: Deploy English Pro website and web app
+
+on:
+  push:
+    branches: [planning/a1-curriculum]
+    paths:
+      - 'lib/**'
+      - 'assets/**'
+      - 'pubspec.yaml'
+      - 'site/**'
+      - '.github/workflows/deploy-web.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: english-pro-pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate Flutter web project
+        run: flutter create --platforms=web --project-name english_pro /tmp/english_pro
+
+      - name: Copy app source and assets
+        run: |
+          cp pubspec.yaml /tmp/english_pro/pubspec.yaml
+          cp -r lib/. /tmp/english_pro/lib/
+          if [ -d assets ]; then cp -r assets /tmp/english_pro/assets; fi
+          cd /tmp/english_pro
+          flutter pub get
+
+      - name: Build browser version
+        working-directory: /tmp/english_pro
+        run: flutter build web --release --base-href "/English-pro/app/"
+
+      - name: Assemble public website
+        run: |
+          mkdir -p public/app
+          cp -r /tmp/english_pro/build/web/. public/app/
+          cp site/index.html public/index.html
+          touch public/.nojekyll
+
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
