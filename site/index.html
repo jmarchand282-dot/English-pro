@@ -22,11 +22,11 @@
     .lang{border:1px solid #dce0ef;background:white;border-radius:12px;padding:9px 12px;font-weight:700;color:var(--navy)}
     .hero{margin:26px auto 22px;padding:clamp(28px,6vw,64px);border-radius:30px;background:linear-gradient(130deg,#151936,#3932a7 72%,#4f46e5);color:white;box-shadow:0 18px 55px #25245b25}
     .eyebrow{color:var(--gold);font-weight:900;letter-spacing:2px;font-size:.78rem}.hero h1{font-size:clamp(2.2rem,6vw,4.3rem);line-height:1.06;max-width:760px;margin:18px 0}.hero p{max-width:650px;color:#e5e7ff;font-size:1.08rem;line-height:1.7}
-    .actions{display:flex;flex-wrap:wrap;gap:13px;margin-top:28px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;border-radius:15px;text-decoration:none;font-weight:900;transition:transform .15s}.btn:hover{transform:translateY(-2px)}.primary{background:var(--gold);color:var(--navy)}.secondary{border:1px solid #ffffff70;color:white;background:#ffffff12}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:28px}.btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:76px;padding:12px 18px;border-radius:15px;text-decoration:none;font-weight:900;text-align:center;transition:transform .15s}.btn:hover{transform:translateY(-2px)}.primary{background:var(--gold);color:var(--navy)}.secondary{border:1px solid #ffffff70;color:white;background:#ffffff12}.btn small{font-size:.72rem;font-weight:600;opacity:.82}.btn.disabled{opacity:.82;cursor:not-allowed}.btn.disabled:hover{transform:none}
     .features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0}.feature{background:white;border:1px solid #e5e7f1;border-radius:20px;padding:22px}.feature b{display:block;color:var(--navy);margin:10px 0}.feature p{color:var(--muted);line-height:1.6;margin:0;font-size:.95rem}.ico{font-size:1.7rem}
     .callout{padding:24px;border-radius:20px;background:#fff;border:1px solid #e5e7f1;line-height:1.7}.callout a{color:var(--blue);font-weight:800}
     footer{padding:28px 0 40px;text-align:center;color:var(--muted);font-size:.88rem}
-    @media(max-width:700px){.features{grid-template-columns:1fr}.hero{margin-top:10px}.top{padding:15px 0}.actions .btn{width:100%}}
+    @media(max-width:700px){.features{grid-template-columns:1fr}.hero{margin-top:10px}.top{padding:15px 0}.actions{grid-template-columns:1fr}.actions .btn{width:100%}}
   </style>
 </head>
 <body>
@@ -40,8 +40,8 @@
       <h1 id="headline">L’anglais, étape par étape.</h1>
       <p id="intro">Apprends à ton rythme avec English Pro : des leçons structurées, des explications simples et des exercices pour développer tes compétences.</p>
       <div class="actions">
-        <a class="btn primary" id="online" href="./app/">▶ Apprendre en ligne</a>
-        <a class="btn secondary" id="download" href="./app/">↓ Ouvrir l’application</a>
+        <a class="btn primary disabled" id="download" href="#android-info" aria-disabled="true"><span>↓ Télécharger l’application Android</span><small id="downloadHint">APK bientôt disponible</small></a>
+        <a class="btn secondary" id="online" href="./app/"><span>🌐 Voir et utiliser en ligne</span><small id="onlineHint">Ouvrir English Pro dans le navigateur</small></a>
       </div>
     </section>
     <section class="features" aria-label="Features">
@@ -49,16 +49,16 @@
       <article class="feature"><div class="ico">📱</div><b id="f2t">Sur le web et Android</b><p id="f2p">Commence directement dans ton navigateur ou installe l’application sur ton téléphone Android.</p></article>
       <article class="feature"><div class="ico">🌍</div><b id="f3t">Pensé pour apprendre</b><p id="f3p">Une expérience accessible, avec une approche bilingue et une progression enregistrée sur ton appareil.</p></article>
     </section>
-    <section class="callout">
-      <strong id="noteTitle">Installer sur ton téléphone</strong><br>
-      <span id="note">Ouvre l’application dans ton navigateur. Dans le menu de ton navigateur, choisis « Ajouter à l’écran d’accueil » ou « Installer l’application » si cette option est disponible.</span>
+    <section class="callout" id="android-info">
+      <strong id="noteTitle">Téléchargement Android</strong><br>
+      <span id="note">Le bouton Android sera activé dès que la version APK aura été finalisée et vérifiée. En attendant, tu peux utiliser English Pro en ligne avec le deuxième bouton.</span>
     </section>
   </main>
   <footer class="wrap">© <span id="year"></span> English Pro · <span id="tagline">Learn today, speak tomorrow.</span></footer>
   <script>
-    const copy={fr:{eyebrow:"APPRENDRE • PROGRESSER • PARLER",headline:"L’anglais, étape par étape.",intro:"Apprends à ton rythme avec English Pro : des leçons structurées, des explications simples et des exercices pour développer tes compétences.",online:"▶ Apprendre en ligne",download:"↓ Ouvrir l’application",f1t:"Un parcours progressif",f1p:"Avance niveau après niveau, avec des leçons organisées et des explications avant les exercices.",f2t:"Sur le web et Android",f2p:"Commence directement dans ton navigateur ou installe l’application sur ton téléphone Android.",f3t:"Pensé pour apprendre",f3p:"Une expérience accessible, avec une approche bilingue et une progression enregistrée sur ton appareil.",noteTitle:"Installer sur ton téléphone",note:"Ouvre l’application dans ton navigateur. Dans le menu de ton navigateur, choisis « Ajouter à l’écran d’accueil » ou « Installer l’application » si cette option est disponible."},en:{eyebrow:"LEARN • IMPROVE • SPEAK",headline:"English, one step at a time.",intro:"Learn at your own pace with English Pro: structured lessons, clear explanations and exercises to build your skills.",online:"▶ Learn online",download:"↓ Open the app",f1t:"A progressive learning path",f1p:"Move forward level by level, with organized lessons and explanations before exercises.",f2t:"On web and Android",f2p:"Start in your browser or install the app on your Android phone.",f3t:"Designed for learning",f3p:"An accessible bilingual experience, with progress saved on your device.",noteTitle:"Install on your phone",note:"Open the app in your browser. In your browser menu, choose “Add to Home screen” or “Install app” if available."}};
+    const copy={fr:{eyebrow:"APPRENDRE • PROGRESSER • PARLER",headline:"L’anglais, étape par étape.",intro:"Apprends à ton rythme avec English Pro : des leçons structurées, des explications simples et des exercices pour développer tes compétences.",online:"🌐 Voir et utiliser en ligne",onlineHint:"Ouvrir English Pro dans le navigateur",download:"↓ Télécharger l’application Android",downloadHint:"APK bientôt disponible",f1t:"Un parcours progressif",f1p:"Avance niveau après niveau, avec des leçons organisées et des explications avant les exercices.",f2t:"Sur le web et Android",f2p:"Commence directement dans ton navigateur ou installe l’application sur ton téléphone Android.",f3t:"Pensé pour apprendre",f3p:"Une expérience accessible, avec une approche bilingue et une progression enregistrée sur ton appareil.",noteTitle:"Téléchargement Android",note:"Le bouton Android sera activé dès que la version APK aura été finalisée et vérifiée. En attendant, tu peux utiliser English Pro en ligne avec le deuxième bouton."},en:{eyebrow:"LEARN • IMPROVE • SPEAK",headline:"English, one step at a time.",intro:"Learn at your own pace with English Pro: structured lessons, clear explanations and exercises to build your skills.",online:"🌐 Use online",onlineHint:"Open English Pro in your browser",download:"↓ Download Android app",downloadHint:"APK coming soon",f1t:"A progressive learning path",f1p:"Move forward level by level, with organized lessons and explanations before exercises.",f2t:"On web and Android",f2p:"Start in your browser or install the app on your Android phone.",f3t:"Designed for learning",f3p:"An accessible bilingual experience, with progress saved on your device.",noteTitle:"Android download",note:"The Android button will be activated as soon as the APK version is finalized and tested. In the meantime, use English Pro online with the second button."}};
     let language="fr";document.getElementById("year").textContent=new Date().getFullYear();
-    document.getElementById("lang").addEventListener("click",()=>{language=language==="fr"?"en":"fr";const c=copy[language];for(const id of Object.keys(c)){document.getElementById(id).textContent=c[id]}document.documentElement.lang=language;});
+    document.getElementById("lang").addEventListener("click",()=>{language=language==="fr"?"en":"fr";const c=copy[language];for(const id of Object.keys(c)){const el=document.getElementById(id);if(el)el.textContent=c[id]}document.documentElement.lang=language;});
   </script>
 </body>
 </html>
