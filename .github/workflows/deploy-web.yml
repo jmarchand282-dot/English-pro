@@ -39,6 +39,26 @@ jobs:
       - name: Generate Flutter web project
         run: flutter create --platforms=web --project-name english_pro /tmp/english_pro
 
+      - name: Install Google Analytics tag
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('/tmp/english_pro/web/index.html')
+          html = path.read_text()
+          tag = """  <!-- Google tag (gtag.js) -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-WL3FF4CCBM"></script>
+            <script>
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-WL3FF4CCBM');
+            </script>
+          """
+          if 'G-WL3FF4CCBM' not in html:
+              html = html.replace('</head>', tag + '\\n</head>', 1)
+          path.write_text(html)
+          PY
+
       - name: Copy app source and assets
         run: |
           cp pubspec.yaml /tmp/english_pro/pubspec.yaml
