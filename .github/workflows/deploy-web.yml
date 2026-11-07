@@ -76,6 +76,8 @@ jobs:
           mkdir -p public/app
           cp -r /tmp/english_pro/build/web/. public/app/
           cp site/index.html public/index.html
+          cp site/robots.txt public/robots.txt
+          cp site/sitemap.xml public/sitemap.xml
           touch public/.nojekyll
 
       - name: Upload website
