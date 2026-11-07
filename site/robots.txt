@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jmarchand282-dot.github.io/English-pro/sitemap.xml
+
+User-agent: OAI-SearchBot
+Allow: /
