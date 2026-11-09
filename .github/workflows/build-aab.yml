@@ -68,7 +68,7 @@ jobs:
           ]
           for permission in additions:
               if permission not in xml:
-                  xml = xml.replace('<application', f'<uses-permission android:name="{permission}"/>\\n    <application', 1)
+                  xml = xml.replace('<application', f'<uses-permission android:name="{permission}"/>\n    <application', 1)
           receivers = '''        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
                   <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
                       <intent-filter>
@@ -80,7 +80,7 @@ jobs:
                   </receiver>
           '''
           if 'ScheduledNotificationBootReceiver' not in xml:
-              xml = xml.replace('</application>', receivers + '\\n    </application>', 1)
+              xml = xml.replace('</application>', receivers + '\n    </application>', 1)
           if '<queries>' not in xml:
               xml = xml.replace('</manifest>', '''    <queries>
                       <intent><action android:name="android.intent.action.TTS_SERVICE"/></intent>
@@ -122,7 +122,7 @@ jobs:
           }
           '''
           if 'create("release")' not in text:
-              text = text.replace('buildTypes {', signing + '\\nbuildTypes {', 1)
+              text = text.replace('buildTypes {', signing + '\nbuildTypes {', 1)
           text = re.sub(r'signingConfig = signingConfigs\\.getByName\\("debug"\\)', 'signingConfig = signingConfigs.getByName("release")', text)
           gradle.write_text(text)
           PY
@@ -135,9 +135,9 @@ jobs:
           gradle = Path('/tmp/english_pro/android/app/build.gradle.kts')
           text = gradle.read_text()
           if 'isCoreLibraryDesugaringEnabled = true' not in text:
-              text = text.replace('compileOptions {', 'compileOptions {\\n        isCoreLibraryDesugaringEnabled = true', 1)
+              text = text.replace('compileOptions {', 'compileOptions {\n        isCoreLibraryDesugaringEnabled = true', 1)
           if 'coreLibraryDesugaring(' not in text:
-              text += '\\ndependencies {\\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\\n}\\n'
+              text += '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
           gradle.write_text(text)
           PY
 
@@ -151,6 +151,10 @@ jobs:
 
       - name: Build signed Android App Bundle
         working-directory: /tmp/english_pro
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: flutter build appbundle --release
 
       - name: Verify AAB signature
