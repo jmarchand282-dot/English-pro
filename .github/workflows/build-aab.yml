@@ -123,7 +123,7 @@ jobs:
           '''
           if 'create("release")' not in text:
               text = text.replace('buildTypes {', signing + '\nbuildTypes {', 1)
-          text = re.sub(r'signingConfig = signingConfigs\\.getByName\\("debug"\\)', 'signingConfig = signingConfigs.getByName("release")', text)
+          text = re.sub(r'signingConfig = signingConfigs\.getByName\("debug"\)', 'signingConfig = signingConfigs.getByName("release")', text)
           gradle.write_text(text)
           PY
           grep -q 'signingConfig = signingConfigs.getByName("release")' /tmp/english_pro/android/app/build.gradle.kts
