@@ -1,0 +1,172 @@
+name: Build English Pro Play Store AAB
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-aab:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check signing secrets
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          test -n "$ANDROID_KEYSTORE_BASE64" || (echo "Missing GitHub secret: ANDROID_KEYSTORE_BASE64" && exit 1)
+          test -n "$KEYSTORE_PASSWORD" || (echo "Missing GitHub secret: KEYSTORE_PASSWORD" && exit 1)
+          test -n "$KEY_ALIAS" || (echo "Missing GitHub secret: KEY_ALIAS" && exit 1)
+          test -n "$KEY_PASSWORD" || (echo "Missing GitHub secret: KEY_PASSWORD" && exit 1)
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate Android project
+        run: flutter create --platforms=android --org com.englishpro.app --project-name english_pro /tmp/english_pro
+
+      - name: Configure launcher icon and Android permissions
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          root = Path('/tmp/english_pro')
+          source = Path('assets/icons/english_pro_launcher.xml')
+          target = root / 'android/app/src/main/res/drawable/english_pro_launcher.xml'
+          target.parent.mkdir(parents=True, exist_ok=True)
+          target.write_text(source.read_text())
+          manifest = root / 'android/app/src/main/AndroidManifest.xml'
+          xml = manifest.read_text()
+          start = xml.find('<application')
+          end = xml.find('>', start)
+          if start < 0 or end < 0:
+              raise SystemExit('Android application tag not found')
+          tag = xml[start:end]
+          tag = re.sub(r'android:icon="[^"]+"', 'android:icon="@drawable/english_pro_launcher"', tag)
+          if 'android:icon=' not in tag:
+              tag += ' android:icon="@drawable/english_pro_launcher"'
+          xml = xml[:start] + tag + xml[end:]
+          additions = [
+              'android.permission.RECEIVE_BOOT_COMPLETED',
+              'android.permission.POST_NOTIFICATIONS',
+              'android.permission.RECORD_AUDIO',
+          ]
+          for permission in additions:
+              if permission not in xml:
+                  xml = xml.replace('<application', f'<uses-permission android:name="{permission}"/>\n    <application', 1)
+          receivers = '''        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+                  <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+                      <intent-filter>
+                          <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                          <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                          <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                          <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+                      </intent-filter>
+                  </receiver>
+          '''
+          if 'ScheduledNotificationBootReceiver' not in xml:
+              xml = xml.replace('</application>', receivers + '\n    </application>', 1)
+          if '<queries>' not in xml:
+              xml = xml.replace('</manifest>', '''    <queries>
+                      <intent><action android:name="android.intent.action.TTS_SERVICE"/></intent>
+                      <intent><action android:name="android.speech.RecognitionService"/></intent>
+                  </queries>
+          </manifest>''', 1)
+          manifest.write_text(xml)
+          PY
+
+      - name: Copy Flutter application source
+        run: |
+          cp pubspec.yaml /tmp/english_pro/pubspec.yaml
+          cp -r lib/. /tmp/english_pro/lib/
+          rm -rf /tmp/english_pro/test
+          mkdir -p /tmp/english_pro/test
+          cp -r test/. /tmp/english_pro/test/
+          cd /tmp/english_pro
+          flutter pub get
+
+      - name: Configure upload-key signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > /tmp/english_pro/upload-keystore.jks
+          test -s /tmp/english_pro/upload-keystore.jks
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          gradle = Path('/tmp/english_pro/android/app/build.gradle.kts')
+          text = gradle.read_text()
+          signing = '''
+          signingConfigs {
+              create("release") {
+                  storeFile = file("../../upload-keystore.jks")
+                  storePassword = System.getenv("KEYSTORE_PASSWORD")
+                  keyAlias = System.getenv("KEY_ALIAS")
+                  keyPassword = System.getenv("KEY_PASSWORD")
+              }
+          }
+          '''
+          if 'create("release")' not in text:
+              text = text.replace('buildTypes {', signing + '\nbuildTypes {', 1)
+          text = re.sub(r'signingConfig = signingConfigs\.getByName\("debug"\)', 'signingConfig = signingConfigs.getByName("release")', text)
+          gradle.write_text(text)
+          PY
+          grep -q 'signingConfig = signingConfigs.getByName("release")' /tmp/english_pro/android/app/build.gradle.kts
+
+      - name: Enable notification desugaring
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          gradle = Path('/tmp/english_pro/android/app/build.gradle.kts')
+          text = gradle.read_text()
+          if 'isCoreLibraryDesugaringEnabled = true' not in text:
+              text = text.replace('compileOptions {', 'compileOptions {\n        isCoreLibraryDesugaringEnabled = true', 1)
+          if 'coreLibraryDesugaring(' not in text:
+              text += '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
+          gradle.write_text(text)
+          PY
+
+      - name: Analyze Dart code
+        working-directory: /tmp/english_pro
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run curriculum tests
+        working-directory: /tmp/english_pro
+        run: flutter test
+
+      - name: Build signed Android App Bundle
+        working-directory: /tmp/english_pro
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: flutter build appbundle --release
+
+      - name: Verify AAB signature
+        run: jarsigner -verify -verbose -certs /tmp/english_pro/build/app/outputs/bundle/release/app-release.aab
+
+      - name: Upload signed AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: English-Pro-Play-Store-AAB
+          path: /tmp/english_pro/build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 7
