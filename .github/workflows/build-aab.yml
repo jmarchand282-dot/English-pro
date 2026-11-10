@@ -14,13 +14,11 @@ jobs:
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: upload
+          KEY_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           test -n "$ANDROID_KEYSTORE_BASE64" || (echo "Missing GitHub secret: ANDROID_KEYSTORE_BASE64" && exit 1)
           test -n "$KEYSTORE_PASSWORD" || (echo "Missing GitHub secret: KEYSTORE_PASSWORD" && exit 1)
-          test -n "$KEY_ALIAS" || (echo "Missing GitHub secret: KEY_ALIAS" && exit 1)
-          test -n "$KEY_PASSWORD" || (echo "Missing GitHub secret: KEY_PASSWORD" && exit 1)
 
       - name: Checkout source
         uses: actions/checkout@v4
