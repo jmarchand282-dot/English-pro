@@ -92,9 +92,13 @@ jobs:
         run: |
           cp pubspec.yaml /tmp/english_pro/pubspec.yaml
           cp -r lib/. /tmp/english_pro/lib/
-          rm -rf /tmp/english_pro/test
-          mkdir -p /tmp/english_pro/test
-          cp -r test/. /tmp/english_pro/test/
+          if [ -d test ] && [ -n "$(find test -type f -print -quit)" ]; then
+            rm -rf /tmp/english_pro/test
+            mkdir -p /tmp/english_pro/test
+            cp -r test/. /tmp/english_pro/test/
+          else
+            echo "No repository test/ directory; keeping generated Flutter test scaffold."
+          fi
           cd /tmp/english_pro
           flutter pub get
 
