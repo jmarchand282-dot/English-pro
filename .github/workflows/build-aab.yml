@@ -97,7 +97,8 @@ jobs:
             mkdir -p /tmp/english_pro/test
             cp -r test/. /tmp/english_pro/test/
           else
-            echo "No repository test/ directory; keeping generated Flutter test scaffold."
+            rm -rf /tmp/english_pro/test
+            echo "No repository test/ directory; project tests will be skipped."
           fi
           cd /tmp/english_pro
           flutter pub get
@@ -152,7 +153,12 @@ jobs:
 
       - name: Run curriculum tests
         working-directory: /tmp/english_pro
-        run: flutter test
+        run: |
+          if [ -d test ] && [ -n "$(find test -type f -print -quit)" ]; then
+            flutter test
+          else
+            echo "No project tests found; skipping test execution."
+          fi
 
       - name: Build signed Android App Bundle
         working-directory: /tmp/english_pro
